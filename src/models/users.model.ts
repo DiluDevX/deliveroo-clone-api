@@ -5,15 +5,27 @@ export type IUsers = {
   createdAt: Date;
   updatedAt: Date;
 
-  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
   password: string;
 };
 
 const usersSchema = new Schema<IUsers>(
   {
-    name: {
+    firstName: {
+      type: String,
+    },
+    lastName: {
+      type: String,
+    },
+    email: {
       type: String,
       required: true,
+    },
+    phone: {
+      type: String,
     },
     password: {
       type: String,

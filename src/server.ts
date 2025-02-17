@@ -8,6 +8,7 @@ import restaurantRoutes from "./routes/restaurant.routes";
 import dishRoutes from "./routes/dish.routes";
 import categoryRoutes from "./routes/category.routes";
 import usersRoutes from "./routes/users.routes";
+import authRoutes from "./routes/authUser.routes";
 import cors from "cors";
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/restaurants", restaurantRoutes);
 app.use("/dishes", dishRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/authUsers", authRoutes);
 app.use("/users", usersRoutes);
 
 app.use(commonRoutes);

@@ -24,24 +24,29 @@ const getAllUsers = async (_req: Request, res: Response) => {
   }
 };
 
-const authenticateUser = async (req: Request, res: Response) => {
-  const { name, password } = req.body;
+const logInUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
   try {
-    const existingUser = await usersService.findById(name);
+    const existingUser = await usersService.findOne({ email });
 
     if (!existingUser) {
-      return res
+      res
         .status(404)
-        .json({ message: "User not found.Please Create An Account" });
+        .json({ message: "Email not found.Please Create An Account" });
+
+      return;
     }
 
     if (existingUser.password !== password) {
-      return res.status(401).json({ message: "Invalid Credentials" });
+      res.status(401).json({ message: "Invalid Password" });
+
+      return;
     }
 
-    const token = jwt.sign({ name: existingUser.name }, SECRET_KEY);
-    return res.status(200).json({
+    const token = jwt.sign({ firstName: existingUser.firstName }, SECRET_KEY);
+
+    res.status(200).json({
       message: "Authenticated",
       token: token,
     });
@@ -52,36 +57,41 @@ const authenticateUser = async (req: Request, res: Response) => {
 };
 
 const createNewUser = async (req: Request, res: Response) => {
-  const { name, password } = req.body;
-
   try {
-    const existingUser = await usersService.findById(name);
+    const existingUser = await usersService.findOne({ email: req.body.email });
 
     if (existingUser) {
-      return res.status(409).json({
-        message: "User Already Exists. Please Login",
+      res.status(400).json({
+        message: "Email already exists. Please Log In",
+      });
+      return;
+    } else {
+      const createdUser = await usersService.createNew({ ...req.body });
+
+      const token = jwt.sign(
+        { firstName: createdUser.firstName ?? "" },
+        SECRET_KEY,
+      );
+
+      res.status(201).json({
+        data: createdUser,
+        token: token,
+        message: "Success",
       });
     }
-
-    const createdUser = await usersService.createNew({ name, password });
-
-    const token = jwt.sign({ name: createdUser.name }, SECRET_KEY);
-
-    return res.status(201).json({
-      message: "User Created",
-      token: token,
-    });
   } catch (error) {
     console.error("Error creating user:", error);
-    return res.status(500).json({
+    res.status(500).json({
       message: "Internal Server Error",
     });
+
+    return;
   }
 };
 
-const getAnUser = async (req: Request, res: Response) => {
+const getAnUser = async (_req: Request, res: Response) => {
   try {
-    const foundRestaurant = await usersService.findById(req.params.orgID);
+    const foundRestaurant = await usersService.findOne({});
 
     if (!foundRestaurant) {
       res.status(404).json({
@@ -188,7 +198,7 @@ const deleteAnUser = async (req: Request, res: Response) => {
 
 export {
   getAllUsers,
-  authenticateUser,
+  logInUser,
   createNewUser,
   getAnUser,
   updateAnUserPartially,
