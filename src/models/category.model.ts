@@ -1,12 +1,29 @@
 import mongoose from "mongoose";
 
-const categorySchema = new mongoose.Schema({
-  name: String,
-  restaurant: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: "Restaurant",
+export interface ICategory {
+  createdAt: Date;
+  updatedAt: Date;
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  restaurant: mongoose.Types.ObjectId;
+}
+
+const categorySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    restaurant: {
+      required: true,
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "Restaurant",
+    },
   },
-});
+  { timestamps: true },
+);
 
 categorySchema.virtual("dishes", {
   ref: "Dish",

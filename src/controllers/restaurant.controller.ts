@@ -2,8 +2,25 @@ import { restaurantService } from "../services/restaurant.service";
 import { z } from "zod";
 import { Request, Response } from "express";
 import { createRestaurantRequestBodySchema } from "../schema/restaurant.schema";
+import {
+  DeleteRestaurantResponseBodyDTO,
+  GetAllRestaurantsResponseBodyDTO,
+  GetARestaurantResponseBodyDTO,
+  UpdateRestaurantFullyRequestBodyDTO,
+  UpdateRestaurantFullyResponseBodyDTO,
+  UpdateRestaurantPartiallyRequestBodyDTO,
+  UpdateRestaurantPartiallyResponseBodyDTO,
+} from "../dto/restaurant.dto";
+import {
+  CommonGetAllResponseDTO,
+  CommonResponseDTO,
+  ObjectIdPathParamsDTO,
+} from "../dto/common.dto";
 
-const getAllRestaurants = async (_req: Request, res: Response) => {
+const getAllRestaurants = async (
+  _req: Request,
+  res: Response<CommonGetAllResponseDTO<GetAllRestaurantsResponseBodyDTO>>,
+) => {
   try {
     const restaurantsArray = await restaurantService.findAll();
 
@@ -44,9 +61,12 @@ const createNewRestaurant = async (
   }
 };
 
-const getARestaurant = async (req: Request, res: Response) => {
+const getARestaurant = async (
+  req: Request<ObjectIdPathParamsDTO>,
+  res: Response<CommonResponseDTO<GetARestaurantResponseBodyDTO>>,
+) => {
   try {
-    const foundRestaurant = await restaurantService.findById(req.params.orgID);
+    const foundRestaurant = await restaurantService.findById(req.params.id);
 
     if (!foundRestaurant) {
       res.status(404).json({
@@ -69,7 +89,13 @@ const getARestaurant = async (req: Request, res: Response) => {
   }
 };
 
-const updateARestaurantFully = async (req: Request, res: Response) => {
+const updateARestaurantFully = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    CommonResponseDTO<UpdateRestaurantFullyRequestBodyDTO>
+  >,
+  res: Response<CommonResponseDTO<UpdateRestaurantFullyResponseBodyDTO>>,
+) => {
   try {
     const updatedRestaurant = await restaurantService.findByIdAndUpdate(
       req.params.id,
@@ -96,7 +122,13 @@ const updateARestaurantFully = async (req: Request, res: Response) => {
   }
 };
 
-const updateARestaurantPartially = async (req: Request, res: Response) => {
+const updateARestaurantPartially = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    CommonResponseDTO<UpdateRestaurantPartiallyRequestBodyDTO>
+  >,
+  res: Response<CommonResponseDTO<UpdateRestaurantPartiallyResponseBodyDTO>>,
+) => {
   try {
     const updatedRestaurant = await restaurantService.findByIdAndUpdate(
       req.params.id,
@@ -124,7 +156,10 @@ const updateARestaurantPartially = async (req: Request, res: Response) => {
   }
 };
 
-const deleteARestaurant = async (req: Request, res: Response) => {
+const deleteARestaurant = async (
+  req: Request<ObjectIdPathParamsDTO>,
+  res: Response<CommonResponseDTO<DeleteRestaurantResponseBodyDTO>>,
+) => {
   try {
     const deletedRestaurant = await restaurantService.findByIdAndDelete(
       req.params.id,

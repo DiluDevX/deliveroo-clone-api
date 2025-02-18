@@ -1,3 +1,20 @@
+import { z } from "zod";
+import {
+  CreateNewCategoryResponseBodyDTO,
+  DeleteCategoryResponseBodyDTO,
+  GetACategoryRequestBodyDTO,
+  GetACategoryResponseBodyDTO,
+  GetAllCategoriesResponseBodyDTO,
+  UpdateCategoryFullyRequestBodyDTO,
+  UpdateCategoryFullyResponseBodyDTO,
+  UpdateCategoryPartiallyRequestBodyDTO,
+  UpdateCategoryPartiallyResponseBodyDTO,
+} from "../dto/category.dto";
+import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
+import {
+  CategoryPathParamsSchema,
+  CreateCategoryRequestBodySchema,
+} from "../schema/category.schema";
 import { restaurantPathParamsSchema } from "../schema/restaurant.schema";
 import { categoryService } from "../services/category.service";
 import { restaurantService } from "../services/restaurant.service";
@@ -10,7 +27,10 @@ interface CategoryFilters {
 interface FoundRestaurant {
   restaurant: string | null | number;
 }
-const getAllCategories = async (req: Request, res: Response) => {
+const getAllCategories = async (
+  req: Request,
+  res: Response<CommonResponseDTO<GetAllCategoriesResponseBodyDTO>>,
+) => {
   try {
     const filters: CategoryFilters = {};
 
@@ -36,7 +56,14 @@ const getAllCategories = async (req: Request, res: Response) => {
   }
 };
 
-const createNewCategory = async (req: Request, res: Response) => {
+const createNewCategory = async (
+  req: Request<
+    z.infer<typeof CategoryPathParamsSchema>,
+    unknown,
+    z.infer<typeof CreateCategoryRequestBodySchema>
+  >,
+  res: Response<CommonResponseDTO<CreateNewCategoryResponseBodyDTO>>,
+) => {
   try {
     const decodedOrgID = decodeURIComponent(req.params.orgID);
 
@@ -71,7 +98,10 @@ const createNewCategory = async (req: Request, res: Response) => {
   }
 };
 
-const getCategory = async (req: Request, res: Response) => {
+const getCategory = async (
+  req: Request<ObjectIdPathParamsDTO, GetACategoryRequestBodyDTO>,
+  res: Response<CommonResponseDTO<GetACategoryResponseBodyDTO>>,
+) => {
   try {
     const foundCategory = await categoryService.findById(req.params.id);
 
@@ -96,7 +126,10 @@ const getCategory = async (req: Request, res: Response) => {
   }
 };
 
-const updateCategoryFully = async (req: Request, res: Response) => {
+const updateCategoryFully = async (
+  req: Request<ObjectIdPathParamsDTO, UpdateCategoryFullyRequestBodyDTO>,
+  res: Response<CommonResponseDTO<UpdateCategoryFullyResponseBodyDTO>>,
+) => {
   try {
     const foundRestaurant = await restaurantService.findById(
       req.body.restaurant,
@@ -134,7 +167,10 @@ const updateCategoryFully = async (req: Request, res: Response) => {
   }
 };
 
-const updateCategoryPartially = async (req: Request, res: Response) => {
+const updateCategoryPartially = async (
+  req: Request<ObjectIdPathParamsDTO, UpdateCategoryPartiallyRequestBodyDTO>,
+  res: Response<CommonResponseDTO<UpdateCategoryPartiallyResponseBodyDTO>>,
+) => {
   try {
     if (req.body.restaurant) {
       const foundRestaurant = await restaurantService.findById(
@@ -174,7 +210,10 @@ const updateCategoryPartially = async (req: Request, res: Response) => {
   }
 };
 
-const deleteCategory = async (req: Request, res: Response) => {
+const deleteCategory = async (
+  req: Request<ObjectIdPathParamsDTO>,
+  res: Response<CommonResponseDTO<DeleteCategoryResponseBodyDTO>>,
+) => {
   try {
     const deletedCategory = await categoryService.findByIdAndDelete(
       req.params.id,

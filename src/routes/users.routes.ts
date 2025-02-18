@@ -5,25 +5,34 @@ import {
   getAllUsers,
   getAnUser,
   updateAnUserPartially,
-  logInUser,
-  createNewUser,
   updateAnUserFully,
 } from "../controllers/users.controller";
+import ValidateBody from "../middleware/validate-body.middleware";
+import ValidateParams from "../middleware/validate-params.middleware";
+import { objectIdPathParamsSchema } from "../schema/common.schema";
+import {
+  updateUserFullyRequestBodySchema,
+  updateUserPartiallyRequestBodySchema,
+} from "../schema/users.schema";
 
 router.get("/", getAllUsers);
 
-router.post("/login", async (req, res) => {
-  await logInUser(req, res);
-});
+router.get("/:id", ValidateParams(objectIdPathParamsSchema), getAnUser);
 
-router.post("/signup", createNewUser);
+router.patch(
+  "/:id",
+  ValidateParams(objectIdPathParamsSchema),
+  ValidateBody(updateUserPartiallyRequestBodySchema),
+  updateAnUserPartially,
+);
 
-router.get("/:id", getAnUser);
+router.put(
+  "/:id",
+  ValidateParams(objectIdPathParamsSchema),
+  ValidateBody(updateUserFullyRequestBodySchema),
+  updateAnUserFully,
+);
 
-router.patch("/:id", updateAnUserPartially);
-
-router.put("/:id", updateAnUserFully);
-
-router.delete("/:id", deleteAnUser);
+router.delete("/:id", ValidateParams(objectIdPathParamsSchema), deleteAnUser);
 
 export default router;

@@ -13,33 +13,36 @@ export interface IDish {
   restaurant: ObjectId;
 }
 
-const dishSchema = new Schema<IDish>({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const dishSchema = new Schema<IDish>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: false,
+    },
+    calories: {
+      type: Number,
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    category: {
+      type: SchemaTypes.ObjectId,
+      ref: "Category",
+    },
+    restaurant: {
+      type: SchemaTypes.ObjectId,
+      ref: "Restaurant",
+    },
   },
-  description: {
-    type: String,
-    required: false,
-  },
-  calories: {
-    type: Number,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  category: {
-    type: SchemaTypes.ObjectId,
-    ref: "Category",
-  },
-  restaurant: {
-    type: SchemaTypes.ObjectId,
-    ref: "Restaurant",
-  },
-});
+  { timestamps: true },
+);
 
 const Dish = model("Dish", dishSchema);
 

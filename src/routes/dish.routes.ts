@@ -20,7 +20,7 @@ import ValidateQuery from "../middleware/validate-query.middleware";
 
 const router = express.Router();
 
-router.get("/", getAllDishes, ValidateQuery(DishQueryParamsSchema));
+router.get("/", ValidateQuery(DishQueryParamsSchema), getAllDishes);
 
 router.post("/", ValidateBody(CreateDishRequestBodySchema), createNewDish);
 

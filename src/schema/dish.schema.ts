@@ -3,8 +3,8 @@ import { z } from "zod";
 const DishName = z.string().min(4).max(50);
 const DishDescription = z.string().min(3).max(150);
 const DishPrice = z.number().min(1);
-const DishCategory = z.string().min(4).max(30).or(z.number());
-const DishRestaurant = z.string().min(4).max(30).or(z.number());
+const DishCategory = z.string().min(4).max(30);
+const DishRestaurant = z.string().min(4).max(30);
 
 export const CreateDishRequestBodySchema = z.object({
   name: DishName,
@@ -22,6 +22,6 @@ export const PartiallyUpdateDishRequestBodySchema =
 
 export const DishQueryParamsSchema = z.object({
   populate: z.string(),
-  restaurant: z.string().min(4).max(30).or(z.number()),
-  category: z.string().min(4).max(30).or(z.number()),
+  restaurant: z.string().min(4).max(30),
+  category: z.string().min(4).max(30),
 });

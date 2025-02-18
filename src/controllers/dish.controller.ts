@@ -1,13 +1,31 @@
 import { dishService } from "../services/dish.service";
 import { categoryService } from "../services/category.service";
 import { Request, Response } from "express";
+import {
+  CreateNewDishResponseBodyDTO,
+  DeleteDishResponseBodyDTO,
+  GetADishRequestBodyDTO,
+  GetADishResponseBodyDTO,
+  GetAllDishedRequestQueryDTO,
+  GetAllDishesResponseBodyDTO,
+  UpdateDishFullyRequestBodyDTO,
+  UpdateDishFullyResponseBodyDTO,
+  UpdateDishPartiallyRequestBodyDTO,
+  UpdateDishPartiallyResponseBodyDTO,
+} from "../dto/dish.dto";
+import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
+import { CreateDishRequestBodySchema } from "../schema/dish.schema";
+import { z } from "zod";
 
 interface DishFilters {
   restaurant?: string;
   category?: string;
 }
 
-const getAllDishes = async (req: Request, res: Response) => {
+const getAllDishes = async (
+  req: Request<unknown, unknown, unknown, GetAllDishedRequestQueryDTO>,
+  res: Response<CommonResponseDTO<GetAllDishesResponseBodyDTO>>,
+) => {
   try {
     const filters: DishFilters = {};
 
@@ -25,16 +43,21 @@ const getAllDishes = async (req: Request, res: Response) => {
       message: "OK",
       data: dishesArray,
     });
+    return;
   } catch (error) {
     console.log(error, "error");
 
     res.status(500).json({
       message: "Internal Server Error",
     });
+    return;
   }
 };
 
-const createNewDish = async (req: Request, res: Response) => {
+const createNewDish = async (
+  req: Request<unknown, unknown, z.infer<typeof CreateDishRequestBodySchema>>,
+  res: Response<CommonResponseDTO<CreateNewDishResponseBodyDTO>>,
+) => {
   try {
     const foundCategory = await categoryService.findById(req.body.category);
 
@@ -64,7 +87,13 @@ const createNewDish = async (req: Request, res: Response) => {
   }
 };
 
-const getADish = async (req: Request, res: Response) => {
+const getADish = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    CommonResponseDTO<GetADishRequestBodyDTO>
+  >,
+  res: Response<CommonResponseDTO<GetADishResponseBodyDTO>>,
+) => {
   try {
     const foundDish = await dishService.findById(req.params.id);
 
@@ -88,7 +117,13 @@ const getADish = async (req: Request, res: Response) => {
   }
 };
 
-const updateDishFully = async (req: Request, res: Response) => {
+const updateDishFully = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    CommonResponseDTO<UpdateDishFullyRequestBodyDTO>
+  >,
+  res: Response<CommonResponseDTO<UpdateDishFullyResponseBodyDTO>>,
+) => {
   try {
     const foundCategory = await categoryService.findById(req.body.category);
 
@@ -125,7 +160,13 @@ const updateDishFully = async (req: Request, res: Response) => {
   }
 };
 
-const updateDishPartially = async (req: Request, res: Response) => {
+const updateDishPartially = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    CommonResponseDTO<UpdateDishPartiallyRequestBodyDTO>
+  >,
+  res: Response<CommonResponseDTO<UpdateDishPartiallyResponseBodyDTO>>,
+) => {
   try {
     let foundCategory;
     if (req.body.category) {
@@ -171,7 +212,10 @@ const updateDishPartially = async (req: Request, res: Response) => {
   }
 };
 
-const deleteDish = async (req: Request, res: Response) => {
+const deleteDish = async (
+  req: Request<ObjectIdPathParamsDTO>,
+  res: Response<CommonResponseDTO<DeleteDishResponseBodyDTO>>,
+) => {
   try {
     const deletedDish = await dishService.findByIdAndDelete(req.params.id);
 
