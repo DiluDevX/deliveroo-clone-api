@@ -15,6 +15,7 @@ import {
   CommonGetAllResponseDTO,
   CommonResponseDTO,
   ObjectIdPathParamsDTO,
+  OrgIdPathParamsDTO,
 } from "../dto/common.dto";
 
 const getAllRestaurants = async (
@@ -62,11 +63,11 @@ const createNewRestaurant = async (
 };
 
 const getARestaurant = async (
-  req: Request<ObjectIdPathParamsDTO>,
+  req: Request<OrgIdPathParamsDTO>,
   res: Response<CommonResponseDTO<GetARestaurantResponseBodyDTO>>,
 ) => {
   try {
-    const foundRestaurant = await restaurantService.findById(req.params.id);
+    const foundRestaurant = await restaurantService.findOne(req.params.orgID);
 
     if (!foundRestaurant) {
       res.status(404).json({

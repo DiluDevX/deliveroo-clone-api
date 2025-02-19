@@ -11,7 +11,7 @@ const createNew = async (data: CreateModel<IRestaurant>) => {
   return Restaurant.create({ ...data, orgId: uuidv4() });
 };
 
-const findById = async (orgID: string) => {
+const findOne = async (orgID: string) => {
   const input = mongoose.Types.ObjectId.isValid(orgID)
     ? { _id: orgID }
     : { name: orgID };
@@ -27,7 +27,7 @@ const findByIdAndDelete = async (id: string) => {
 };
 
 export const restaurantService = {
-  findById,
+  findOne,
   createNew,
   findAll,
   findByIdAndUpdate,

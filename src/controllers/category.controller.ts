@@ -70,7 +70,7 @@ const createNewCategory = async (
     restaurantPathParamsSchema.safeParse({
       orgID: decodedOrgID,
     });
-    const foundRestaurant = (await restaurantService.findById(
+    const foundRestaurant = (await restaurantService.findOne(
       req.body.restaurant,
     )) as unknown as FoundRestaurant | null;
 
@@ -131,7 +131,7 @@ const updateCategoryFully = async (
   res: Response<CommonResponseDTO<UpdateCategoryFullyResponseBodyDTO>>,
 ) => {
   try {
-    const foundRestaurant = await restaurantService.findById(
+    const foundRestaurant = await restaurantService.findOne(
       req.body.restaurant,
     );
 
@@ -173,7 +173,7 @@ const updateCategoryPartially = async (
 ) => {
   try {
     if (req.body.restaurant) {
-      const foundRestaurant = await restaurantService.findById(
+      const foundRestaurant = await restaurantService.findOne(
         req.body.restaurant,
       );
 
