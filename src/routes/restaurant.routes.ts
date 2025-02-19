@@ -12,6 +12,7 @@ import {
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
   createRestaurantRequestBodySchema,
+  restaurantPathParamsSchema,
   updateRestaurantFullyRequestBodySchema,
   updateRestaurantPartiallyRequestBodySchema,
 } from "../schema/restaurant.schema";
@@ -33,7 +34,11 @@ router.put(
   updateARestaurantFully,
 );
 
-router.get("/:orgID", getARestaurant);
+router.get(
+  "/:orgID",
+  ValidateParams(restaurantPathParamsSchema),
+  getARestaurant,
+);
 
 router.patch(
   "/:id",
