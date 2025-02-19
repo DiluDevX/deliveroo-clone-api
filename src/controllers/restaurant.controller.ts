@@ -67,7 +67,8 @@ const getARestaurant = async (
   res: Response<CommonResponseDTO<GetARestaurantResponseBodyDTO>>,
 ) => {
   try {
-    const foundRestaurant = await restaurantService.findOne(req.params.orgID);
+    const decodedOrgID = decodeURIComponent(req.params.orgID);
+    const foundRestaurant = await restaurantService.findOne(decodedOrgID);
 
     if (!foundRestaurant) {
       res.status(404).json({

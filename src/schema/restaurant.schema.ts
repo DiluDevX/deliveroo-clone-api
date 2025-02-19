@@ -45,9 +45,9 @@ export const restaurantPathParamsSchema = z.object({
   orgID: z
     .string()
     .min(4)
-    .max(30)
+    .max(40)
     .regex(
-      /^(?:[a-zA-Z0-9_-]|%[0-9A-Fa-f]{2})+$/,
+      /^(?:[a-zA-Z0-9_\- ]|%[0-9A-Fa-f]{2})+$/,
       "orgID must contain only letters, numbers, dashes, underscores, or encoded characters",
     ),
 });
