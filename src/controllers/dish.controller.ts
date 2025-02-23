@@ -23,18 +23,23 @@ interface DishFilters {
 }
 
 const getAllDishes = async (
-  req: Request<unknown, unknown, unknown, GetAllDishedRequestQueryDTO>,
+  req: Request<
+    unknown,
+    CommonResponseDTO<GetAllDishesResponseBodyDTO>,
+    unknown,
+    GetAllDishedRequestQueryDTO
+  >,
   res: Response<CommonResponseDTO<GetAllDishesResponseBodyDTO>>,
 ) => {
   try {
     const filters: DishFilters = {};
 
     if (req.query.restaurant) {
-      filters.restaurant = req.query.restaurant as string;
+      filters.restaurant = req.query.restaurant;
     }
 
     if (req.query.category) {
-      filters.category = req.query.category as string;
+      filters.category = req.query.category;
     }
 
     const dishesArray = await dishService.findAll(filters, req.query.populate);

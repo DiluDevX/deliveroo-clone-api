@@ -1,28 +1,31 @@
 import { z } from "zod";
+import { updateUserPartiallyRequestBodySchema } from "../schema/users.schema";
 import {
-  createUserRequestBodySchema,
-  updateUserPartiallyRequestBodySchema,
-} from "../schema/users.schema";
+  checkEmailRequestBodySchema,
+  loginRequestBodySchema,
+  signupRequestBodySchema,
+} from "../schema/auth.schema";
+import { IUser } from "../models/user.model";
 
-export type CheckEmailRequestBody = z.infer<
-  typeof updateUserPartiallyRequestBodySchema
+export type CheckEmailRequestBodyDTO = z.infer<
+  typeof checkEmailRequestBodySchema
 >;
 
-export type CheckEmailResponseBody = {
-  message: string;
+export type CheckEmailResponseBodyDTO = {
+  firstName: string;
+  lastName: string;
+  email: string;
 };
 
-export type LoginUserRequestBody = z.infer<typeof createUserRequestBodySchema>;
+export type LoginRequestBodyDTO = z.infer<typeof loginRequestBodySchema>;
 
-export type LoginUserResponseBody = {
-  message: string;
+export type LoginResponseBodyDTO = {
   token: string;
 };
 
-export type CreateNewUserRequestBody = z.infer<
-  typeof createUserRequestBodySchema
->;
+export type SignupRequestBodyDTO = z.infer<typeof signupRequestBodySchema>;
 
-export type CreateNewUserResponseBody = z.infer<
-  typeof createUserRequestBodySchema
->;
+export type SignupResponseBodyDTO = {
+  token: string;
+  user: Omit<IUser, "password">;
+};

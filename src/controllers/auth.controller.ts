@@ -4,12 +4,12 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { comparePasswords, hashPassword } from "../utils/PasswordHashBcrypt";
 import {
-  CheckEmailRequestBody,
-  CheckEmailResponseBody,
-  CreateNewUserRequestBody,
-  CreateNewUserResponseBody,
-  LoginUserRequestBody,
-  LoginUserResponseBody,
+  CheckEmailRequestBodyDTO,
+  CheckEmailResponseBodyDTO,
+  LoginRequestBodyDTO,
+  LoginResponseBodyDTO,
+  SignupRequestBodyDTO,
+  SignupResponseBodyDTO,
 } from "../dto/auth.dto";
 import { CommonResponseDTO } from "../dto/common.dto";
 
@@ -18,23 +18,30 @@ dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY as string;
 
 export const checkEmail = async (
-  req: Request<CheckEmailRequestBody>,
-  res: Response<CommonResponseDTO<CheckEmailResponseBody>>,
+  req: Request<
+    unknown,
+    CommonResponseDTO<CheckEmailResponseBodyDTO>,
+    CheckEmailRequestBodyDTO
+  >,
+  res: Response<CommonResponseDTO<CheckEmailResponseBodyDTO>>,
 ) => {
   try {
     const existingUser = await usersService.findOne({ email: req.body.email });
 
     if (!existingUser) {
-      res
-        .status(404)
-        .json({ message: "Email not found. Please create an account." });
+      res.status(404).json({ message: "User not found" });
 
       return;
     }
 
-    const token = jwt.sign({ firstName: existingUser.firstName }, SECRET_KEY);
-
-    res.status(200).json({ message: "Successful", token });
+    res.status(200).json({
+      message: "Successful",
+      data: {
+        email: existingUser.email,
+        firstName: existingUser.firstName,
+        lastName: existingUser.lastName,
+      },
+    });
     return;
   } catch (error) {
     console.error("Error:", error);
@@ -43,9 +50,13 @@ export const checkEmail = async (
   }
 };
 
-export const logInUser = async (
-  req: Request<LoginUserRequestBody>,
-  res: Response<CommonResponseDTO<LoginUserResponseBody>>,
+export const login = async (
+  req: Request<
+    unknown,
+    CommonResponseDTO<LoginResponseBodyDTO>,
+    LoginRequestBodyDTO
+  >,
+  res: Response<CommonResponseDTO<LoginResponseBodyDTO>>,
 ) => {
   const { email, password } = req.body;
 
@@ -53,19 +64,17 @@ export const logInUser = async (
     const existingUser = await usersService.findOne({ email });
 
     if (!existingUser) {
-      res
-        .status(404)
-        .json({ message: "Email not found.Please Create An Account" });
-
+      res.status(401).json({ message: "Invalid credentials" });
       return;
     }
-    const checkPassword = await comparePasswords(
+
+    const isValidPassword = await comparePasswords(
       password,
       existingUser.password,
     );
 
-    if (!checkPassword) {
-      res.status(401).json({ message: "Invalid Password" });
+    if (!isValidPassword) {
+      res.status(401).json({ message: "Invalid credentials" });
       return;
     }
 
@@ -73,50 +82,61 @@ export const logInUser = async (
 
     res.status(200).json({
       message: "Authenticated",
-      token: token,
+      data: {
+        token,
+      },
     });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
-
     return;
   }
 };
 
-export const createNewUser = async (
-  req: Request<CreateNewUserRequestBody>,
-  res: Response<CommonResponseDTO<CreateNewUserResponseBody>>,
+export const signup = async (
+  req: Request<
+    unknown,
+    CommonResponseDTO<SignupResponseBodyDTO>,
+    SignupRequestBodyDTO
+  >,
+  res: Response<CommonResponseDTO<SignupResponseBodyDTO>>,
 ) => {
   try {
     const existingUser = await usersService.findOne({ email: req.body.email });
 
     if (existingUser) {
-      res.status(400).json({
-        message: "Email already exists. Please Log In",
+      res.status(403).json({
+        message: "User already exists",
       });
       return;
-    } else {
-      const hashedPassword = hashPassword(req.body.password);
-      req.body.password = hashedPassword;
-      const createdUser = await usersService.createNew({ ...req.body });
-
-      const token = jwt.sign(
-        { firstName: createdUser.firstName ?? "" },
-        SECRET_KEY,
-      );
-
-      res.status(201).json({
-        data: createdUser,
-        token: token,
-        message: "Success",
-      });
     }
+
+    const hashedPassword = hashPassword(req.body.password);
+
+    const createdUser = await usersService.createNew({
+      ...req.body,
+      password: hashedPassword,
+    });
+
+    const { password, ...responseUser } = createdUser;
+
+    const token = jwt.sign(
+      { firstName: createdUser.firstName ?? "" },
+      SECRET_KEY,
+    );
+
+    res.status(201).json({
+      message: "Success",
+      data: {
+        token,
+        user: responseUser,
+      },
+    });
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.error("Error:", error);
     res.status(500).json({
       message: "Internal Server Error",
     });
-
     return;
   }
 };

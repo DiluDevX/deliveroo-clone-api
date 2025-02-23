@@ -1,22 +1,22 @@
 import Restaurant from "../models/restaurant.model";
 import { CreateModel } from "../types/mongoose.types";
-import Users, { IUsers } from "../models/users.model";
+import User, { IUser } from "../models/user.model";
 import { RootFilterQuery, Types } from "mongoose";
 
 const findAll = async () => {
-  return Users.find();
+  return User.find();
 };
 
-const createNew = async (data: CreateModel<IUsers>) => {
-  return Users.create({ ...data });
+const createNew = async (data: CreateModel<IUser>) => {
+  return User.create({ ...data });
 };
 
-const findOne = async (data?: RootFilterQuery<IUsers>) => {
-  return Users.findOne(data);
+const findOne = async (data?: RootFilterQuery<IUser>) => {
+  return User.findOne(data);
 };
 
 const findById = async (id: Types.ObjectId) => {
-  return Users.findById(id);
+  return User.findById(id);
 };
 
 const findByIdAndUpdate = async (id: string, data: any) => {

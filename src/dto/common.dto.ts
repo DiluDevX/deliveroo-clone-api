@@ -7,8 +7,6 @@ export type ObjectIdPathParamsDTO = z.infer<typeof objectIdPathParamsSchema>;
 export type OrgIdPathParamsDTO = z.infer<typeof restaurantPathParamsSchema>;
 
 export type CommonResponseDTO<T> = {
-  restaurant?: string;
-  token?: string;
   message: string;
   data?: T;
 };

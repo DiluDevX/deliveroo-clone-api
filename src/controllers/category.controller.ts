@@ -87,7 +87,6 @@ const createNewCategory = async (
     res.status(201).json({
       message: "Created",
       data: createdCategory,
-      restaurant: foundRestaurant.restaurant as string,
     });
   } catch (error) {
     console.log(error, "error");

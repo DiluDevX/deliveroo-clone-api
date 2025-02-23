@@ -1,13 +1,26 @@
 import { z } from "zod";
+import {
+  userFirstNameSchema,
+  usersCheckPasswordSchema,
+  usersCreatePasswordSchema,
+  usersEmailSchema,
+  usersLastNameSchema,
+  usersPhoneSchema,
+} from "./users.schema";
 
-const usersEmailSchema = z.string().email().min(3).max(50);
-const usersPasswordSchema = z.string().min(8);
-
-export const loginUserRequestBodySchema = z.object({
+export const checkEmailRequestBodySchema = z.object({
   email: usersEmailSchema,
-  password: usersPasswordSchema,
 });
 
-export const authenticateUserRequestBodySchema = z.object({
+export const loginRequestBodySchema = z.object({
   email: usersEmailSchema,
+  password: usersCheckPasswordSchema,
+});
+
+export const signupRequestBodySchema = z.object({
+  firstName: userFirstNameSchema,
+  lastName: usersLastNameSchema,
+  email: usersEmailSchema,
+  phone: usersPhoneSchema.optional(),
+  password: usersCreatePasswordSchema,
 });
