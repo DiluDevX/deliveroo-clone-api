@@ -17,7 +17,7 @@ import {
 import ValidateParams from "../middleware/validate-params.middleware";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
 import ValidateQuery from "../middleware/validate-query.middleware";
-import { authorizeRole } from "../middleware/authorize-role.middleware";
+import { authorizeRole } from "../middleware/authorize-admin.middleware";
 
 const router = express.Router();
 

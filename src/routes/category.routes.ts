@@ -8,7 +8,7 @@ import {
 } from "../schema/category.schema";
 import ValidateParams from "../middleware/validate-params.middleware";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
-import { authorizeRole } from "../middleware/authorize-role.middleware";
+import { authorizeRole } from "../middleware/authorize-admin.middleware";
 const {
   getAllCategories,
   createNewCategory,

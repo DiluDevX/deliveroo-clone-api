@@ -18,7 +18,7 @@ import {
 } from "../schema/restaurant.schema";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
 import ValidateParams from "../middleware/validate-params.middleware";
-import { authorizeRole } from "../middleware/authorize-role.middleware";
+import { authorizeRole } from "../middleware/authorize-admin.middleware";
 
 router.get("/", getAllRestaurants);
 

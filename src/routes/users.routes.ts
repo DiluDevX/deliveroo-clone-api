@@ -14,7 +14,7 @@ import {
   updateUserFullyRequestBodySchema,
   updateUserPartiallyRequestBodySchema,
 } from "../schema/users.schema";
-import { authorizeRole } from "../middleware/authorize-role.middleware";
+import { authorizeRole } from "../middleware/authorize-admin.middleware";
 
 router.get("/", getAllUsers);
 

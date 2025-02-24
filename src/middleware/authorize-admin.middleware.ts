@@ -34,3 +34,32 @@ export const authorizeRole = (role: string) => {
     }
   };
 };
+
+export const optionalAuthorizeRole = (role: string) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader?.startsWith("Bearer ")
+      ? authHeader.split(" ")[1]
+      : null;
+
+    if (!token) {
+      next();
+      return;
+    }
+
+    try {
+      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayload;
+      req.user = decodedToken;
+
+      if (req.user.role !== role) {
+        res.status(403).json({ message: "Access denied. Insufficient role." });
+        return;
+      }
+
+      next();
+    } catch (error) {
+      res.status(401).json({ error: "Access denied. Invalid token." });
+      return;
+    }
+  };
+};
