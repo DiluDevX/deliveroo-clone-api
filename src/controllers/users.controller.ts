@@ -9,10 +9,21 @@ import {
   UpdateUserPartiallyRequestBodyDTO,
   UpdateUserPartiallyResponseBodyDTO,
   DeleteUserResponseBodyDTO,
+  UserResponseDTO,
 } from "../dto/user.dto";
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
+import { IUser } from "../models/user.model";
 
 dotenv.config();
+
+const toResponseDTO = (user: IUser): UserResponseDTO => ({
+  id: user._id.toString(),
+  firstName: user.firstName,
+  lastName: user.lastName,
+  email: user.email,
+  phone: user.phone ?? undefined,
+  role: user.role,
+});
 
 const getAllUsers = async (
   _req: Request,
@@ -22,7 +33,7 @@ const getAllUsers = async (
     const usersArray = await usersService.findAll();
     res.status(200).json({
       message: "OK",
-      data: usersArray,
+      data: usersArray.map(toResponseDTO),
     });
   } catch (error) {
     console.log(error, "error");
@@ -42,7 +53,7 @@ const getAnUser = async (
     }
     res.status(200).json({
       message: "OK",
-      data: foundUser,
+      data: toResponseDTO(foundUser),
     });
   } catch (error) {
     console.log(error, "error");
@@ -65,7 +76,7 @@ const updateAnUserFully = async (
     }
     res.status(200).json({
       message: "Updated User",
-      data: updatedUser,
+      data: toResponseDTO(updatedUser),
     });
   } catch (error) {
     console.log(error, "error");
@@ -92,7 +103,7 @@ const updateAnUserPartially = async (
     }
     res.status(200).json({
       message: "OK",
-      data: updatedUser,
+      data: toResponseDTO(updatedUser),
     });
   } catch (error) {
     console.log(error, "error");
@@ -112,7 +123,7 @@ const deleteAnUser = async (
     }
     res.status(200).json({
       message: "OK",
-      data: deletedUser,
+      data: toResponseDTO(deletedUser),
     });
   } catch (error) {
     console.log(error, "error");

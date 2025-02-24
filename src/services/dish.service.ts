@@ -1,7 +1,15 @@
 import Dish from "../models/dish.model";
 
-const findAll = async (filters: any, populate: any) => {
-  return Dish.find(filters).populate(populate);
+const findAll = async (filters: any, populate?: string | string[]) => {
+  const query = Dish.find(filters);
+  if (populate === "category") {
+    query.populate("category");
+  } else if (populate === "restaurant") {
+    query.populate("restaurant");
+  } else if (populate === "category restaurant") {
+    query.populate("category").populate("restaurant");
+  }
+  return query;
 };
 
 const createNew = async (data: any) => {

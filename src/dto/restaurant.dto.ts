@@ -3,25 +3,6 @@ import {
   updateRestaurantFullyRequestBodySchema,
   updateRestaurantPartiallyRequestBodySchema,
 } from "../schema/restaurant.schema";
-import { IRestaurant } from "../models/restaurant.model";
-
-export type UpdateRestaurantFullyRequestBodyDTO = z.infer<
-  typeof updateRestaurantFullyRequestBodySchema
->;
-
-export type UpdateRestaurantPartiallyRequestBodyDTO = z.infer<
-  typeof updateRestaurantPartiallyRequestBodySchema
->;
-
-export type GetAllRestaurantsResponseBodyDTO = IRestaurant[];
-
-export type UpdateRestaurantFullyResponseBodyDTO = IRestaurant;
-
-export type UpdateRestaurantPartiallyResponseBodyDTO = IRestaurant;
-
-export type DeleteRestaurantResponseBodyDTO = IRestaurant;
-
-export type GetARestaurantResponseBodyDTO = IRestaurant;
 
 export type CreateNewRestaurantRequestBodyDTO = {
   name: string;
@@ -34,7 +15,17 @@ export type CreateNewRestaurantRequestBodyDTO = {
   deliveryCharge: string;
 };
 
-export type CreateNewRestaurantResponseBodyDTO = {
+export type UpdateRestaurantFullyRequestBodyDTO = z.infer<
+  typeof updateRestaurantFullyRequestBodySchema
+>;
+
+export type UpdateRestaurantPartiallyRequestBodyDTO = z.infer<
+  typeof updateRestaurantPartiallyRequestBodySchema
+>;
+
+export type RestaurantResponseDTO = {
+  id: string;
+  orgId: string;
   name: string;
   image: string;
   description?: string;
@@ -44,3 +35,10 @@ export type CreateNewRestaurantResponseBodyDTO = {
   minimumValue: string;
   deliveryCharge: string;
 };
+
+export type GetAllRestaurantsResponseBodyDTO = RestaurantResponseDTO[];
+export type UpdateRestaurantFullyResponseBodyDTO = RestaurantResponseDTO;
+export type UpdateRestaurantPartiallyResponseBodyDTO = RestaurantResponseDTO;
+export type DeleteRestaurantResponseBodyDTO = RestaurantResponseDTO;
+export type GetARestaurantResponseBodyDTO = RestaurantResponseDTO;
+export type CreateNewRestaurantResponseBodyDTO = RestaurantResponseDTO;

@@ -3,7 +3,12 @@ import {
   FullyUpdateCategoryRequestBodySchema,
   PartiallyUpdateCategoryRequestBodySchema,
 } from "../schema/category.schema";
-import { ICategory } from "../models/category.model";
+
+export type CreateNewCategoryRequestBodyDTO = {
+  name: string;
+  restaurant: string;
+};
+
 export type UpdateCategoryFullyRequestBodyDTO = z.infer<
   typeof FullyUpdateCategoryRequestBodySchema
 >;
@@ -12,19 +17,15 @@ export type UpdateCategoryPartiallyRequestBodyDTO = z.infer<
   typeof PartiallyUpdateCategoryRequestBodySchema
 >;
 
-export type GetAllCategoriesResponseBodyDTO = ICategory[];
-
-export type UpdateCategoryFullyResponseBodyDTO = ICategory;
-
-export type UpdateCategoryPartiallyResponseBodyDTO = ICategory;
-
-export type DeleteCategoryResponseBodyDTO = ICategory;
-
-export type GetACategoryResponseBodyDTO = ICategory;
-
-export type CreateNewCategoryResponseBodyDTO = ICategory;
-
-export type CreateNewCategoryRequestBodyDTO = {
+export type CategoryResponseDTO = {
+  id: string;
   name: string;
   restaurant: string;
 };
+
+export type GetAllCategoriesResponseBodyDTO = CategoryResponseDTO[];
+export type UpdateCategoryFullyResponseBodyDTO = CategoryResponseDTO;
+export type UpdateCategoryPartiallyResponseBodyDTO = CategoryResponseDTO;
+export type DeleteCategoryResponseBodyDTO = CategoryResponseDTO;
+export type GetACategoryResponseBodyDTO = CategoryResponseDTO;
+export type CreateNewCategoryResponseBodyDTO = CategoryResponseDTO;

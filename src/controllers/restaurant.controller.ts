@@ -1,7 +1,5 @@
 import { restaurantService } from "../services/restaurant.service";
-import { z } from "zod";
 import { Request, Response } from "express";
-import { createRestaurantRequestBodySchema } from "../schema/restaurant.schema";
 import {
   CreateNewRestaurantRequestBodyDTO,
   CreateNewRestaurantResponseBodyDTO,
@@ -12,12 +10,27 @@ import {
   UpdateRestaurantFullyResponseBodyDTO,
   UpdateRestaurantPartiallyRequestBodyDTO,
   UpdateRestaurantPartiallyResponseBodyDTO,
+  RestaurantResponseDTO,
 } from "../dto/restaurant.dto";
 import {
   CommonResponseDTO,
   ObjectIdPathParamsDTO,
   OrgIdPathParamsDTO,
 } from "../dto/common.dto";
+import { IRestaurant } from "../models/restaurant.model";
+
+const toResponseDTO = (restaurant: IRestaurant): RestaurantResponseDTO => ({
+  id: restaurant._id.toString(),
+  orgId: restaurant.orgId,
+  name: restaurant.name,
+  image: restaurant.image,
+  description: restaurant.description,
+  tags: restaurant.tags,
+  openingAt: restaurant.openingAt,
+  closingAt: restaurant.closingAt,
+  minimumValue: restaurant.minimumValue,
+  deliveryCharge: restaurant.deliveryCharge,
+});
 
 const getAllRestaurants = async (
   _req: Request<
@@ -30,17 +43,13 @@ const getAllRestaurants = async (
 ) => {
   try {
     const restaurantsArray = await restaurantService.findAll();
-
     res.status(200).json({
       message: "OK",
-      data: restaurantsArray,
+      data: restaurantsArray.map(toResponseDTO),
     });
   } catch (error) {
     console.log(error, "error");
-
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -50,17 +59,13 @@ const createNewRestaurant = async (
 ) => {
   try {
     const createdRestaurant = await restaurantService.createNew(req.body);
-
     res.status(201).json({
       message: "Created",
-      data: createdRestaurant,
+      data: toResponseDTO(createdRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -71,25 +76,17 @@ const getARestaurant = async (
   try {
     const decodedOrgID = decodeURIComponent(req.params.orgID);
     const foundRestaurant = await restaurantService.findOne(decodedOrgID);
-
     if (!foundRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+      res.status(404).json({ message: "Restaurant Not found" });
       return;
     }
-
     res.status(200).json({
       message: "OK",
-      data: foundRestaurant,
+      data: toResponseDTO(foundRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -106,24 +103,17 @@ const updateARestaurantFully = async (
       req.params.id,
       req.body,
     );
-
     if (!updatedRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+      res.status(404).json({ message: "Restaurant Not found" });
       return;
     }
-
     res.status(200).json({
       message: "Updated Restaurant",
-      data: updatedRestaurant,
+      data: toResponseDTO(updatedRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -140,25 +130,17 @@ const updateARestaurantPartially = async (
       req.params.id,
       req.body,
     );
-
     if (!updatedRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+      res.status(404).json({ message: "Restaurant Not found" });
       return;
     }
-
     res.status(200).json({
       message: "OK",
-      data: updatedRestaurant,
+      data: toResponseDTO(updatedRestaurant),
     });
-    return;
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -170,25 +152,17 @@ const deleteARestaurant = async (
     const deletedRestaurant = await restaurantService.findByIdAndDelete(
       req.params.id,
     );
-
     if (!deletedRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+      res.status(404).json({ message: "Restaurant Not found" });
       return;
     }
-
     res.status(200).json({
       message: "OK",
-      data: deletedRestaurant,
+      data: toResponseDTO(deletedRestaurant),
     });
-    return;
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

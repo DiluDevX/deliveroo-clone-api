@@ -3,9 +3,7 @@ import {
   updateUserFullyRequestBodySchema,
   updateUserPartiallyRequestBodySchema,
 } from "../schema/users.schema";
-import { IUser } from "../models/user.model";
 
-// Request DTOs
 export type UpdateUserFullyRequestBodyDTO = z.infer<
   typeof updateUserFullyRequestBodySchema
 >;
@@ -13,9 +11,17 @@ export type UpdateUserPartiallyRequestBodyDTO = z.infer<
   typeof updateUserPartiallyRequestBodySchema
 >;
 
-// Response Types
-export type GetAllUsersResponseBodyDTO = IUser[];
-export type GetAnUserResponseBodyDTO = IUser;
-export type UpdateUserFullyResponseBodyDTO = IUser;
-export type UpdateUserPartiallyResponseBodyDTO = IUser;
-export type DeleteUserResponseBodyDTO = IUser;
+export type UserResponseDTO = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role: string;
+};
+
+export type GetAllUsersResponseBodyDTO = UserResponseDTO[];
+export type GetAnUserResponseBodyDTO = UserResponseDTO;
+export type UpdateUserFullyResponseBodyDTO = UserResponseDTO;
+export type UpdateUserPartiallyResponseBodyDTO = UserResponseDTO;
+export type DeleteUserResponseBodyDTO = UserResponseDTO;
