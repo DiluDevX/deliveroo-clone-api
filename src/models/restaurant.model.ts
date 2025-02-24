@@ -1,6 +1,6 @@
 import { ObjectId, Schema, model } from "mongoose";
 
-export type IRestaurant = {
+export interface IRestaurant {
   _id: ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -14,7 +14,7 @@ export type IRestaurant = {
   closingAt: string;
   minimumValue: string;
   deliveryCharge: string;
-};
+}
 
 const restaurantSchema = new Schema<IRestaurant>(
   {

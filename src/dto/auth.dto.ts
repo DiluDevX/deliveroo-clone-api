@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { updateUserPartiallyRequestBodySchema } from "../schema/users.schema";
 import {
   checkEmailRequestBodySchema,
   loginRequestBodySchema,
@@ -30,14 +29,14 @@ export type SignupResponseBodyDTO = {
   user: Omit<IUser, "password">;
 };
 
-export interface JwtPayload {
+export interface JwtPayloadDTO {
   firstName: string;
   role: string;
 }
 declare global {
   namespace Express {
     interface Request {
-      user?: JwtPayload;
+      user?: JwtPayloadDTO;
     }
   }
 }

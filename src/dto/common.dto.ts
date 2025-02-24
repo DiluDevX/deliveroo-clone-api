@@ -10,8 +10,3 @@ export type CommonResponseDTO<T> = {
   message: string;
   data?: T;
 };
-
-export type CommonGetAllResponseDTO<T> = {
-  message: string;
-  data?: T[];
-};

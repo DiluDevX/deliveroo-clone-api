@@ -22,8 +22,9 @@ export type DeleteCategoryResponseBodyDTO = ICategory;
 
 export type GetACategoryResponseBodyDTO = ICategory;
 
-export type GetACategoryRequestBodyDTO = ICategory;
-
 export type CreateNewCategoryResponseBodyDTO = ICategory;
 
-export type CreateNewCategoryRequestBodyDTO = ICategory;
+export type CreateNewCategoryRequestBodyDTO = {
+  name: string;
+  restaurant: string;
+};

@@ -3,6 +3,8 @@ import { z } from "zod";
 import { Request, Response } from "express";
 import { createRestaurantRequestBodySchema } from "../schema/restaurant.schema";
 import {
+  CreateNewRestaurantRequestBodyDTO,
+  CreateNewRestaurantResponseBodyDTO,
   DeleteRestaurantResponseBodyDTO,
   GetAllRestaurantsResponseBodyDTO,
   GetARestaurantResponseBodyDTO,
@@ -12,15 +14,19 @@ import {
   UpdateRestaurantPartiallyResponseBodyDTO,
 } from "../dto/restaurant.dto";
 import {
-  CommonGetAllResponseDTO,
   CommonResponseDTO,
   ObjectIdPathParamsDTO,
   OrgIdPathParamsDTO,
 } from "../dto/common.dto";
 
 const getAllRestaurants = async (
-  _req: Request,
-  res: Response<CommonGetAllResponseDTO<GetAllRestaurantsResponseBodyDTO>>,
+  _req: Request<
+    unknown,
+    CommonResponseDTO<GetAllRestaurantsResponseBodyDTO>,
+    unknown,
+    unknown
+  >,
+  res: Response<CommonResponseDTO<GetAllRestaurantsResponseBodyDTO>>,
 ) => {
   try {
     const restaurantsArray = await restaurantService.findAll();
@@ -39,12 +45,8 @@ const getAllRestaurants = async (
 };
 
 const createNewRestaurant = async (
-  req: Request<
-    unknown,
-    unknown,
-    z.infer<typeof createRestaurantRequestBodySchema>
-  >,
-  res: Response,
+  req: Request<unknown, unknown, CreateNewRestaurantRequestBodyDTO>,
+  res: Response<CommonResponseDTO<CreateNewRestaurantResponseBodyDTO>>,
 ) => {
   try {
     const createdRestaurant = await restaurantService.createNew(req.body);
@@ -94,7 +96,8 @@ const getARestaurant = async (
 const updateARestaurantFully = async (
   req: Request<
     ObjectIdPathParamsDTO,
-    CommonResponseDTO<UpdateRestaurantFullyRequestBodyDTO>
+    unknown,
+    UpdateRestaurantFullyRequestBodyDTO
   >,
   res: Response<CommonResponseDTO<UpdateRestaurantFullyResponseBodyDTO>>,
 ) => {
@@ -127,7 +130,8 @@ const updateARestaurantFully = async (
 const updateARestaurantPartially = async (
   req: Request<
     ObjectIdPathParamsDTO,
-    CommonResponseDTO<UpdateRestaurantPartiallyRequestBodyDTO>
+    unknown,
+    UpdateRestaurantPartiallyRequestBodyDTO
   >,
   res: Response<CommonResponseDTO<UpdateRestaurantPartiallyResponseBodyDTO>>,
 ) => {

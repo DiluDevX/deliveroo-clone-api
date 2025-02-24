@@ -4,7 +4,6 @@ import { Request, Response } from "express";
 import {
   CreateNewDishResponseBodyDTO,
   DeleteDishResponseBodyDTO,
-  GetADishRequestBodyDTO,
   GetADishResponseBodyDTO,
   GetAllDishedRequestQueryDTO,
   GetAllDishesResponseBodyDTO,
@@ -93,10 +92,7 @@ const createNewDish = async (
 };
 
 const getADish = async (
-  req: Request<
-    ObjectIdPathParamsDTO,
-    CommonResponseDTO<GetADishRequestBodyDTO>
-  >,
+  req: Request<ObjectIdPathParamsDTO>,
   res: Response<CommonResponseDTO<GetADishResponseBodyDTO>>,
 ) => {
   try {

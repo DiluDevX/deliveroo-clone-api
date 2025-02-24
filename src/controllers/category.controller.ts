@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   CreateNewCategoryResponseBodyDTO,
   DeleteCategoryResponseBodyDTO,
-  GetACategoryRequestBodyDTO,
   GetACategoryResponseBodyDTO,
   GetAllCategoriesResponseBodyDTO,
   UpdateCategoryFullyRequestBodyDTO,
@@ -13,29 +12,36 @@ import {
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import {
   CategoryPathParamsSchema,
+  CategoryQueryParamsSchema,
   CreateCategoryRequestBodySchema,
 } from "../schema/category.schema";
 import { restaurantPathParamsSchema } from "../schema/restaurant.schema";
 import { categoryService } from "../services/category.service";
 import { restaurantService } from "../services/restaurant.service";
 import { Request, Response } from "express";
+import { IRestaurant } from "../models/restaurant.model";
 
 interface CategoryFilters {
   restaurant?: string;
 }
 
-interface FoundRestaurant {
-  restaurant: string | null | number;
-}
 const getAllCategories = async (
-  req: Request,
+  req: Request<
+    unknown,
+    unknown,
+    unknown,
+    z.infer<typeof CategoryQueryParamsSchema>
+  >,
   res: Response<CommonResponseDTO<GetAllCategoriesResponseBodyDTO>>,
 ) => {
   try {
     const filters: CategoryFilters = {};
 
     if (req.query.restaurant) {
-      filters.restaurant = req.query.restaurant as string;
+      filters.restaurant =
+        typeof req.query.restaurant === "number"
+          ? req.query.restaurant.toString()
+          : req.query.restaurant;
     }
 
     const categoriesArray = await categoryService.findAll(
@@ -67,12 +73,16 @@ const createNewCategory = async (
   try {
     const decodedOrgID = decodeURIComponent(req.params.orgID);
 
-    restaurantPathParamsSchema.safeParse({
+    const parseResult = restaurantPathParamsSchema.safeParse({
       orgID: decodedOrgID,
     });
+    if (!parseResult.success) {
+      res.status(400).json({ message: "Invalid orgID" });
+      return;
+    }
     const foundRestaurant = (await restaurantService.findOne(
       req.body.restaurant,
-    )) as unknown as FoundRestaurant | null;
+    )) as IRestaurant | null;
 
     if (!foundRestaurant) {
       res.status(404).json({
@@ -98,7 +108,7 @@ const createNewCategory = async (
 };
 
 const getCategory = async (
-  req: Request<ObjectIdPathParamsDTO, GetACategoryRequestBodyDTO>,
+  req: Request<ObjectIdPathParamsDTO, unknown>,
   res: Response<CommonResponseDTO<GetACategoryResponseBodyDTO>>,
 ) => {
   try {

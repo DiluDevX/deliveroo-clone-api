@@ -23,8 +23,6 @@ export type DeleteDishResponseBodyDTO = IDish;
 
 export type GetADishResponseBodyDTO = IDish;
 
-export type GetADishRequestBodyDTO = IDish;
-
 export type CreateNewDishResponseBodyDTO = IDish;
 
 export type GetAllDishedRequestQueryDTO = z.infer<typeof DishQueryParamsSchema>;

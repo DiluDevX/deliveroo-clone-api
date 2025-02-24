@@ -1,130 +1,122 @@
 import { usersService } from "../services/users.service";
 import { Request, Response } from "express";
 import dotenv from "dotenv";
+import {
+  GetAllUsersResponseBodyDTO,
+  GetAnUserResponseBodyDTO,
+  UpdateUserFullyRequestBodyDTO,
+  UpdateUserFullyResponseBodyDTO,
+  UpdateUserPartiallyRequestBodyDTO,
+  UpdateUserPartiallyResponseBodyDTO,
+  DeleteUserResponseBodyDTO,
+} from "../dto/user.dto";
+import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 
 dotenv.config();
 
-const getAllUsers = async (_req: Request, res: Response) => {
+const getAllUsers = async (
+  _req: Request,
+  res: Response<CommonResponseDTO<GetAllUsersResponseBodyDTO>>,
+) => {
   try {
-    const UsersArray = await usersService.findAll();
-
+    const usersArray = await usersService.findAll();
     res.status(200).json({
       message: "OK",
-      data: UsersArray,
+      data: usersArray,
     });
   } catch (error) {
     console.log(error, "error");
-
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const getAnUser = async (_req: Request, res: Response) => {
+const getAnUser = async (
+  req: Request<ObjectIdPathParamsDTO>,
+  res: Response<CommonResponseDTO<GetAnUserResponseBodyDTO>>,
+) => {
   try {
-    const foundRestaurant = await usersService.findOne({});
-
-    if (!foundRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+    const foundUser = await usersService.findById(req.params.id);
+    if (!foundUser) {
+      res.status(404).json({ message: "User Not found" });
       return;
     }
-
     res.status(200).json({
       message: "OK",
-      data: foundRestaurant,
+      data: foundUser,
     });
   } catch (error) {
     console.log(error, "error");
-
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const updateAnUserFully = async (req: Request, res: Response) => {
+const updateAnUserFully = async (
+  req: Request<ObjectIdPathParamsDTO, unknown, UpdateUserFullyRequestBodyDTO>,
+  res: Response<CommonResponseDTO<UpdateUserFullyResponseBodyDTO>>,
+) => {
   try {
-    const updatedRestaurant = await usersService.findByIdAndUpdate(
+    const updatedUser = await usersService.findByIdAndUpdate(
       req.params.id,
       req.body,
     );
-
-    if (!updatedRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+    if (!updatedUser) {
+      res.status(404).json({ message: "User Not found" });
       return;
     }
-
     res.status(200).json({
-      message: "Updated Restaurant",
-      data: updatedRestaurant,
+      message: "Updated User",
+      data: updatedUser,
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const updateAnUserPartially = async (req: Request, res: Response) => {
+const updateAnUserPartially = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    unknown,
+    UpdateUserPartiallyRequestBodyDTO
+  >,
+  res: Response<CommonResponseDTO<UpdateUserPartiallyResponseBodyDTO>>,
+) => {
   try {
-    const updatedRestaurant = await usersService.findByIdAndUpdate(
+    const updatedUser = await usersService.findByIdAndUpdate(
       req.params.id,
       req.body,
     );
-
-    if (!updatedRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+    if (!updatedUser) {
+      res.status(404).json({ message: "User Not found" });
       return;
     }
-
     res.status(200).json({
       message: "OK",
-      data: updatedRestaurant,
+      data: updatedUser,
     });
-    return;
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const deleteAnUser = async (req: Request, res: Response) => {
+const deleteAnUser = async (
+  req: Request<ObjectIdPathParamsDTO>,
+  res: Response<CommonResponseDTO<DeleteUserResponseBodyDTO>>,
+) => {
   try {
-    const deletedRestaurant = await usersService.findByIdAndDelete(
-      req.params.id,
-    );
-
-    if (!deletedRestaurant) {
-      res.status(404).json({
-        message: "Restaurant Not found",
-      });
-
+    const deletedUser = await usersService.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      res.status(404).json({ message: "User Not found" });
       return;
     }
-
     res.status(200).json({
       message: "OK",
-      data: deletedRestaurant,
+      data: deletedUser,
     });
-    return;
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

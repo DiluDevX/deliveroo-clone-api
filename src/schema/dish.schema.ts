@@ -21,7 +21,7 @@ export const PartiallyUpdateDishRequestBodySchema =
   CreateDishRequestBodySchema.optional();
 
 export const DishQueryParamsSchema = z.object({
-  populate: z.string(),
-  restaurant: z.string().min(4).max(30),
-  category: z.string().min(4).max(30),
+  populate: z.string().optional(),
+  restaurant: z.string().min(4).max(30).optional(),
+  category: z.string().min(4).max(30).optional(),
 });

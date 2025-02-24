@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { JwtPayload } from "../dto/auth.dto";
+import { JwtPayloadDTO } from "../dto/auth.dto";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -19,7 +19,7 @@ export const authorizeRole = (role: string) => {
     }
 
     try {
-      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayload;
+      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayloadDTO;
       req.user = decodedToken;
 
       if (req.user.role !== role) {
@@ -48,7 +48,7 @@ export const optionalAuthorizeRole = (role: string) => {
     }
 
     try {
-      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayload;
+      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayloadDTO;
       req.user = decodedToken;
 
       if (req.user.role !== role) {
