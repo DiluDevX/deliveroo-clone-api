@@ -14,6 +14,7 @@ import {
   updateUserFullyRequestBodySchema,
   updateUserPartiallyRequestBodySchema,
 } from "../schema/users.schema";
+import { authorizeRole } from "../middleware/authorize-role.middleware";
 
 router.get("/", getAllUsers);
 
@@ -21,6 +22,7 @@ router.get("/:id", ValidateParams(objectIdPathParamsSchema), getAnUser);
 
 router.patch(
   "/:id",
+  authorizeRole("admin"),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(updateUserPartiallyRequestBodySchema),
   updateAnUserPartially,
@@ -28,11 +30,17 @@ router.patch(
 
 router.put(
   "/:id",
+  authorizeRole("admin"),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(updateUserFullyRequestBodySchema),
   updateAnUserFully,
 );
 
-router.delete("/:id", ValidateParams(objectIdPathParamsSchema), deleteAnUser);
+router.delete(
+  "/:id",
+  authorizeRole("admin"),
+  ValidateParams(objectIdPathParamsSchema),
+  deleteAnUser,
+);
 
 export default router;

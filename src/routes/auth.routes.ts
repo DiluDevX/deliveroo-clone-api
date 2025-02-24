@@ -7,6 +7,7 @@ import {
   loginRequestBodySchema,
   signupRequestBodySchema,
 } from "../schema/auth.schema";
+import { authorizeRole } from "../middleware/authorize-role.middleware";
 
 router.post(
   "/check-email",
@@ -16,6 +17,11 @@ router.post(
 
 router.post("/login", ValidateBody(loginRequestBodySchema), login);
 
-router.post("/signup", ValidateBody(signupRequestBodySchema), signup);
+router.post(
+  "/signup",
+  authorizeRole("admin"),
+  ValidateBody(signupRequestBodySchema),
+  signup,
+);
 
 export default router;

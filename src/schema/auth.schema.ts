@@ -23,4 +23,5 @@ export const signupRequestBodySchema = z.object({
   email: usersEmailSchema,
   phone: usersPhoneSchema.optional(),
   password: usersCreatePasswordSchema,
+  role: z.enum(["admin", "user"]).default("user"),
 });

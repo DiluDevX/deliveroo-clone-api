@@ -29,3 +29,15 @@ export type SignupResponseBodyDTO = {
   token: string;
   user: Omit<IUser, "password">;
 };
+
+export interface JwtPayload {
+  firstName: string;
+  role: string;
+}
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
+    }
+  }
+}

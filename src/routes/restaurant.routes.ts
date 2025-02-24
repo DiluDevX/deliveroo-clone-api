@@ -18,17 +18,20 @@ import {
 } from "../schema/restaurant.schema";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
 import ValidateParams from "../middleware/validate-params.middleware";
+import { authorizeRole } from "../middleware/authorize-role.middleware";
 
 router.get("/", getAllRestaurants);
 
 router.post(
   "/",
+  authorizeRole("admin"),
   ValidateBody(createRestaurantRequestBodySchema),
   createNewRestaurant,
 );
 
 router.put(
   "/:id",
+  authorizeRole("admin"),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(updateRestaurantFullyRequestBodySchema),
   updateARestaurantFully,
@@ -42,6 +45,7 @@ router.get(
 
 router.patch(
   "/:id",
+  authorizeRole("admin"),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(updateRestaurantPartiallyRequestBodySchema),
   updateARestaurantPartially,
@@ -49,6 +53,7 @@ router.patch(
 
 router.delete(
   "/:id",
+  authorizeRole("admin"),
   ValidateParams(objectIdPathParamsSchema),
   deleteARestaurant,
 );

@@ -78,8 +78,10 @@ export const login = async (
       return;
     }
 
-    const token = jwt.sign({ firstName: existingUser.firstName }, SECRET_KEY);
-
+    const token = jwt.sign(
+      { firstName: existingUser.firstName, role: existingUser.role },
+      SECRET_KEY,
+    );
     res.status(200).json({
       message: "Authenticated",
       data: {
@@ -110,12 +112,23 @@ export const signup = async (
       });
       return;
     }
+    if (req.body.role === "admin") {
+      if (!req.user || req.user.role !== "admin") {
+        res.status(403).json({
+          message: "Only admin users can create admin accounts",
+        });
+        return;
+      }
+    }
+
+    const role = req.body.role || "user";
 
     const hashedPassword = hashPassword(req.body.password);
 
     const createdUser = await usersService.createNew({
       ...req.body,
       password: hashedPassword,
+      role,
     });
 
     const { password, ...responseUser } = createdUser;

@@ -10,6 +10,7 @@ export type IUser = {
   email: string;
   phone?: string;
   password: string;
+  role: string;
 };
 
 const userSchema = new Schema<IUser>(
@@ -32,6 +33,11 @@ const userSchema = new Schema<IUser>(
     },
     phone: {
       type: String,
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ["admin", "user"],
     },
   },
   { timestamps: true },

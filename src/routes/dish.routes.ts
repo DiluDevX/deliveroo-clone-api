@@ -17,15 +17,22 @@ import {
 import ValidateParams from "../middleware/validate-params.middleware";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
 import ValidateQuery from "../middleware/validate-query.middleware";
+import { authorizeRole } from "../middleware/authorize-role.middleware";
 
 const router = express.Router();
 
 router.get("/", ValidateQuery(DishQueryParamsSchema), getAllDishes);
 
-router.post("/", ValidateBody(CreateDishRequestBodySchema), createNewDish);
+router.post(
+  "/",
+  authorizeRole("admin"),
+  ValidateBody(CreateDishRequestBodySchema),
+  createNewDish,
+);
 
 router.put(
   "/:id",
+  authorizeRole("admin"),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(FullyUpdateDishRequestBodySchema),
   updateDishFully,
@@ -40,11 +47,17 @@ router.get(
 
 router.patch(
   "/:id",
+  authorizeRole("admin"),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(PartiallyUpdateDishRequestBodySchema),
   updateDishPartially,
 );
 
-router.delete("/:id", ValidateParams(objectIdPathParamsSchema), deleteDish);
+router.delete(
+  "/:id",
+  authorizeRole("admin"),
+  ValidateParams(objectIdPathParamsSchema),
+  deleteDish,
+);
 
 export default router;
