@@ -2,12 +2,6 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 dotenv.config();
 
-interface MailOptions {
-  to: string;
-  subject: string;
-  text: string;
-}
-
 const MAILTRAP_USER = process.env.MAILTRAP_USER as string;
 const MAILTRAP_PASS = process.env.MAILTRAP_PASS as string;
 
@@ -20,13 +14,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendMail = async ({ to, subject, text }: MailOptions) => {
+export const sendMail = async ({
+  to,
+  from,
+  subject,
+  html,
+}: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}) => {
   try {
     const info = await transporter.sendMail({
-      from: "deliveroo.support@deliveroo.com",
+      from,
       to,
       subject,
-      text,
+      html,
     });
 
     console.log("Email sent:", info.messageId);

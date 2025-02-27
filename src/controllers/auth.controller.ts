@@ -6,12 +6,15 @@ import { comparePasswords, hashPassword } from "../utils/PasswordHashBcrypt";
 import {
   CheckEmailRequestBodyDTO,
   CheckEmailResponseBodyDTO,
+  ForgotPasswordRequestBodyDTO,
   LoginRequestBodyDTO,
   LoginResponseBodyDTO,
   SignupRequestBodyDTO,
   SignupResponseBodyDTO,
 } from "../dto/auth.dto";
 import { CommonResponseDTO } from "../dto/common.dto";
+import { IUser } from "../models/user.model";
+import { sendForgotPasswordEmail } from "../services/email-template.service";
 
 dotenv.config();
 
@@ -145,6 +148,41 @@ export const signup = async (
         token,
         user: responseUser,
       },
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+    return;
+  }
+};
+
+export const forgotPassword = async (
+  req: Request<unknown, CommonResponseDTO<void>, ForgotPasswordRequestBodyDTO>,
+  res: Response<CommonResponseDTO<void>>,
+) => {
+  try {
+    let existingUser: IUser | null;
+    existingUser = await usersService.findOne({
+      email: req.body.username,
+    });
+
+    if (!existingUser) {
+      existingUser = await usersService.findOne({
+        phone: req.body.username,
+      });
+    }
+
+    if (existingUser) {
+      // user is found
+      // therefore need to send the forgot password email
+
+      sendForgotPasswordEmail(existingUser.email);
+    }
+
+    res.status(200).json({
+      message: "Success",
     });
   } catch (error) {
     console.error("Error:", error);

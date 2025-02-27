@@ -21,6 +21,15 @@ router.post(
   checkEmail,
 );
 
+router.post("/login", ValidateBody(loginRequestBodySchema), login);
+
+router.post(
+  "/signup",
+  optionalAuthorizeRole("admin"),
+  ValidateBody(signupRequestBodySchema),
+  signup,
+);
+
 router.post(
   "/forgot-password",
   ValidateBody(forgotPasswordRequestBodySchema),
@@ -28,17 +37,9 @@ router.post(
 );
 
 router.post(
-  "/login",
-
-  ValidateBody(loginRequestBodySchema),
-  login,
-);
-
-router.post(
-  "/signup",
-  optionalAuthorizeRole("admin"),
-  ValidateBody(signupRequestBodySchema),
-  signup,
+  "/reset-password",
+  ValidateBody(forgotPasswordRequestBodySchema),
+  forgotPassword,
 );
 
 export default router;
