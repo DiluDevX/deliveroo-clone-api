@@ -1,9 +1,15 @@
 import express from "express";
 const router = express.Router();
-import { checkEmail, signup, login } from "../controllers/auth.controller";
+import {
+  checkEmail,
+  signup,
+  login,
+  forgotPassword,
+} from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
   checkEmailRequestBodySchema,
+  forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
   signupRequestBodySchema,
 } from "../schema/auth.schema";
@@ -13,6 +19,12 @@ router.post(
   "/check-email",
   ValidateBody(checkEmailRequestBodySchema),
   checkEmail,
+);
+
+router.post(
+  "/forgot-password",
+  ValidateBody(forgotPasswordRequestBodySchema),
+  forgotPassword,
 );
 
 router.post(

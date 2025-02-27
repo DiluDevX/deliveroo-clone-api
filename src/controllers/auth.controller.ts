@@ -26,11 +26,12 @@ export const checkEmail = async (
   res: Response<CommonResponseDTO<CheckEmailResponseBodyDTO>>,
 ) => {
   try {
-    const existingUser = await usersService.findOne({ email: req.body.email });
+    const existingUser = await usersService.findOne({
+      email: req.body.email,
+    });
 
     if (!existingUser) {
       res.status(404).json({ message: "User not found" });
-
       return;
     }
 

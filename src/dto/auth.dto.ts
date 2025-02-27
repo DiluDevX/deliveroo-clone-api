@@ -1,14 +1,14 @@
 import { z } from "zod";
 import {
-  checkEmailRequestBodySchema,
+  forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
   signupRequestBodySchema,
 } from "../schema/auth.schema";
 import { IUser } from "../models/user.model";
 
-export type CheckEmailRequestBodyDTO = z.infer<
-  typeof checkEmailRequestBodySchema
->;
+export type CheckEmailRequestBodyDTO = {
+  email: string;
+};
 
 export type CheckEmailResponseBodyDTO = {
   firstName: string;
@@ -23,6 +23,10 @@ export type LoginResponseBodyDTO = {
 };
 
 export type SignupRequestBodyDTO = z.infer<typeof signupRequestBodySchema>;
+
+export type ForgotPasswordRequestBodyDTO = z.infer<
+  typeof forgotPasswordRequestBodySchema
+>;
 
 export type SignupResponseBodyDTO = {
   token: string;

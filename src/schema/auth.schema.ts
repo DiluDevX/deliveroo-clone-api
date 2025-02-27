@@ -25,3 +25,7 @@ export const signupRequestBodySchema = z.object({
   password: usersCreatePasswordSchema,
   role: z.enum(["admin", "user"]).default("user"),
 });
+
+export const forgotPasswordRequestBodySchema = z.object({
+  username: z.string().min(1),
+});
