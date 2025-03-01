@@ -26,7 +26,6 @@ const passwordResetTokenSchema = new Schema<IPasswordResetToken>(
     expiresAt: {
       type: Date,
       required: true,
-      index: { expires: "3h" },
     },
   },
   { timestamps: true },

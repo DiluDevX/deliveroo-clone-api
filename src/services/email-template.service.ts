@@ -1,6 +1,5 @@
 import { sendMail } from "./mail.service";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import PasswordResetToken from "../models/resetPassword.model";
 import { usersService } from "./users.service";
 import crypto from "crypto";
@@ -35,7 +34,7 @@ export const sendForgotPasswordEmail = async (email: string) => {
     _id: user._id,
     email,
     token,
-    expiresAt: new Date(Date.now() + 3 * 60 * 60 * 1000),
+    expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000),
   });
 
   const resetUrl = `${appUrl}/reset-password?token=${token}`;
@@ -48,8 +47,10 @@ export const sendForgotPasswordEmail = async (email: string) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Reset Your Password</title>
       <style>
+            @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+
         body {
-          font-family: Arial, sans-serif;
+          font-family: IBM Plex Sans, serif;
           line-height: 1.6;
           color: #333;
           max-width: 600px;
@@ -65,7 +66,7 @@ export const sendForgotPasswordEmail = async (email: string) => {
         }
         .button {
           display: inline-block;
-          background-color: #4A90E2;
+          background-color: #00ccbc;
           color: white;
           text-decoration: none;
           padding: 12px 24px;
@@ -97,7 +98,7 @@ export const sendForgotPasswordEmail = async (email: string) => {
       
       <a href="${resetUrl}" class="button">Reset Password</a>
       
-      <p>This link will expire in 24 hours for security reasons.</p>
+      <p>This link will expire in 1 hour for security reasons.</p>
       
       <p>If the button above doesn't work, copy and paste the following link into your browser:</p>
       
