@@ -5,6 +5,7 @@ import {
   signup,
   login,
   forgotPassword,
+  validateResetPasswordToken,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
@@ -12,6 +13,7 @@ import {
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
   signupRequestBodySchema,
+  validateResetPasswordRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
 
@@ -36,10 +38,6 @@ router.post(
   forgotPassword,
 );
 
-router.post(
-  "/reset-password",
-  ValidateBody(forgotPasswordRequestBodySchema),
-  forgotPassword,
-);
+router.post("/validate-token", validateResetPasswordToken);
 
 export default router;

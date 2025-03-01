@@ -13,6 +13,8 @@ import {
 } from "../dto/user.dto";
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
+import { hashPassword } from "../utils/PasswordHashBcrypt";
+import PasswordResetToken from "../models/resetPassword.model";
 
 dotenv.config();
 
@@ -93,21 +95,30 @@ const updateAnUserPartially = async (
   res: Response<CommonResponseDTO<UpdateUserPartiallyResponseBodyDTO>>,
 ) => {
   try {
+    if (req.body.password) {
+      req.body.password = hashPassword(req.body.password);
+      await PasswordResetToken.deleteOne({ _id: req.params.id });
+    }
+
     const updatedUser = await usersService.findByIdAndUpdate(
       req.params.id,
       req.body,
     );
+
     if (!updatedUser) {
-      res.status(404).json({ message: "User Not found" });
+      res.status(404).json({ message: "User Not Found" });
       return;
     }
+
     res.status(200).json({
       message: "OK",
       data: toResponseDTO(updatedUser),
     });
+    return;
   } catch (error) {
-    console.log(error, "error");
+    console.error("Error updating user:", error);
     res.status(500).json({ message: "Internal Server Error" });
+    return;
   }
 };
 
@@ -124,6 +135,31 @@ const deleteAnUser = async (
     res.status(200).json({
       message: "OK",
       data: toResponseDTO(deletedUser),
+    });
+  } catch (error) {
+    console.log(error, "error");
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const findAndUpdateUserPassword = async (
+  req: Request,
+  res: Response,
+) => {
+  const { password } = req.body;
+  const hashedPassword = hashPassword(password);
+  try {
+    const updatedUserPassword = await usersService.findByIdAndUpdate(
+      req.params.id,
+      { password: hashedPassword },
+    );
+    if (!updatedUserPassword) {
+      res.status(404).json({ message: "User Not found" });
+      return;
+    }
+    res.status(200).json({
+      message: "Updated",
+      data: toResponseDTO(updatedUserPassword),
     });
   } catch (error) {
     console.log(error, "error");

@@ -1,0 +1,40 @@
+import { Schema, model, Types, SchemaTypes } from "mongoose";
+
+export type IPasswordResetToken = {
+  _id: Types.ObjectId;
+  email: string;
+  token: string;
+  expiresAt: Date;
+};
+
+const passwordResetTokenSchema = new Schema<IPasswordResetToken>(
+  {
+    email: {
+      type: String,
+      ref: "User",
+      required: true,
+    },
+    _id: {
+      type: SchemaTypes.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    token: {
+      type: String,
+      required: true,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+      index: { expires: "3h" },
+    },
+  },
+  { timestamps: true },
+);
+
+const PasswordResetToken = model(
+  "PasswordResetToken",
+  passwordResetTokenSchema,
+);
+
+export default PasswordResetToken;

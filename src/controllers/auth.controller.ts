@@ -9,12 +9,15 @@ import {
   ForgotPasswordRequestBodyDTO,
   LoginRequestBodyDTO,
   LoginResponseBodyDTO,
+  ResetPasswordRequestBodySchemaDTO,
+  ResetPasswordResponseBodySchemaDTO,
   SignupRequestBodyDTO,
   SignupResponseBodyDTO,
 } from "../dto/auth.dto";
 import { CommonResponseDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
 import { sendForgotPasswordEmail } from "../services/email-template.service";
+import PasswordResetToken from "../models/resetPassword.model";
 
 dotenv.config();
 
@@ -165,12 +168,12 @@ export const forgotPassword = async (
   try {
     let existingUser: IUser | null;
     existingUser = await usersService.findOne({
-      email: req.body.username,
+      email: req.body.userName,
     });
 
     if (!existingUser) {
       existingUser = await usersService.findOne({
-        phone: req.body.username,
+        phone: req.body.userName,
       });
     }
 
@@ -184,6 +187,43 @@ export const forgotPassword = async (
     res.status(200).json({
       message: "Success",
     });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+    return;
+  }
+};
+
+export const validateResetPasswordToken = async (
+  req: Request<
+    unknown,
+    CommonResponseDTO<ResetPasswordResponseBodySchemaDTO>,
+    ResetPasswordRequestBodySchemaDTO
+  >,
+  res: Response<CommonResponseDTO<ResetPasswordResponseBodySchemaDTO>>,
+) => {
+  try {
+    const existingToken = await PasswordResetToken.findOne({
+      token: req.body.token,
+    });
+
+    if (!existingToken) {
+      res.status(400).json({
+        message: "Invalid or expired token",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Success",
+      data: {
+        email: existingToken.email,
+        user_id: existingToken._id,
+      },
+    });
+    return;
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({

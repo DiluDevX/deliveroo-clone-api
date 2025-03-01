@@ -5,6 +5,7 @@ import {
   signupRequestBodySchema,
 } from "../schema/auth.schema";
 import { IUser } from "../models/user.model";
+import { ObjectId } from "mongodb";
 
 export type CheckEmailRequestBodyDTO = {
   email: string;
@@ -44,3 +45,13 @@ declare global {
     }
   }
 }
+
+export type ResetPasswordRequestBodySchemaDTO = {
+  token: string;
+  newPassword?: string;
+};
+
+export type ResetPasswordResponseBodySchemaDTO = {
+  email: string;
+  user_id: ObjectId;
+};

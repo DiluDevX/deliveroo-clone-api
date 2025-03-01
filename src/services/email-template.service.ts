@@ -1,7 +1,13 @@
 import { sendMail } from "./mail.service";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import PasswordResetToken from "../models/resetPassword.model";
+import { usersService } from "./users.service";
+import crypto from "crypto";
 
 dotenv.config();
+
+const SECRET_KEY = process.env.SECRET_KEY as string;
 
 const config = {
   companyName: process.env.COMPANY_NAME,
@@ -18,7 +24,21 @@ const supportEmail = config.supportEmail;
 const appUrl = config.appUrl;
 
 export const sendForgotPasswordEmail = async (email: string) => {
-  const resetUrl = `${appUrl}/reset-password`;
+  const user = await usersService.findOne({ email });
+  if (!user) {
+    return new Error("User not found");
+  }
+
+  const token = crypto.randomBytes(6).toString("hex");
+
+  await PasswordResetToken.create({
+    _id: user._id,
+    email,
+    token,
+    expiresAt: new Date(Date.now() + 3 * 60 * 60 * 1000),
+  });
+
+  const resetUrl = `${appUrl}/reset-password?token=${token}`;
 
   const html = `
     <!DOCTYPE html>
