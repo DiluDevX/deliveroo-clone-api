@@ -38,6 +38,10 @@ router.post(
   forgotPassword,
 );
 
-router.post("/validate-token", validateResetPasswordToken);
+router.post(
+  "/validate-token",
+  ValidateBody(validateResetPasswordRequestBodySchema),
+  validateResetPasswordToken,
+);
 
 export default router;

@@ -46,9 +46,13 @@ declare global {
   }
 }
 
-export type ResetPasswordRequestBodySchemaDTO = {
+export type ValidateResetPasswordTokenRequestBodySchemaDTO = {
   token: string;
-  newPassword?: string;
+};
+
+export type ValidateResetPasswordTokenResponseBodySchemaDTO = {
+  email: string;
+  user_id: ObjectId;
 };
 
 export type ResetPasswordResponseBodySchemaDTO = {

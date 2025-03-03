@@ -10,6 +10,8 @@ import {
   UpdateUserPartiallyResponseBodyDTO,
   DeleteUserResponseBodyDTO,
   UserResponseDTO,
+  FindAndUpdateUserPasswordResponseBodyDTO,
+  FindAndUpdateUserPasswordRequestBodyDTO,
 } from "../dto/user.dto";
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
@@ -143,8 +145,12 @@ const deleteAnUser = async (
 };
 
 export const findAndUpdateUserPassword = async (
-  req: Request,
-  res: Response,
+  req: Request<
+    ObjectIdPathParamsDTO,
+    unknown,
+    FindAndUpdateUserPasswordRequestBodyDTO
+  >,
+  res: Response<CommonResponseDTO<FindAndUpdateUserPasswordResponseBodyDTO>>,
 ) => {
   const { password } = req.body;
   const hashedPassword = hashPassword(password);

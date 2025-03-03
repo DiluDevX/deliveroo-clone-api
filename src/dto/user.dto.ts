@@ -20,6 +20,12 @@ export type UserResponseDTO = {
   role: string;
 };
 
+export type FindAndUpdateUserPasswordRequestBodyDTO = {
+  password: string;
+};
+
+export type FindAndUpdateUserPasswordResponseBodyDTO = UserResponseDTO;
+
 export type GetAllUsersResponseBodyDTO = UserResponseDTO[];
 export type GetAnUserResponseBodyDTO = UserResponseDTO;
 export type UpdateUserFullyResponseBodyDTO = UserResponseDTO;

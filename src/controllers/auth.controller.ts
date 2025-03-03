@@ -9,10 +9,10 @@ import {
   ForgotPasswordRequestBodyDTO,
   LoginRequestBodyDTO,
   LoginResponseBodyDTO,
-  ResetPasswordRequestBodySchemaDTO,
-  ResetPasswordResponseBodySchemaDTO,
   SignupRequestBodyDTO,
   SignupResponseBodyDTO,
+  ValidateResetPasswordTokenRequestBodySchemaDTO,
+  ValidateResetPasswordTokenResponseBodySchemaDTO,
 } from "../dto/auth.dto";
 import { CommonResponseDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
@@ -199,10 +199,12 @@ export const forgotPassword = async (
 export const validateResetPasswordToken = async (
   req: Request<
     unknown,
-    CommonResponseDTO<ResetPasswordResponseBodySchemaDTO>,
-    ResetPasswordRequestBodySchemaDTO
+    CommonResponseDTO<ValidateResetPasswordTokenResponseBodySchemaDTO>,
+    ValidateResetPasswordTokenRequestBodySchemaDTO
   >,
-  res: Response<CommonResponseDTO<ResetPasswordResponseBodySchemaDTO>>,
+  res: Response<
+    CommonResponseDTO<ValidateResetPasswordTokenResponseBodySchemaDTO>
+  >,
 ) => {
   try {
     const existingToken = await PasswordResetToken.findOne({
