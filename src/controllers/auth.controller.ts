@@ -17,7 +17,7 @@ import {
 import { CommonResponseDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
 import { sendForgotPasswordEmail } from "../services/email-template.service";
-import PasswordResetToken from "../models/resetPassword.model";
+import PasswordResetToken from "../models/reset-password.model";
 
 dotenv.config();
 

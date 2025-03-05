@@ -16,7 +16,7 @@ import {
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
 import { hashPassword } from "../utils/PasswordHashBcrypt";
-import PasswordResetToken from "../models/resetPassword.model";
+import PasswordResetToken from "../models/reset-password.model";
 
 dotenv.config();
 

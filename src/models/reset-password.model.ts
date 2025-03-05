@@ -2,6 +2,7 @@ import { Schema, model, Types, SchemaTypes } from "mongoose";
 
 export type IPasswordResetToken = {
   _id: Types.ObjectId;
+  userId: Types.ObjectId;
   email: string;
   token: string;
   expiresAt: Date;
@@ -14,7 +15,7 @@ const passwordResetTokenSchema = new Schema<IPasswordResetToken>(
       ref: "User",
       required: true,
     },
-    _id: {
+    userId: {
       type: SchemaTypes.ObjectId,
       ref: "User",
       required: true,

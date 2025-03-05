@@ -1,6 +1,6 @@
 import { sendMail } from "./mail.service";
 import dotenv from "dotenv";
-import PasswordResetToken from "../models/resetPassword.model";
+import PasswordResetToken from "../models/reset-password.model";
 import { usersService } from "./users.service";
 import crypto from "crypto";
 
@@ -31,7 +31,7 @@ export const sendForgotPasswordEmail = async (email: string) => {
   const token = crypto.randomBytes(6).toString("hex");
 
   await PasswordResetToken.create({
-    _id: user._id,
+    userId: user._id,
     email,
     token,
     expiresAt: new Date(Date.now() + 1 * 60 * 60 * 1000),
