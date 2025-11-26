@@ -13,6 +13,7 @@ import {
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
   signupRequestBodySchema,
+  validateOAuthTokenRequestBodySchema,
   validateResetPasswordRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
@@ -42,6 +43,11 @@ router.post(
   "/validate-token",
   ValidateBody(validateResetPasswordRequestBodySchema),
   validateResetPasswordToken,
+);
+
+router.post(
+  "validate-OAuthToken",
+  ValidateBody(validateOAuthTokenRequestBodySchema),
 );
 
 export default router;

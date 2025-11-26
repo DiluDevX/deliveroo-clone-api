@@ -15,6 +15,7 @@ export type CheckEmailResponseBodyDTO = {
   firstName: string;
   lastName: string;
   email: string;
+  token: string;
 };
 
 export type LoginRequestBodyDTO = z.infer<typeof loginRequestBodySchema>;

@@ -18,6 +18,7 @@ import { CommonResponseDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
 import { sendForgotPasswordEmail } from "../services/email-template.service";
 import PasswordResetToken from "../models/reset-password.model";
+import { OAuth2Client } from "google-auth-library";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ export const checkEmail = async (
       res.status(404).json({ message: "User not found" });
       return;
     }
+    const token = jwt.sign({ firstName: existingUser.firstName }, SECRET_KEY);
 
     res.status(200).json({
       message: "Successful",
@@ -47,6 +49,7 @@ export const checkEmail = async (
         email: existingUser.email,
         firstName: existingUser.firstName,
         lastName: existingUser.lastName,
+        token: token,
       },
     });
     return;

@@ -38,3 +38,7 @@ export const resetPasswordRequestBodySchema = z.object({
 export const validateResetPasswordRequestBodySchema = z.object({
   token: z.string().min(10),
 });
+
+export const validateOAuthTokenRequestBodySchema = z.object({
+  token: z.string().min(10),
+});

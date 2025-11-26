@@ -6,8 +6,6 @@ import crypto from "crypto";
 
 dotenv.config();
 
-const SECRET_KEY = process.env.SECRET_KEY as string;
-
 const config = {
   companyName: process.env.COMPANY_NAME,
   companyEmail: process.env.COMPANY_EMAIL,
