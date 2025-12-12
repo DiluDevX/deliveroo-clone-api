@@ -11,14 +11,18 @@ export const authorizeUser = (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.replace("Bearer ", "");
 
   if (!token) {
     return res.status(401).send({ error: "Access denied. No token provided" });
   }
 
   try {
-    const decodedToken = jwt.verify(token, SECRET_KEY) as { role: string };
+    const decodedToken = jwt.verify(token, SECRET_KEY) as {
+      firstName: string;
+      role: string;
+    };
 
     req.user = decodedToken;
 

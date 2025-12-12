@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Request } from "express";
 import {
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
@@ -6,6 +7,10 @@ import {
 } from "../schema/auth.schema";
 import { IUser } from "../models/user.model";
 import { ObjectId } from "mongodb";
+
+export interface AuthenticatedUserRequest extends Request {
+  user?: JwtPayloadDTO;
+}
 
 export type CheckEmailRequestBodyDTO = {
   email: string;

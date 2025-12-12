@@ -30,13 +30,7 @@ const findByUserId = async (userId: string): Promise<CartType | null> => {
 const addItem = async (userId: string, item: CartItem): Promise<CartType> => {
   let cart = await Cart.findOne({ userId });
 
-  if (!cart) {
-    cart = await Cart.create({
-      userId,
-      items: [item],
-      restaurantId: item.restaurantId,
-    });
-  } else {
+  if (cart) {
     const existingItemIndex = cart.items.findIndex(
       (cartItem) => cartItem.dishId === item.dishId,
     );
@@ -48,6 +42,12 @@ const addItem = async (userId: string, item: CartItem): Promise<CartType> => {
     }
 
     await cart.save();
+  } else {
+    cart = await Cart.create({
+      userId,
+      items: [item],
+      restaurantId: item.restaurantId,
+    });
   }
 
   return toPlainObject(cart);

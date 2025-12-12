@@ -74,23 +74,23 @@ const createNewDish = async (
       });
 
       return;
-    } else {
-      const foundCategory = await categoryService.findById(req.body.category);
-
-      if (!foundCategory) {
-        res.status(404).json({
-          message: "Category Not Found",
-        });
-
-        return;
-      }
-
-      const createdDish = await dishService.createNew(req.body);
-      res.status(201).json({
-        message: "OK",
-        data: createdDish,
-      });
     }
+
+    const foundCategory = await categoryService.findById(req.body.category);
+
+    if (!foundCategory) {
+      res.status(404).json({
+        message: "Category Not Found",
+      });
+
+      return;
+    }
+
+    const createdDish = await dishService.createNew(req.body);
+    res.status(201).json({
+      message: "OK",
+      data: createdDish,
+    });
   } catch (error) {
     console.log(error, "error");
 

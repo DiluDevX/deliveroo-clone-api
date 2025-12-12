@@ -2,7 +2,7 @@ import { sendMail } from "./mail.service";
 import dotenv from "dotenv";
 import PasswordResetToken from "../models/reset-password.model";
 import { usersService } from "./users.service";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 dotenv.config();
 
