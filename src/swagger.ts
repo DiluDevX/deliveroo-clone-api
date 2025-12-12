@@ -15,6 +15,7 @@ const options = {
       },
     ],
     tags: [
+      { name: "Health", description: "API health check" },
       { name: "Auth", description: "Authentication endpoints" },
       { name: "Restaurants", description: "Restaurant management" },
       { name: "Categories", description: "Menu categories" },
