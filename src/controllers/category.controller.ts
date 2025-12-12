@@ -162,7 +162,11 @@ const updateCategoryPartially = async (
   res: Response<CommonResponseDTO<UpdateCategoryPartiallyResponseBodyDTO>>,
 ) => {
   try {
-    if (req.body?.restaurant) {
+    if (!req.body) {
+      res.status(400).json({ message: "Request body is required" });
+      return;
+    }
+    if (req.body.restaurant) {
       const foundRestaurant = await restaurantService.findOne(
         req.body.restaurant,
       );

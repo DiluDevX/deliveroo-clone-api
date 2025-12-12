@@ -16,7 +16,6 @@ import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { CreateDishRequestBodySchema } from "../schema/dish.schema";
 import { z } from "zod";
 import { restaurantService } from "../services/restaurant.service";
-import { IDish } from "../models/dish.model";
 
 interface DishFilters {
   restaurant?: string;

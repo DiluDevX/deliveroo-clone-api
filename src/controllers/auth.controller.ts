@@ -128,7 +128,7 @@ export const signup = async (
       return;
     }
     if (req.body.role === "admin") {
-      if (!req.user || req.user.role !== "admin") {
+      if (req.user?.role !== "admin") {
         res.status(403).json({
           message: "Only admin users can create admin accounts",
         });
@@ -179,11 +179,9 @@ export const forgotPassword = async (
       email: req.body.userName,
     });
 
-    if (!existingUser) {
-      existingUser = await usersService.findOne({
-        phone: req.body.userName,
-      });
-    }
+    existingUser ??= await usersService.findOne({
+      phone: req.body.userName,
+    });
 
     if (existingUser) {
       // user is found

@@ -1,13 +1,8 @@
 import { model, ObjectId, Schema, SchemaTypes } from "mongoose";
 
 export interface IDish {
-  _id: ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-
   name: string;
   description?: string;
-  calories: number;
   price: number;
   category: ObjectId;
   restaurant: ObjectId;
@@ -23,10 +18,6 @@ const dishSchema = new Schema<IDish>(
     description: {
       type: String,
       required: false,
-    },
-    calories: {
-      type: Number,
-      required: true,
     },
     price: {
       type: Number,

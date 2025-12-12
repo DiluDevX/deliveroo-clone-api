@@ -102,7 +102,7 @@ const updateAnUserPartially = async (
       await PasswordResetToken.deleteOne({ _id: req.params.id });
     }
 
-    const updatedUser = await usersService.findByIdAndUpdate(
+    const updatedUser = await usersService.findAndUpdatePartially(
       req.params.id,
       req.body,
     );
@@ -155,7 +155,7 @@ export const findAndUpdateUserPassword = async (
   const { password } = req.body;
   const hashedPassword = hashPassword(password);
   try {
-    const updatedUserPassword = await usersService.findByIdAndUpdate(
+    const updatedUserPassword = await usersService.findAndUpdatePartially(
       req.params.id,
       { password: hashedPassword },
     );

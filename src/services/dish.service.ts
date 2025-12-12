@@ -1,36 +1,76 @@
-import Dish, { IDish } from "../models/dish.model";
+import { z } from "zod";
+import { Types } from "mongoose";
+import Dish from "../models/dish.model";
+import {
+  CreateDishRequestBodySchema,
+  PartiallyUpdateDishRequestBodySchema,
+  DishQueryParamsSchema,
+} from "../schema/dish.schema";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const findAll = async (filters: any, populate?: string | string[]) => {
-  const query = Dish.find(filters);
-  if (populate === "category") {
-    query.populate("category");
-  } else if (populate === "restaurant") {
-    query.populate("restaurant");
-  } else if (populate === "category restaurant") {
-    query.populate("category").populate("restaurant");
+type CreateDishInput = z.infer<typeof CreateDishRequestBodySchema>;
+type UpdateDishInput = CreateDishInput;
+type PartialUpdateDishInput = z.infer<
+  typeof PartiallyUpdateDishRequestBodySchema
+>;
+type DishFilters = z.infer<typeof DishQueryParamsSchema>;
+
+// Transform functions for ObjectId conversion
+const toDbDocument = (data: CreateDishInput) => ({
+  ...data,
+  category: new Types.ObjectId(data.category),
+  restaurant: new Types.ObjectId(data.restaurant),
+});
+
+const toPartialDbDocument = (data: PartialUpdateDishInput) => {
+  const result: Record<string, unknown> = { ...data };
+
+  if (data.category) {
+    result.category = new Types.ObjectId(data.category);
   }
+
+  if (data.restaurant) {
+    result.restaurant = new Types.ObjectId(data.restaurant);
+  }
+
+  return result;
+};
+
+// Service methods
+const findAll = async (
+  filters: Partial<Pick<DishFilters, "restaurant" | "category">>,
+  populate?: string | string[],
+) => {
+  const query = Dish.find(filters);
+
+  if (populate) {
+    const fields = Array.isArray(populate) ? populate : populate.split(" ");
+    fields.forEach((field) => query.populate(field));
+  }
+
   return query;
 };
 
-const createNew = async (data: IDish) => {
-  return Dish.create(data);
+const createNew = async (data: CreateDishInput) => {
+  return Dish.create(toDbDocument(data));
 };
 
 const findById = async (id: string) => {
   return Dish.findById(id);
 };
 
-const findByIdAndUpdate = async (id: string, data: IDish) => {
-  return Dish.findByIdAndUpdate(id, data, { new: true });
+const findByIdAndUpdate = async (id: string, data: UpdateDishInput) => {
+  return Dish.findByIdAndUpdate(id, toDbDocument(data), { new: true });
 };
 
-const findAndUpdatePartially = async (id: string, data: Partial<IDish>) => {
-  return Dish.findByIdAndUpdate(id, data, { new: true });
+const findAndUpdatePartially = async (
+  id: string,
+  data: PartialUpdateDishInput,
+) => {
+  return Dish.findByIdAndUpdate(id, toPartialDbDocument(data), { new: true });
 };
 
 const findByIdAndDelete = async (id: string) => {
-  return Dish.findByIdAndDelete(id, { new: true });
+  return Dish.findByIdAndDelete(id);
 };
 
 export const dishService = {

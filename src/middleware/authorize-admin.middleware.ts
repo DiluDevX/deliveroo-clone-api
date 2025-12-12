@@ -29,6 +29,7 @@ export const authorizeRole = (role: string) => {
 
       next();
     } catch (error) {
+      console.log(error);
       res.status(401).json({ error: "Access denied. Invalid token." });
       return;
     }
@@ -58,6 +59,7 @@ export const optionalAuthorizeRole = (role: string) => {
 
       next();
     } catch (error) {
+      console.log(error);
       res.status(401).json({ error: "Access denied. Invalid token." });
       return;
     }

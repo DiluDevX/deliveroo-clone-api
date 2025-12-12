@@ -126,7 +126,7 @@ const updateARestaurantPartially = async (
   res: Response<CommonResponseDTO<UpdateRestaurantPartiallyResponseBodyDTO>>,
 ) => {
   try {
-    const updatedRestaurant = await restaurantService.findByIdAndUpdate(
+    const updatedRestaurant = await restaurantService.findAndUpdatePartially(
       req.params.id,
       req.body,
     );

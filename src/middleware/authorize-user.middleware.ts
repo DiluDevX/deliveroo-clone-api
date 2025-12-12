@@ -24,6 +24,7 @@ export const authorizeUser = (
 
     next();
   } catch (error) {
+    console.log(error);
     return res.status(401).send({ error: "Access denied. Invalid token" });
   }
 };

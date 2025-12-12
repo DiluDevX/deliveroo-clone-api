@@ -39,11 +39,10 @@ export interface JwtPayloadDTO {
   firstName: string;
   role: string;
 }
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtPayloadDTO;
-    }
+
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: JwtPayloadDTO;
   }
 }
 

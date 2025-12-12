@@ -26,7 +26,7 @@ export const sendMail = async ({
   html: string;
 }) => {
   try {
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from,
       to,
       subject,

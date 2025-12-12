@@ -1,21 +1,25 @@
+import { Types } from "mongoose";
 import Cart from "../models/cart.model";
 import { CartItem, Cart as CartType } from "../schema/cart.schema";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const toPlainObject = (cart: any): CartType => {
+// Get the document type from the Cart model
+type CartDocument = typeof Cart extends { prototype: infer U } ? U : never;
+
+// Transform Mongoose document to plain object
+const toPlainObject = (cart: CartDocument): CartType => {
   return {
-    userId: cart.userId.toString(),
-    items: cart.items.map((item: CartItem) => ({
+    userId: (cart.userId as Types.ObjectId).toString(),
+    items: cart.items.map((item: (typeof cart.items)[number]) => ({
       dishId: item.dishId,
       name: item.name,
       price: item.price,
       quantity: item.quantity,
-      restaurantId: item.restaurantId ?? undefined,
+      restaurantId: item.restaurantId,
       image: item.image ?? undefined,
       description: item.description ?? undefined,
     })),
-    restaurantId: cart.restaurantId ?? undefined,
-  } as CartType;
+    restaurantId: cart.restaurantId,
+  };
 };
 
 const findByUserId = async (userId: string): Promise<CartType | null> => {
