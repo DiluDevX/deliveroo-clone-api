@@ -9,7 +9,9 @@ import dishRoutes from "./routes/dish.routes";
 import categoryRoutes from "./routes/category.routes";
 import usersRoutes from "./routes/users.routes";
 import authRoutes from "./routes/auth.routes";
+import cartRoutes from "./routes/cart.routes";
 import cors from "cors";
+import { swaggerUi, swaggerSpec } from "./swagger";
 
 dotenv.config();
 
@@ -25,6 +27,8 @@ app.use("/restaurants", restaurantRoutes);
 app.use("/dishes", dishRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/users", usersRoutes);
+app.use("/cart", cartRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(commonRoutes);
 
