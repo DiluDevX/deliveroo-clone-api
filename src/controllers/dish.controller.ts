@@ -15,6 +15,8 @@ import {
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { CreateDishRequestBodySchema } from "../schema/dish.schema";
 import { z } from "zod";
+import { restaurantService } from "../services/restaurant.service";
+import { IDish } from "../models/dish.model";
 
 interface DishFilters {
   restaurant?: string;
@@ -63,25 +65,33 @@ const createNewDish = async (
   res: Response<CommonResponseDTO<CreateNewDishResponseBodyDTO>>,
 ) => {
   try {
-    const foundCategory = await categoryService.findById(req.body.category);
+    const foundRestaurant = await restaurantService.findOne(
+      req.body.restaurant,
+    );
 
-    if (!foundCategory) {
+    if (!foundRestaurant) {
       res.status(404).json({
-        message: "Category Not Found",
+        message: "Restaurant Not Found",
       });
 
       return;
+    } else {
+      const foundCategory = await categoryService.findById(req.body.category);
+
+      if (!foundCategory) {
+        res.status(404).json({
+          message: "Category Not Found",
+        });
+
+        return;
+      }
+
+      const createdDish = await dishService.createNew(req.body);
+      res.status(201).json({
+        message: "OK",
+        data: createdDish,
+      });
     }
-
-    const createdDish = await dishService.createNew({
-      ...req.body,
-      restaurant: foundCategory.restaurant,
-    });
-
-    res.status(201).json({
-      message: "Created",
-      data: createdDish,
-    });
   } catch (error) {
     console.log(error, "error");
 

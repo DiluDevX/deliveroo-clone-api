@@ -18,7 +18,7 @@ export const FullyUpdateDishRequestBodySchema =
   CreateDishRequestBodySchema.required();
 
 export const PartiallyUpdateDishRequestBodySchema =
-  CreateDishRequestBodySchema.optional();
+  CreateDishRequestBodySchema.partial();
 
 export const DishQueryParamsSchema = z.object({
   populate: z.string().optional(),

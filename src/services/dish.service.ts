@@ -1,5 +1,6 @@
-import Dish from "../models/dish.model";
+import Dish, { IDish } from "../models/dish.model";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const findAll = async (filters: any, populate?: string | string[]) => {
   const query = Dish.find(filters);
   if (populate === "category") {
@@ -12,19 +13,19 @@ const findAll = async (filters: any, populate?: string | string[]) => {
   return query;
 };
 
-const createNew = async (data: any) => {
-  return await Dish.create(data);
+const createNew = async (data: IDish) => {
+  return Dish.create(data);
 };
 
 const findById = async (id: string) => {
   return Dish.findById(id);
 };
 
-const findByIdAndUpdate = async (id: string, data: any) => {
+const findByIdAndUpdate = async (id: string, data: IDish) => {
   return Dish.findByIdAndUpdate(id, data, { new: true });
 };
 
-const findAndUpdatePartially = async (id: string, data: any) => {
+const findAndUpdatePartially = async (id: string, data: Partial<IDish>) => {
   return Dish.findByIdAndUpdate(id, data, { new: true });
 };
 

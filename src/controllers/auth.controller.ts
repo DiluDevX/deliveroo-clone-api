@@ -18,7 +18,6 @@ import { CommonResponseDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
 import { sendForgotPasswordEmail } from "../services/email-template.service";
 import PasswordResetToken from "../models/reset-password.model";
-import { OAuth2Client } from "google-auth-library";
 
 dotenv.config();
 
@@ -89,7 +88,13 @@ export const login = async (
     }
 
     const token = jwt.sign(
-      { firstName: existingUser.firstName, role: existingUser.role },
+      {
+        firstName: existingUser.firstName,
+        role: existingUser.role,
+        lastName: existingUser.lastName,
+        email: existingUser.email,
+        phone: existingUser.phone ?? "",
+      },
       SECRET_KEY,
     );
     res.status(200).json({
@@ -141,7 +146,7 @@ export const signup = async (
       role,
     });
 
-    const { password, ...responseUser } = createdUser;
+    const { ...responseUser } = createdUser;
 
     const token = jwt.sign(
       { firstName: createdUser.firstName ?? "" },
