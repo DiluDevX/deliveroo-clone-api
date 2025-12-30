@@ -5,6 +5,7 @@
   "main": "src/server.ts",
   "type": "commonjs",
   "scripts": {
+    "build": "tsc",
     "dev": "nodemon src/server.ts",
     "format:fix": "prettier --write .",
     "lint:fix": "eslint --fix src"
@@ -43,5 +44,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.48.0"
-  }
+  },
+  "packageManager": "yarn@4.12.0"
 }

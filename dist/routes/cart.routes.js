@@ -1,21 +1,15 @@
-import express from "express";
-const router = express.Router();
-
-import ValidateBody from "../middleware/validate-body.middleware";
-import ValidateParams from "../middleware/validate-params.middleware";
-import { addToCartSchema, updateCartItemSchema } from "../schema/cart.schema";
-import {
-  userIdPathParamsSchema,
-  userIdAndDishIdPathParamsSchema,
-} from "../schema/common.schema";
-import {
-  updateCartItem,
-  addToCart,
-  getCart,
-  removeFromCart,
-  clearCart,
-} from "../controllers/cart.controller";
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const router = express_1.default.Router();
+const validate_body_middleware_1 = __importDefault(require("../middleware/validate-body.middleware"));
+const validate_params_middleware_1 = __importDefault(require("../middleware/validate-params.middleware"));
+const cart_schema_1 = require("../schema/cart.schema");
+const common_schema_1 = require("../schema/common.schema");
+const cart_controller_1 = require("../controllers/cart.controller");
 /**
  * @swagger
  * /cart/{userId}:
@@ -60,8 +54,7 @@ import {
  *       404:
  *         description: Cart not found
  */
-router.get("/:userId", ValidateParams(userIdPathParamsSchema), getCart);
-
+router.get("/:userId", (0, validate_params_middleware_1.default)(common_schema_1.userIdPathParamsSchema), cart_controller_1.getCart);
 /**
  * @swagger
  * /cart:
@@ -105,8 +98,7 @@ router.get("/:userId", ValidateParams(userIdPathParamsSchema), getCart);
  *       200:
  *         description: Item added to cart
  */
-router.post("/", ValidateBody(addToCartSchema), addToCart);
-
+router.post("/", (0, validate_body_middleware_1.default)(cart_schema_1.addToCartSchema), cart_controller_1.addToCart);
 /**
  * @swagger
  * /cart/{userId}/items/{dishId}:
@@ -143,13 +135,7 @@ router.post("/", ValidateBody(addToCartSchema), addToCart);
  *       404:
  *         description: Cart or item not found
  */
-router.patch(
-  "/:userId/items/:dishId",
-  ValidateParams(userIdAndDishIdPathParamsSchema),
-  ValidateBody(updateCartItemSchema),
-  updateCartItem,
-);
-
+router.patch("/:userId/items/:dishId", (0, validate_params_middleware_1.default)(common_schema_1.userIdAndDishIdPathParamsSchema), (0, validate_body_middleware_1.default)(cart_schema_1.updateCartItemSchema), cart_controller_1.updateCartItem);
 /**
  * @swagger
  * /cart/{userId}/items/{dishId}:
@@ -173,12 +159,7 @@ router.patch(
  *       404:
  *         description: Cart or item not found
  */
-router.delete(
-  "/:userId/items/:dishId",
-  ValidateParams(userIdAndDishIdPathParamsSchema),
-  removeFromCart,
-);
-
+router.delete("/:userId/items/:dishId", (0, validate_params_middleware_1.default)(common_schema_1.userIdAndDishIdPathParamsSchema), cart_controller_1.removeFromCart);
 /**
  * @swagger
  * /cart/{userId}:
@@ -197,6 +178,5 @@ router.delete(
  *       404:
  *         description: Cart not found
  */
-router.delete("/:userId", ValidateParams(userIdPathParamsSchema), clearCart);
-
-export default router;
+router.delete("/:userId", (0, validate_params_middleware_1.default)(common_schema_1.userIdPathParamsSchema), cart_controller_1.clearCart);
+exports.default = router;

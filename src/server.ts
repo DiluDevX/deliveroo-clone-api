@@ -16,7 +16,7 @@ import { swaggerUi, swaggerSpec } from "./swagger";
 dotenv.config();
 
 const app = express();
-const port = 4000;
+const port = 3000;
 
 app.use(cors({ origin: "http://localhost:5173" }));
 
