@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const AUTH_SERVICE_URL =
-  process.env.AUTH_SERVICE_URL;
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
 const authClient = axios.create({
   baseURL: AUTH_SERVICE_URL,
@@ -12,6 +11,11 @@ const authClient = axios.create({
 });
 
 export const authService = {
+  checkEmail: async (email: string) => {
+    const response = await authClient.post("/auth/check-email", { email });
+    return response.data;
+  },
+
   signup: async (data: {
     firstName: string;
     lastName: string;

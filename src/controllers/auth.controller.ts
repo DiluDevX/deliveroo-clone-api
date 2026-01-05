@@ -2,21 +2,22 @@ import { Request, Response, NextFunction } from "express";
 import authService from "../services/auth-client.service";
 import { AxiosError } from "axios";
 
-/*export const checkEmail = async (
+export const checkEmail = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    // Keep this local for now, or add to auth microservice later
-    const { email } = req.body;
-    // You can call auth service or keep using local DB
-    res.status(200).json({ exists: false }); // TODO: implement in microservice
+    const result = await authService.checkEmail(req.body.email);
+    res.status(200).json(result);
   } catch (error) {
-    next(error);
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
   }
 };
-*/
 
 export const login = async (
   req: Request,
