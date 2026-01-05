@@ -1,7 +1,6 @@
 import express from "express";
 const router = express.Router();
 import {
-  checkEmail,
   signup,
   login,
   forgotPassword,
@@ -17,37 +16,6 @@ import {
   validateResetPasswordRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
-
-/**
- * @swagger
- * /auth/check-email:
- *   post:
- *     summary: Check if email exists
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: user@example.com
- *     responses:
- *       200:
- *         description: User found
- *       404:
- *         description: User not found
- */
-router.post(
-  "/check-email",
-  ValidateBody(checkEmailRequestBodySchema),
-  checkEmail,
-);
 
 /**
  * @swagger

@@ -1,242 +1,124 @@
-import { usersService } from "../services/users.service";
-import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import { comparePasswords, hashPassword } from "../utils/PasswordHashBcrypt";
-import {
-  CheckEmailRequestBodyDTO,
-  CheckEmailResponseBodyDTO,
-  ForgotPasswordRequestBodyDTO,
-  LoginRequestBodyDTO,
-  LoginResponseBodyDTO,
-  SignupRequestBodyDTO,
-  SignupResponseBodyDTO,
-  ValidateResetPasswordTokenRequestBodySchemaDTO,
-  ValidateResetPasswordTokenResponseBodySchemaDTO,
-} from "../dto/auth.dto";
-import { CommonResponseDTO } from "../dto/common.dto";
-import { IUser } from "../models/user.model";
-import { sendForgotPasswordEmail } from "../services/email-template.service";
-import PasswordResetToken from "../models/reset-password.model";
+import { Request, Response, NextFunction } from "express";
+import authService from "../services/auth-client.service";
+import { AxiosError } from "axios";
 
-dotenv.config();
-
-const SECRET_KEY = process.env.SECRET_KEY as string;
-
-export const checkEmail = async (
-  req: Request<
-    unknown,
-    CommonResponseDTO<CheckEmailResponseBodyDTO>,
-    CheckEmailRequestBodyDTO
-  >,
-  res: Response<CommonResponseDTO<CheckEmailResponseBodyDTO>>,
+/*export const checkEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
-    const existingUser = await usersService.findOne({
-      email: req.body.email,
-    });
-
-    if (!existingUser) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-    const token = jwt.sign({ firstName: existingUser.firstName }, SECRET_KEY);
-
-    res.status(200).json({
-      message: "Successful",
-      data: {
-        email: existingUser.email,
-        firstName: existingUser.firstName,
-        lastName: existingUser.lastName,
-        token: token,
-      },
-    });
-    return;
+    // Keep this local for now, or add to auth microservice later
+    const { email } = req.body;
+    // You can call auth service or keep using local DB
+    res.status(200).json({ exists: false }); // TODO: implement in microservice
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-    return;
+    next(error);
   }
 };
+*/
 
 export const login = async (
-  req: Request<
-    unknown,
-    CommonResponseDTO<LoginResponseBodyDTO>,
-    LoginRequestBodyDTO
-  >,
-  res: Response<CommonResponseDTO<LoginResponseBodyDTO>>,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
-  const { email, password } = req.body;
-
   try {
-    const existingUser = await usersService.findOne({ email });
-
-    if (!existingUser) {
-      res.status(401).json({ message: "Invalid credentials" });
-      return;
-    }
-
-    const isValidPassword = await comparePasswords(
-      password,
-      existingUser.password,
-    );
-
-    if (!isValidPassword) {
-      res.status(401).json({ message: "Invalid credentials" });
-      return;
-    }
-
-    const token = jwt.sign(
-      {
-        firstName: existingUser.firstName,
-        role: existingUser.role,
-        lastName: existingUser.lastName,
-        email: existingUser.email,
-        phone: existingUser.phone ?? "",
-      },
-      SECRET_KEY,
-    );
-    res.status(200).json({
-      message: "Authenticated",
-      data: {
-        token,
-      },
-    });
+    const result = await authService.login(req.body);
+    res.status(200).json(result);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-    return;
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
   }
 };
 
 export const signup = async (
-  req: Request<
-    unknown,
-    CommonResponseDTO<SignupResponseBodyDTO>,
-    SignupRequestBodyDTO
-  >,
-  res: Response<CommonResponseDTO<SignupResponseBodyDTO>>,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
-    const existingUser = await usersService.findOne({ email: req.body.email });
-
-    if (existingUser) {
-      res.status(403).json({
-        message: "User already exists",
-      });
-      return;
-    }
-    if (req.body.role === "admin") {
-      if (req.user?.role !== "admin") {
-        res.status(403).json({
-          message: "Only admin users can create admin accounts",
-        });
-        return;
-      }
-    }
-
-    const role = req.body.role || "user";
-
-    const hashedPassword = hashPassword(req.body.password);
-
-    const createdUser = await usersService.createNew({
-      ...req.body,
-      password: hashedPassword,
-      role,
-    });
-
-    const { ...responseUser } = createdUser;
-
-    const token = jwt.sign(
-      { firstName: createdUser.firstName ?? "" },
-      SECRET_KEY,
-    );
-
-    res.status(201).json({
-      message: "Success",
-      data: {
-        token,
-        user: responseUser,
-      },
-    });
+    const result = await authService.signup(req.body);
+    res.status(201).json(result);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
-    return;
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
   }
 };
 
 export const forgotPassword = async (
-  req: Request<unknown, CommonResponseDTO<void>, ForgotPasswordRequestBodyDTO>,
-  res: Response<CommonResponseDTO<void>>,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
-    let existingUser: IUser | null;
-    existingUser = await usersService.findOne({
-      email: req.body.userName,
-    });
-
-    existingUser ??= await usersService.findOne({
-      phone: req.body.userName,
-    });
-
-    if (existingUser) {
-      // user is found
-      // therefore need to send the forgot password email
-
-      sendForgotPasswordEmail(existingUser.email);
-    }
-
-    res.status(200).json({
-      message: "Success",
-    });
+    const result = await authService.forgotPassword(req.body.userName);
+    res.status(200).json(result);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
-    return;
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
   }
 };
 
 export const validateResetPasswordToken = async (
-  req: Request<
-    unknown,
-    CommonResponseDTO<ValidateResetPasswordTokenResponseBodySchemaDTO>,
-    ValidateResetPasswordTokenRequestBodySchemaDTO
-  >,
-  res: Response<
-    CommonResponseDTO<ValidateResetPasswordTokenResponseBodySchemaDTO>
-  >,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
-    const existingToken = await PasswordResetToken.findOne({
-      token: req.body.token,
-    });
-
-    if (!existingToken) {
-      res.status(400).json({
-        message: "Invalid or expired token",
-      });
-      return;
-    }
-
-    res.status(200).json({
-      message: "Success",
-      data: {
-        email: existingToken.email,
-        user_id: existingToken._id,
-      },
-    });
-    return;
+    const result = await authService.verifyToken(req.body.token);
+    res.status(200).json(result);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
-    return;
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
+  }
+};
+
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await authService.resetPassword(
+      req.body.token,
+      req.body.password,
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
+  }
+};
+
+export const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await authService.refresh(req.body.refreshToken);
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
   }
 };
