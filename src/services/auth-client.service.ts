@@ -2,11 +2,14 @@ import axios from "axios";
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
+const API_KEY = process.env.AUTH_API_KEY;
+
 const authClient = axios.create({
   baseURL: AUTH_SERVICE_URL,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
+    ...(API_KEY ? { "api-key": API_KEY } : {}),
   },
 });
 
