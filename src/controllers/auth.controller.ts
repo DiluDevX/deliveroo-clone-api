@@ -70,23 +70,6 @@ export const forgotPassword = async (
   }
 };
 
-export const validateResetPasswordToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await authService.verifyToken(req.body.token);
-    res.status(200).json(result);
-  } catch (error) {
-    if (error instanceof AxiosError && error.response) {
-      res.status(error.response.status).json(error.response.data);
-    } else {
-      next(error);
-    }
-  }
-};
-
 export const resetPassword = async (
   req: Request,
   res: Response,

@@ -55,11 +55,6 @@ export const authService = {
     });
     return response.data;
   },
-
-  verifyToken: async (token: string) => {
-    const response = await authClient.post("/auth/verify-token", { token });
-    return response.data;
-  },
 };
 
 export default authService;
