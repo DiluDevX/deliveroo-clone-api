@@ -59,7 +59,7 @@ export const forgotPassword = async (
   next: NextFunction,
 ) => {
   try {
-    const result = await authService.forgotPassword(req.body.userName);
+    const result = await authService.forgotPassword(req.body.email);
     res.status(200).json(result);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {

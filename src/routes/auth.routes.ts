@@ -4,7 +4,6 @@ import {
   signup,
   login,
   forgotPassword,
-  validateResetPasswordToken,
   checkEmail,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
@@ -14,7 +13,6 @@ import {
   loginRequestBodySchema,
   signupRequestBodySchema,
   validateOAuthTokenRequestBodySchema,
-  validateResetPasswordRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
 
@@ -162,35 +160,6 @@ router.post(
   "/forgot-password",
   ValidateBody(forgotPasswordRequestBodySchema),
   forgotPassword,
-);
-
-/**
- * @swagger
- * /auth/validate-token:
- *   post:
- *     summary: Validate password reset token
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - token
- *             properties:
- *               token:
- *                 type: string
- *     responses:
- *       200:
- *         description: Token is valid
- *       400:
- *         description: Invalid or expired token
- */
-router.post(
-  "/validate-token",
-  ValidateBody(validateResetPasswordRequestBodySchema),
-  validateResetPasswordToken,
 );
 
 router.post(
