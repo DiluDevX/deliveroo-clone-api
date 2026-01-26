@@ -5,12 +5,14 @@ import {
   login,
   forgotPassword,
   checkEmail,
+  resetPassword,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
   checkEmailRequestBodySchema,
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
+  resetPasswordRequestBodySchema,
   signupRequestBodySchema,
   validateOAuthTokenRequestBodySchema,
 } from "../schema/auth.schema";
@@ -162,6 +164,11 @@ router.post(
   forgotPassword,
 );
 
+router.post(
+  "/reset-password",
+  ValidateBody(resetPasswordRequestBodySchema),
+  resetPassword,
+);
 router.post(
   "validate-OAuthToken",
   ValidateBody(validateOAuthTokenRequestBodySchema),

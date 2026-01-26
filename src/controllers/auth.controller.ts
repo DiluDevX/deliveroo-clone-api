@@ -77,6 +77,7 @@ export const resetPassword = async (
 ) => {
   try {
     const result = await authService.resetPassword(
+      req.body.email,
       req.body.token,
       req.body.password,
     );
