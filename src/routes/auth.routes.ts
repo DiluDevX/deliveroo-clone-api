@@ -1,20 +1,20 @@
 import express from "express";
 const router = express.Router();
 import {
-  checkEmail,
   signup,
   login,
   forgotPassword,
-  validateResetPasswordToken,
+  checkEmail,
+  resetPassword,
+  refreshToken,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
   checkEmailRequestBodySchema,
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
-  signupRequestBodySchema,
-  validateOAuthTokenRequestBodySchema,
-  validateResetPasswordRequestBodySchema,
+  resetPasswordRequestBodySchema,
+  signupRequestBodySchema, validateRefreshTokenRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
 
@@ -166,9 +166,9 @@ router.post(
 
 /**
  * @swagger
- * /auth/validate-token:
+ * /auth/reset-password:
  *   post:
- *     summary: Validate password reset token
+ *     summary: Reset password with token
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -177,25 +177,70 @@ router.post(
  *           schema:
  *             type: object
  *             required:
+ *               - email
  *               - token
+ *               - password
  *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
  *               token:
  *                 type: string
+ *                 example: abc123token
+ *               password:
+ *                 type: string
+ *                 example: newPassword123
  *     responses:
  *       200:
- *         description: Token is valid
+ *         description: Password reset successful
  *       400:
  *         description: Invalid or expired token
+ *       404:
+ *         description: User not found
  */
 router.post(
-  "/validate-token",
-  ValidateBody(validateResetPasswordRequestBodySchema),
-  validateResetPasswordToken,
+  "/reset-password",
+  ValidateBody(resetPasswordRequestBodySchema),
+  resetPassword,
 );
 
-router.post(
-  "validate-OAuthToken",
-  ValidateBody(validateOAuthTokenRequestBodySchema),
-);
+/**
+ * @swagger
+ * /auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token:
+ *                       type: string
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post("/refresh",ValidateBody(validateRefreshTokenRequestBodySchema), refreshToken);
 
 export default router;
