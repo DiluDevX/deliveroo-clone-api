@@ -3,7 +3,22 @@
 When you're ready, start your application by running:
 `docker compose up --build`.
 
-Your application will be available at http://localhost:3000.
+Your application will be available at http://localhost:4000.
+
+## API Endpoints
+
+All API endpoints are now prefixed with `/api`. For example:
+
+- `http://localhost:4000/api/auth`
+- `http://localhost:4000/api/restaurants`
+- `http://localhost:4000/api/dishes`
+- `http://localhost:4000/api/categories`
+- `http://localhost:4000/api/users`
+- `http://localhost:4000/api/cart`
+
+The Swagger API documentation is available at:
+
+- `http://localhost:4000/api/api-docs`
 
 ### Deploying your application to the cloud
 
@@ -19,4 +34,5 @@ Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharin
 docs for more detail on building and pushing.
 
 ### References
-* [Docker's Node.js guide](https://docs.docker.com/language/nodejs/)
+
+- [Docker's Node.js guide](https://docs.docker.com/language/nodejs/)

@@ -22,15 +22,15 @@ app.use(cors({ origin: "http://localhost:5173" }));
 
 app.use(express.json());
 
-app.use("/auth", authRoutes);
-app.use("/restaurants", restaurantRoutes);
-app.use("/dishes", dishRoutes);
-app.use("/categories", categoryRoutes);
-app.use("/users", usersRoutes);
-app.use("/cart", cartRoutes);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/auth", authRoutes);
+app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/dishes", dishRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use(commonRoutes);
+app.use("/api", commonRoutes);
 
 const startServer = async () => {
   try {
