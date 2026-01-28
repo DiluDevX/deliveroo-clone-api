@@ -11,11 +11,26 @@ const API_KEY = process.env.AUTH_API_KEY;
 const authClient = axios.create({
   baseURL: AUTH_SERVICE_URL,
   timeout: 5000,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     ...(API_KEY ? { "api-key": API_KEY } : {}),
   },
 });
+
+// Debug: Log cookies from auth service
+authClient.interceptors.response.use(
+  (response) => {
+    const setCookieHeader = response.headers["set-cookie"];
+    if (setCookieHeader) {
+      console.log("🍪 Cookies received from auth service:", setCookieHeader);
+    }
+    return response;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const authService = {
   checkEmail: async (email: string) => {
@@ -32,12 +47,17 @@ export const authService = {
     role?: "admin" | "user";
   }) => {
     const response = await authClient.post("/auth/signup", data);
-    return response.data;
+    return response;
   },
 
   login: async (data: { email: string; password: string }) => {
     const response = await authClient.post("/auth/login", data);
-    return response.data;
+    return response;
+  },
+
+  authStatus: async () => {
+     await authClient.get("/auth/me");
+    return
   },
 
   refresh: async (refreshToken: string) => {

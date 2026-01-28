@@ -7,6 +7,7 @@ import {
   checkEmail,
   resetPassword,
   refreshToken,
+  checkAuthStatus,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
@@ -247,5 +248,7 @@ router.post(
   ValidateBody(validateRefreshTokenRequestBodySchema),
   refreshToken,
 );
+
+router.post("/me", checkAuthStatus)
 
 export default router;
