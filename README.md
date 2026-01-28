@@ -26,7 +26,7 @@ This API follows a microservice architecture pattern:
 
 ## Project Structure
 
-```
+```text
 src/
 ├── controllers/     # Request handlers
 ├── dto/            # Data Transfer Objects
@@ -80,13 +80,13 @@ yarn dev
 nodemon src/server.ts
 ```
 
-The server runs on **http://localhost:4000**
+The server runs on **<http://localhost:4000>**
 
 ## API Documentation
 
 Swagger documentation is available at:
 
-- **Local:** http://localhost:4000/api-docs
+- **Local:** <http://localhost:4000/api-docs>
 
 ## API Endpoints
 
@@ -210,4 +210,4 @@ DiluDevX
 
 ## Repository
 
-https://github.com/DiluDevX/deliveroo-clone-api
+<https://github.com/DiluDevX/deliveroo-clone-api>
