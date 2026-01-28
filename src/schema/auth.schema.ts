@@ -33,7 +33,7 @@ export const forgotPasswordRequestBodySchema = z.object({
 export const resetPasswordRequestBodySchema = z.object({
   password: usersCreatePasswordSchema,
   email: usersEmailSchema,
-  token: z.string().min(5),
+  token: z.string().min(10),
 });
 
 export const validateResetPasswordRequestBodySchema = z.object({
@@ -41,5 +41,9 @@ export const validateResetPasswordRequestBodySchema = z.object({
 });
 
 export const validateOAuthTokenRequestBodySchema = z.object({
-  token: z.string().min(10),
+  refreshToken: z.string().min(10),
+});
+
+export const validateRefreshTokenRequestBodySchema = z.object({
+  refreshToken: z.string().min(10),
 });

@@ -2,6 +2,10 @@ import axios from "axios";
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
+if (!AUTH_SERVICE_URL) {
+  throw new Error("AUTH_SERVICE_URL is not defined");
+}
+
 const API_KEY = process.env.AUTH_API_KEY;
 
 const authClient = axios.create({

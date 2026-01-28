@@ -6,6 +6,7 @@ import {
   forgotPassword,
   checkEmail,
   resetPassword,
+  refreshToken,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
@@ -13,7 +14,7 @@ import {
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
   resetPasswordRequestBodySchema,
-  signupRequestBodySchema,
+  signupRequestBodySchema, validateRefreshTokenRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
 
@@ -203,5 +204,43 @@ router.post(
   ValidateBody(resetPasswordRequestBodySchema),
   resetPassword,
 );
+
+/**
+ * @swagger
+ * /auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *     responses:
+ *       200:
+ *         description: Token refreshed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token:
+ *                       type: string
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post("/refresh",ValidateBody(validateRefreshTokenRequestBodySchema), refreshToken);
 
 export default router;
