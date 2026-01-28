@@ -2205,7 +2205,7 @@ __metadata:
     jsonwebtoken: "npm:^9.0.2"
     mongodb: "npm:^6.13.0"
     mongoose: "npm:^8.9.5"
-    nodemailer: "npm:^6.10.0"
+    nodemailer: "npm:7.0.11"
     nodemon: "npm:^3.1.9"
     prettier: "npm:3.4.2"
     swagger-jsdoc: "npm:^6.2.8"
@@ -3809,10 +3809,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:^6.10.0":
-  version: 6.10.1
-  resolution: "nodemailer@npm:6.10.1"
-  checksum: 10c0/e81fde258ea4f4e5646e9e3eebe89294d007939999d2d1a8c96c5488fa00bf659e46cf76fccb2697e9aa6ef9807a1ed47ff2aef6ad30b795e3849b6997066d16
+"nodemailer@npm:7.0.11":
+  version: 7.0.11
+  resolution: "nodemailer@npm:7.0.11"
+  checksum: 10c0/208f108fdb4c5dd0e3a2f013578d53dad505cf1b9c7a084f6d22fc9d6f3912daafb4a23793ca568ff848afc35f15f4eb24382d3f6f9fb8ede4a8410d4ca63618
   languageName: node
   linkType: hard
 

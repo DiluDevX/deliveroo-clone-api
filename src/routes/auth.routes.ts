@@ -14,7 +14,6 @@ import {
   loginRequestBodySchema,
   resetPasswordRequestBodySchema,
   signupRequestBodySchema,
-  validateOAuthTokenRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
 
@@ -164,14 +163,45 @@ router.post(
   forgotPassword,
 );
 
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset password with token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - token
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               token:
+ *                 type: string
+ *                 example: abc123token
+ *               password:
+ *                 type: string
+ *                 example: newPassword123
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Invalid or expired token
+ *       404:
+ *         description: User not found
+ */
 router.post(
   "/reset-password",
   ValidateBody(resetPasswordRequestBodySchema),
   resetPassword,
-);
-router.post(
-  "validate-OAuthToken",
-  ValidateBody(validateOAuthTokenRequestBodySchema),
 );
 
 export default router;
