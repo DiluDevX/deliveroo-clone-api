@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth.routes";
 import cartRoutes from "./routes/cart.routes";
 import cors from "cors";
 import { swaggerUi, swaggerSpec } from "./swagger";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ const port = 4000;
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/restaurants", restaurantRoutes);

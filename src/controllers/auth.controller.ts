@@ -31,7 +31,7 @@ export const login = async (
     const setCookieHeader = result.headers["set-cookie"];
     if (setCookieHeader) {
       const modifiedCookies = setCookieHeader.map((cookie: string) =>
-        cookie.replace(/SameSite=None/gi, "SameSite=Lax")
+        cookie.replace(/SameSite=None/gi, "SameSite=Lax"),
       );
       res.setHeader("Set-Cookie", modifiedCookies);
     }
@@ -53,15 +53,6 @@ export const signup = async (
 ) => {
   try {
     const result = await authService.signup(req.body);
-
-    // Forward cookies from auth service to client with SameSite=Lax
-    const setCookieHeader = result.headers["set-cookie"];
-    if (setCookieHeader) {
-      const modifiedCookies = setCookieHeader.map((cookie: string) =>
-        cookie.replace(/SameSite=None/gi, "SameSite=Lax")
-      );
-      res.setHeader("Set-Cookie", modifiedCookies);
-    }
 
     res.status(201).json(result.data);
   } catch (error) {
@@ -97,7 +88,6 @@ export const resetPassword = async (
 ) => {
   try {
     const result = await authService.resetPassword(
-      req.body.email,
       req.body.token,
       req.body.password,
     );
@@ -117,8 +107,9 @@ export const refreshToken = async (
   next: NextFunction,
 ) => {
   try {
-    const result = await authService.refresh(req.body.refreshToken);
-    res.status(200).json(result);
+    // Pass the refresh token from the cookie
+    const result = await authService.refresh(req.cookies.refreshToken);
+    res.status(200).json(result.data);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
       res.status(error.response.status).json(error.response.data);
@@ -129,13 +120,13 @@ export const refreshToken = async (
 };
 
 export const checkAuthStatus = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const result = await authService.authStatus();
-    res.status(200).json(result);
+    const result = await authService.authStatus(req.cookies.accessToken);
+    res.status(200).json(result.data);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
       res.status(error.response.status).json(error.response.data);
@@ -143,4 +134,37 @@ export const checkAuthStatus = async (
       next(error);
     }
   }
-}
+};
+
+export const logOut = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const response = await authService.logOut(req.cookies.refreshToken);
+    if (response.status !== 200) {
+      return res.status(response.status).json(response.data);
+    }
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
+  }
+};

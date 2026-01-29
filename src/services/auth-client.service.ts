@@ -29,7 +29,7 @@ authClient.interceptors.response.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 export const authService = {
@@ -55,14 +55,43 @@ export const authService = {
     return response;
   },
 
-  authStatus: async () => {
-     await authClient.get("/auth/me");
-    return
+  logOut: async (refreshToken: string) => {
+    const response = await authClient.post(
+      "/auth/logOut",
+      {},
+      {
+        headers: {
+          Cookie: `refreshToken=${refreshToken}`,
+        },
+      },
+    );
+    return response;
+  },
+
+  authStatus: async (accessToken: string) => {
+    const response = await authClient.post(
+      "/auth/me",
+      {},
+      {
+        headers: {
+          Cookie: `accessToken=${accessToken}`,
+        },
+      },
+    );
+    return response;
   },
 
   refresh: async (refreshToken: string) => {
-    const response = await authClient.post("/auth/refresh", { refreshToken });
-    return response.data;
+    const response = await authClient.post(
+      "/auth/refresh",
+      {},
+      {
+        headers: {
+          Cookie: `refreshToken=${refreshToken}`,
+        },
+      },
+    );
+    return response;
   },
 
   forgotPassword: async (email: string) => {
@@ -72,9 +101,8 @@ export const authService = {
     return response.data;
   },
 
-  resetPassword: async (email: string, token: string, password: string) => {
+  resetPassword: async (token: string, password: string) => {
     const response = await authClient.post("/auth/reset-password", {
-      email,
       token,
       password,
     });

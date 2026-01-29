@@ -8,6 +8,7 @@ import {
   resetPassword,
   refreshToken,
   checkAuthStatus,
+  logOut,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
@@ -16,7 +17,6 @@ import {
   loginRequestBodySchema,
   resetPasswordRequestBodySchema,
   signupRequestBodySchema,
-  validateRefreshTokenRequestBodySchema,
 } from "../schema/auth.schema";
 import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
 
@@ -243,12 +243,10 @@ router.post(
  *       401:
  *         description: Invalid or expired refresh token
  */
-router.post(
-  "/refresh",
-  ValidateBody(validateRefreshTokenRequestBodySchema),
-  refreshToken,
-);
+router.post("/refresh", refreshToken);
 
-router.post("/me", checkAuthStatus)
+router.post("/me", checkAuthStatus);
+
+router.post("/logOut", logOut);
 
 export default router;
