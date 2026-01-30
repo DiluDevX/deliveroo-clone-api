@@ -1,4 +1,5 @@
 import express from "express";
+import authService from "../services/auth-client.service";
 
 const router = express.Router();
 
@@ -22,9 +23,29 @@ const router = express.Router();
  *                   example: OK
  */
 router.get("/", (_req, res) => {
+  let authServiceStatus = "unknown";
+  let mailServiceStatus = "unknown";
+  router.get("http://localhost:4001/", (_req, res) => {
+    if (res.status(200)) {
+      authServiceStatus = "up";
+    } else {
+      authServiceStatus = "down";
+    }
+  });
+  router.get("http://localhost:3000/", (_req, res) => {
+    if (res.status(200)) {
+      mailServiceStatus = "up";
+    } else {
+      mailServiceStatus = "down";
+    }
+  });
   res.status(200).json({
     message: "OK",
     time: new Date().toISOString(),
+    services: {
+      authService: authServiceStatus,
+      mailService: mailServiceStatus,
+    },
   });
 });
 
