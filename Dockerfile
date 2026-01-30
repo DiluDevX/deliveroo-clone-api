@@ -3,15 +3,12 @@ ARG NODE_VERSION=24.11.1
 
 FROM node:${NODE_VERSION}-alpine as base
 WORKDIR /app
-RUN corepack enable && corepack prepare yarn@stable --activate
 
 FROM base as deps
-COPY package.json yarn.lock ./
+COPY package.json ./
 RUN npm install
 
 FROM deps as build
-COPY .yarn ./.yarn
-COPY .yarnrc.yml ./
 COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build

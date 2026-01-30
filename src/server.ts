@@ -32,7 +32,7 @@ app.use("/api/users", usersRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use("/api", commonRoutes);
+app.use("/", commonRoutes);
 
 const startServer = async () => {
   try {
