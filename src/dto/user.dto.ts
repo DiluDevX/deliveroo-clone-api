@@ -18,6 +18,8 @@ export type UserResponseDTO = {
   email: string;
   phone?: string;
   role: string;
+  status: "Active" | "Suspended";
+  orderCount: number;
 };
 
 export type FindAndUpdateUserPasswordRequestBodyDTO = {

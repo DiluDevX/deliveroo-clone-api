@@ -5,7 +5,7 @@ export interface IRestaurant {
   createdAt: Date;
   updatedAt: Date;
   orgId: string;
-
+  adminId: string;
   name: string;
   image: string;
   description?: string;
@@ -14,6 +14,11 @@ export interface IRestaurant {
   closingAt: string;
   minimumValue: string;
   deliveryCharge: string;
+  cuisine: string;
+  rating: number;
+  totalOrders: number;
+  totalRevenue: number;
+  status: "active" | "disabled";
 }
 
 const restaurantSchema = new Schema<IRestaurant>(
@@ -45,6 +50,10 @@ const restaurantSchema = new Schema<IRestaurant>(
       required: true,
       unique: true,
     },
+    adminId: {
+      type: String,
+      required: true,
+    },
     minimumValue: {
       type: String,
       required: true,
@@ -52,6 +61,28 @@ const restaurantSchema = new Schema<IRestaurant>(
     deliveryCharge: {
       type: String,
       required: true,
+    },
+    cuisine: {
+      type: String,
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+    },
+    totalOrders: {
+      type: Number,
+      required: true,
+    },
+    totalRevenue: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+      default: "active",
+      enum: ["active", "disabled"],
     },
   },
   { timestamps: true },

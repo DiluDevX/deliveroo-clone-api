@@ -13,6 +13,9 @@ import cartRoutes from "./routes/cart.routes";
 import cors from "cors";
 import { swaggerUi, swaggerSpec } from "./swagger";
 import cookieParser from "cookie-parser";
+import { financeRoutes } from "./routes/finance.routes";
+import orderRoutes from "./routes/order.routes";
+import adminRoutes from "./routes/admin.routes";
 
 dotenv.config();
 
@@ -25,6 +28,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/finance", financeRoutes);
+app.use("/api/orders", orderRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/dishes", dishRoutes);
 app.use("/api/categories", categoryRoutes);

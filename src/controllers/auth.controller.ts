@@ -27,7 +27,6 @@ export const login = async (
   try {
     const result = await authService.login(req.body);
 
-    // Forward cookies from auth service to client with SameSite=Lax
     const setCookieHeader = result.headers["set-cookie"];
     if (setCookieHeader) {
       const modifiedCookies = setCookieHeader.map((cookie: string) =>

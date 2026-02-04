@@ -92,7 +92,6 @@ router.get("/", getAllRestaurants);
  */
 router.post(
   "/",
-  authorizeRole("admin"),
   ValidateBody(createRestaurantRequestBodySchema),
   createNewRestaurant,
 );

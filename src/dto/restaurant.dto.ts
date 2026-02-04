@@ -28,12 +28,18 @@ export type RestaurantResponseDTO = {
   orgId: string;
   name: string;
   image: string;
+  adminId: string;
   description?: string;
   tags: string[];
   openingAt: string;
   closingAt: string;
   minimumValue: string;
   deliveryCharge: string;
+  cuisine: string;
+  rating: number;
+  totalOrders: number;
+  totalRevenue: number;
+  status: "active" | "disabled";
 };
 
 export type GetAllRestaurantsResponseBodyDTO = RestaurantResponseDTO[];

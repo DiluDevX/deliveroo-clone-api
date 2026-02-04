@@ -1,5 +1,6 @@
 import { restaurantService } from "../services/restaurant.service";
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 import {
   CreateNewRestaurantRequestBodyDTO,
   CreateNewRestaurantResponseBodyDTO,
@@ -18,18 +19,25 @@ import {
   OrgIdPathParamsDTO,
 } from "../dto/common.dto";
 import { IRestaurant } from "../models/restaurant.model";
+import { financeService } from "../services/finance.service";
 
 const toResponseDTO = (restaurant: IRestaurant): RestaurantResponseDTO => ({
   id: restaurant._id.toString(),
   orgId: restaurant.orgId,
   name: restaurant.name,
   image: restaurant.image,
+  adminId: restaurant.adminId,
   description: restaurant.description,
   tags: restaurant.tags,
   openingAt: restaurant.openingAt,
   closingAt: restaurant.closingAt,
   minimumValue: restaurant.minimumValue,
   deliveryCharge: restaurant.deliveryCharge,
+  cuisine: restaurant.cuisine,
+  rating: restaurant.rating,
+  totalOrders: restaurant.totalOrders,
+  totalRevenue: restaurant.totalRevenue,
+  status: restaurant.status,
 });
 
 const getAllRestaurants = async (
@@ -59,10 +67,24 @@ const createNewRestaurant = async (
 ) => {
   try {
     const createdRestaurant = await restaurantService.createNew(req.body);
-    res.status(201).json({
-      message: "Created",
-      data: toResponseDTO(createdRestaurant),
+
+    const financeRecord = await financeService.createFinanceRecord({
+      restaurantId: new Types.ObjectId(createdRestaurant.id),
+      totalRevenue: 0,
+      platformCommission: 0,
+      commissionPercentage: 10,
+      amountDue: 0,
+      amountPaid: 0,
+      pendingAmount: 0,
+      status: "pending",
     });
+
+    if (financeRecord && createdRestaurant) {
+      res.status(201).json({
+        message: "Created and updated Finance Record",
+        data: toResponseDTO(createdRestaurant),
+      });
+    }
   } catch (error) {
     console.log(error, "error");
     res.status(500).json({ message: "Internal Server Error" });

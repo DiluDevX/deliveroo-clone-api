@@ -17,7 +17,7 @@ import {
 
 /**
  * @swagger
- * /users:
+ * /users/all:
  *   get:
  *     summary: Get all users (Admin only)
  *     tags: [Users]
@@ -49,7 +49,7 @@ import {
  *                       role:
  *                         type: string
  */
-router.get("/", getAllUsers);
+router.get("/all", getAllUsers);
 
 /**
  * @swagger
