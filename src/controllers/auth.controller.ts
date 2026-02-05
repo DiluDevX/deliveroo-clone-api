@@ -107,7 +107,21 @@ export const refreshToken = async (
 ) => {
   try {
     // Pass the refresh token from the cookie
+    if (req.cookies.refreshToken === undefined) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const result = await authService.refresh(req.cookies.refreshToken);
+    const setCookieHeader = result.headers["set-cookie"];
+    if (setCookieHeader) {
+      const modifiedCookies = setCookieHeader.map((cookie: string) =>
+        cookie.replace(/SameSite=None/gi, "SameSite=Lax"),
+      );
+      res.setHeader("set-cookie", modifiedCookies);
+    }
+    console.log(
+      "🍪 Cookies on refresh response:",
+      result.headers["set-cookie"],
+    );
     res.status(200).json(result.data);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
@@ -124,6 +138,9 @@ export const checkAuthStatus = async (
   next: NextFunction,
 ) => {
   try {
+    if (req.cookies.accessToken === undefined) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const result = await authService.authStatus(req.cookies.accessToken);
     res.status(200).json(result.data);
   } catch (error) {

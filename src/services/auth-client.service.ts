@@ -96,6 +96,7 @@ export const authService = {
   },
 
   refresh: async (refreshToken: string) => {
+    console.log("🍪 Sending refresh token cookie:", refreshToken);
     const response = await authClient.post(
       "/auth/refresh",
       {},
@@ -104,6 +105,10 @@ export const authService = {
           Cookie: `refreshToken=${refreshToken}`,
         },
       },
+    );
+    console.log(
+      "🍪 Cookies on refresh response:",
+      response.headers["set-cookie"],
     );
     return response;
   },
