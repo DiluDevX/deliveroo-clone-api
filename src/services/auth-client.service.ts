@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IUser } from "../models/user.model";
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
@@ -49,9 +50,17 @@ export const authService = {
     email: string;
     phone?: string;
     password: string;
-    role?: "admin" | "user";
+    role?: "platform_admin" | "user" | "restaurant_admin";
   }) => {
     const response = await authClient.post("/auth/signup", data);
+    return response;
+  },
+
+  updatePartially: async (userId: string, updateData: Partial<IUser>) => {
+    const response = await authClient.patch(
+      `/auth/update-partially/${userId}`,
+      updateData,
+    );
     return response;
   },
 
@@ -96,7 +105,6 @@ export const authService = {
   },
 
   refresh: async (refreshToken: string) => {
-    console.log("🍪 Sending refresh token cookie:", refreshToken);
     const response = await authClient.post(
       "/auth/refresh",
       {},
@@ -105,10 +113,6 @@ export const authService = {
           Cookie: `refreshToken=${refreshToken}`,
         },
       },
-    );
-    console.log(
-      "🍪 Cookies on refresh response:",
-      response.headers["set-cookie"],
     );
     return response;
   },

@@ -17,6 +17,8 @@ export const createRestaurantRequestBodySchema = z.object({
   minimumValue: restaurantMinimumValueSchema,
   deliveryCharge: restaurantDeliveryChargeSchema,
   image: restaurantImageSchema,
+  cuisine: z.string(),
+  adminId: z.string(),
 });
 
 export const updateRestaurantFullyRequestBodySchema = z.object({

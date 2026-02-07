@@ -60,7 +60,7 @@ const restaurantSchema = new Schema<IRestaurant>(
     },
     deliveryCharge: {
       type: String,
-      required: true,
+      required: false,
     },
     cuisine: {
       type: String,
@@ -68,15 +68,18 @@ const restaurantSchema = new Schema<IRestaurant>(
     },
     rating: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     totalOrders: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     totalRevenue: {
       type: Number,
-      required: true,
+      required: false,
+      default: 0,
     },
     status: {
       type: String,

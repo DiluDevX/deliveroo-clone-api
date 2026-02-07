@@ -9,6 +9,7 @@ import {
   refreshToken,
   checkAuthStatus,
   logOut,
+  updateUserPartially,
 } from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
@@ -17,8 +18,13 @@ import {
   loginRequestBodySchema,
   resetPasswordRequestBodySchema,
   signupRequestBodySchema,
+  signUpRestaurantAdminRequestBodySchema,
 } from "../schema/auth.schema";
-import { optionalAuthorizeRole } from "../middleware/authorize-admin.middleware";
+import {
+  updateUserPartiallyRequestBodySchema,
+  updateUserPartiallyRequestParamsSchema,
+} from "../schema/users.schema";
+import ValidateParams from "../middleware/validate-params.middleware";
 
 /**
  * @swagger
@@ -129,10 +135,11 @@ router.post("/login", ValidateBody(loginRequestBodySchema), login);
  *       400:
  *         description: User already exists
  */
+router.post("/signup", ValidateBody(signupRequestBodySchema), signup);
+
 router.post(
-  "/signup",
-  optionalAuthorizeRole("admin"),
-  ValidateBody(signupRequestBodySchema),
+  "/admin/create-restaurant-admin",
+  ValidateBody(signUpRestaurantAdminRequestBodySchema),
   signup,
 );
 
@@ -205,6 +212,13 @@ router.post(
   "/reset-password",
   ValidateBody(resetPasswordRequestBodySchema),
   resetPassword,
+);
+
+router.patch(
+  "/admin/update-partially/:userId",
+  ValidateBody(updateUserPartiallyRequestBodySchema),
+  ValidateParams(updateUserPartiallyRequestParamsSchema),
+  updateUserPartially,
 );
 
 /**

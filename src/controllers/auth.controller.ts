@@ -63,6 +63,33 @@ export const signup = async (
   }
 };
 
+export const updateUserPartially = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  const updateData = req.body;
+  if (Object.keys(updateData).length === 0) {
+    return res
+      .status(400)
+      .json({ message: "At least one field is required to update" });
+  }
+  try {
+    const result = await authService.updatePartially(userId, updateData.data);
+    res.status(200).json(result.data);
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
+  }
+};
+
 export const forgotPassword = async (
   req: Request,
   res: Response,
@@ -118,10 +145,7 @@ export const refreshToken = async (
       );
       res.setHeader("set-cookie", modifiedCookies);
     }
-    console.log(
-      "🍪 Cookies on refresh response:",
-      result.headers["set-cookie"],
-    );
+
     res.status(200).json(result.data);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {

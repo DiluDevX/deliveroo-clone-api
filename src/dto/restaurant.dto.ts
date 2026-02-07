@@ -13,6 +13,8 @@ export type CreateNewRestaurantRequestBodyDTO = {
   closingAt: string;
   minimumValue: string;
   deliveryCharge: string;
+  cuisine: string;
+  adminId: string;
 };
 
 export type UpdateRestaurantFullyRequestBodyDTO = z.infer<

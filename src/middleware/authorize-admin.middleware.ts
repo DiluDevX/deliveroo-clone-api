@@ -1,67 +1,29 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { JwtPayloadDTO } from "../dto/auth.dto";
 import dotenv from "dotenv";
 dotenv.config();
 
-const SECRET_KEY = process.env.SECRET_KEY as string;
-
-export const authorizeRole = (role: string) => {
+export const AuthorizeRestaurantAdmin = () => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader?.startsWith("Bearer ")
-      ? authHeader.split(" ")[1]
-      : null;
-
-    if (!token) {
-      res.status(401).json({ error: "Access denied. No token provided." });
+    const reqRole = req.headers.restaurant_admin;
+    if (!reqRole) {
+      res
+        .status(403)
+        .json({ error: "Access denied. Insufficient permissions." });
       return;
     }
-
-    try {
-      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayloadDTO;
-      req.user = decodedToken;
-
-      if (req.user.role !== role) {
-        res.status(403).json({ message: "Access denied. Insufficient role." });
-        return;
-      }
-
-      next();
-    } catch (error) {
-      console.log(error);
-      res.status(401).json({ error: "Access denied. Invalid token." });
-      return;
-    }
+    next();
   };
 };
 
-export const optionalAuthorizeRole = (role: string) => {
+export const AuthorizePlatformAdmin = () => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader?.startsWith("Bearer ")
-      ? authHeader.split(" ")[1]
-      : null;
-
-    if (!token) {
-      next();
+    const reqRole = req.headers.platform_admin;
+    if (!reqRole) {
+      res
+        .status(403)
+        .json({ error: "Access denied. Insufficient permissions." });
       return;
     }
-
-    try {
-      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayloadDTO;
-      req.user = decodedToken;
-
-      if (req.user.role !== role) {
-        res.status(403).json({ message: "Access denied. Insufficient role." });
-        return;
-      }
-
-      next();
-    } catch (error) {
-      console.log(error);
-      res.status(401).json({ error: "Access denied. Invalid token." });
-      return;
-    }
+    next();
   };
 };

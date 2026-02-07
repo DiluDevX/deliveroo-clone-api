@@ -8,7 +8,7 @@ import {
 } from "../schema/category.schema";
 import ValidateParams from "../middleware/validate-params.middleware";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
-import { authorizeRole } from "../middleware/authorize-admin.middleware";
+import { AuthorizeRestaurantAdmin } from "../middleware/authorize-admin.middleware";
 const {
   getAllCategories,
   createNewCategory,
@@ -85,7 +85,7 @@ router.get("/", getAllCategories);
  */
 router.post(
   "/",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateBody(CreateCategoryRequestBodySchema),
   createNewCategory,
 );
@@ -126,7 +126,7 @@ router.post(
  */
 router.put(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(FullyUpdateCategoryRequestBodySchema),
   updateCategoryFully,
@@ -181,7 +181,7 @@ router.get("/:id", ValidateParams(objectIdPathParamsSchema), getCategory);
  */
 router.patch(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(PartiallyUpdateCategoryRequestBodySchema),
   updateCategoryPartially,
@@ -209,7 +209,7 @@ router.patch(
  */
 router.delete(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   deleteCategory,
 );
