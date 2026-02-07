@@ -11,6 +11,8 @@ export type IUser = {
   phone?: string;
   password: string;
   role: string;
+  status: "Active" | "Suspended";
+  orderCount: number;
 };
 
 const userSchema = new Schema<IUser>(
@@ -38,6 +40,17 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: true,
       enum: ["admin", "user"],
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ["Active", "Suspended"],
+      default: "Active",
+    },
+    orderCount: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
   { timestamps: true },

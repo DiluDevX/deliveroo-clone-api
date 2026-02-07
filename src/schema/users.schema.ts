@@ -29,3 +29,7 @@ export const updateUserPartiallyRequestBodySchema = z.object({
   phone: usersPhoneSchema.optional(),
   password: usersCreatePasswordSchema.optional(),
 });
+
+export const updateUserPartiallyRequestParamsSchema = z.object({
+  userId: z.string().min(1),
+});

@@ -2,7 +2,6 @@ import { usersService } from "../services/users.service";
 import { Request, Response } from "express";
 import dotenv from "dotenv";
 import {
-  GetAllUsersResponseBodyDTO,
   GetAnUserResponseBodyDTO,
   UpdateUserFullyRequestBodyDTO,
   UpdateUserFullyResponseBodyDTO,
@@ -17,6 +16,7 @@ import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { IUser } from "../models/user.model";
 import { hashPassword } from "../utils/PasswordHashBcrypt";
 import PasswordResetToken from "../models/reset-password.model";
+import authService from "../services/auth-client.service";
 
 dotenv.config();
 
@@ -27,20 +27,18 @@ const toResponseDTO = (user: IUser): UserResponseDTO => ({
   email: user.email,
   phone: user.phone ?? undefined,
   role: user.role,
+  status: user.status,
+  orderCount: user.orderCount,
 });
 
-const getAllUsers = async (
-  _req: Request,
-  res: Response<CommonResponseDTO<GetAllUsersResponseBodyDTO>>,
-) => {
+const getAllUsers = async (_req: Request, res: Response) => {
   try {
-    const usersArray = await usersService.findAll();
+    const usersArray = await authService.getAllUsers();
     res.status(200).json({
       message: "OK",
-      data: usersArray.map(toResponseDTO),
+      data: usersArray.users,
     });
-  } catch (error) {
-    console.log(error, "error");
+  } catch {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -50,14 +48,14 @@ const getAnUser = async (
   res: Response<CommonResponseDTO<GetAnUserResponseBodyDTO>>,
 ) => {
   try {
-    const foundUser = await usersService.findById(req.params.id);
-    if (!foundUser) {
+    const foundUser = await authService.getUsersByIds([req.params.id]);
+    if (!foundUser || foundUser.length === 0) {
       res.status(404).json({ message: "User Not found" });
       return;
     }
     res.status(200).json({
       message: "OK",
-      data: toResponseDTO(foundUser),
+      data: toResponseDTO(foundUser[0]),
     });
   } catch (error) {
     console.log(error, "error");

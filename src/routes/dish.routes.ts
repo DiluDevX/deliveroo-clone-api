@@ -17,7 +17,7 @@ import {
 import ValidateParams from "../middleware/validate-params.middleware";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
 import ValidateQuery from "../middleware/validate-query.middleware";
-import { authorizeRole } from "../middleware/authorize-admin.middleware";
+import { AuthorizeRestaurantAdmin } from "../middleware/authorize-admin.middleware";
 
 const router = express.Router();
 
@@ -106,7 +106,7 @@ router.get("/", ValidateQuery(DishQueryParamsSchema), getAllDishes);
  */
 router.post(
   "/",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateBody(CreateDishRequestBodySchema),
   createNewDish,
 );
@@ -155,7 +155,7 @@ router.post(
  */
 router.put(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(FullyUpdateDishRequestBodySchema),
   updateDishFully,
@@ -222,7 +222,7 @@ router.get(
  */
 router.patch(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(PartiallyUpdateDishRequestBodySchema),
   updateDishPartially,
@@ -250,7 +250,7 @@ router.patch(
  */
 router.delete(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   deleteDish,
 );

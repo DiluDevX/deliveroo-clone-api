@@ -18,7 +18,7 @@ import {
 } from "../schema/restaurant.schema";
 import { objectIdPathParamsSchema } from "../schema/common.schema";
 import ValidateParams from "../middleware/validate-params.middleware";
-import { authorizeRole } from "../middleware/authorize-admin.middleware";
+import { AuthorizeRestaurantAdmin } from "../middleware/authorize-admin.middleware";
 
 /**
  * @swagger
@@ -92,7 +92,6 @@ router.get("/", getAllRestaurants);
  */
 router.post(
   "/",
-  authorizeRole("admin"),
   ValidateBody(createRestaurantRequestBodySchema),
   createNewRestaurant,
 );
@@ -125,7 +124,7 @@ router.post(
  */
 router.put(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(updateRestaurantFullyRequestBodySchema),
   updateARestaurantFully,
@@ -182,7 +181,7 @@ router.get(
  */
 router.patch(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   ValidateBody(updateRestaurantPartiallyRequestBodySchema),
   updateARestaurantPartially,
@@ -210,7 +209,7 @@ router.patch(
  */
 router.delete(
   "/:id",
-  authorizeRole("admin"),
+  AuthorizeRestaurantAdmin(),
   ValidateParams(objectIdPathParamsSchema),
   deleteARestaurant,
 );

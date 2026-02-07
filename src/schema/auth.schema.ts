@@ -26,6 +26,25 @@ export const signupRequestBodySchema = z.object({
   role: z.enum(["admin", "user"]).default("user"),
 });
 
+export const userUpdateRequestBodySchema = z.object({
+  firstName: userFirstNameSchema.optional(),
+  lastName: usersLastNameSchema.optional(),
+  email: usersEmailSchema.optional(),
+  phone: usersPhoneSchema.optional(),
+  password: usersCreatePasswordSchema.optional(),
+  role: z.enum(["admin", "user"]).default("user").optional(),
+  status: z.enum(["active", "inactive"]).default("active").optional(),
+  restaurantID: z.string().optional(),
+});
+
+export const signUpRestaurantAdminRequestBodySchema = z.object({
+  firstName: userFirstNameSchema,
+  lastName: usersLastNameSchema,
+  email: usersEmailSchema,
+  password: usersCreatePasswordSchema,
+  role: z.enum(["restaurant_admin"]),
+});
+
 export const forgotPasswordRequestBodySchema = z.object({
   email: usersEmailSchema,
 });

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-const restaurantNameSchema = z.string().min(1).max(20);
+const restaurantNameSchema = z.string().min(1).max(30);
 const restaurantDescriptionSchema = z.string().min(3).max(150);
-const restaurantTagSchema = z.string().min(3).max(20);
+const restaurantTagSchema = z.string().min(3).max(30);
 const restaurantTimeSchema = z.string().time();
 const restaurantMinimumValueSchema = z.string().min(1);
 const restaurantDeliveryChargeSchema = z.string().min(1);
@@ -17,6 +17,8 @@ export const createRestaurantRequestBodySchema = z.object({
   minimumValue: restaurantMinimumValueSchema,
   deliveryCharge: restaurantDeliveryChargeSchema,
   image: restaurantImageSchema,
+  cuisine: z.string(),
+  adminId: z.string(),
 });
 
 export const updateRestaurantFullyRequestBodySchema = z.object({

@@ -27,7 +27,6 @@ export const login = async (
   try {
     const result = await authService.login(req.body);
 
-    // Forward cookies from auth service to client with SameSite=Lax
     const setCookieHeader = result.headers["set-cookie"];
     if (setCookieHeader) {
       const modifiedCookies = setCookieHeader.map((cookie: string) =>
@@ -55,6 +54,33 @@ export const signup = async (
     const result = await authService.signup(req.body);
 
     res.status(201).json(result.data);
+  } catch (error) {
+    if (error instanceof AxiosError && error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      next(error);
+    }
+  }
+};
+
+export const updateUserPartially = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+  const updateData = req.body;
+  if (Object.keys(updateData).length === 0) {
+    return res
+      .status(400)
+      .json({ message: "At least one field is required to update" });
+  }
+  try {
+    const result = await authService.updatePartially(userId, updateData.data);
+    res.status(200).json(result.data);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
       res.status(error.response.status).json(error.response.data);
@@ -108,7 +134,18 @@ export const refreshToken = async (
 ) => {
   try {
     // Pass the refresh token from the cookie
+    if (req.cookies.refreshToken === undefined) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const result = await authService.refresh(req.cookies.refreshToken);
+    const setCookieHeader = result.headers["set-cookie"];
+    if (setCookieHeader) {
+      const modifiedCookies = setCookieHeader.map((cookie: string) =>
+        cookie.replace(/SameSite=None/gi, "SameSite=Lax"),
+      );
+      res.setHeader("set-cookie", modifiedCookies);
+    }
+
     res.status(200).json(result.data);
   } catch (error) {
     if (error instanceof AxiosError && error.response) {
@@ -125,6 +162,9 @@ export const checkAuthStatus = async (
   next: NextFunction,
 ) => {
   try {
+    if (req.cookies.accessToken === undefined) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     const result = await authService.authStatus(req.cookies.accessToken);
     res.status(200).json(result.data);
   } catch (error) {

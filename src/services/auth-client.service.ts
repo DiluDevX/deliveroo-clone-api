@@ -1,4 +1,5 @@
 import axios from "axios";
+import { IUser } from "../models/user.model";
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
@@ -33,6 +34,11 @@ authClient.interceptors.response.use(
 );
 
 export const authService = {
+  getAllUsers: async () => {
+    const response = await authClient.get("/auth/users");
+    return response.data;
+  },
+
   checkEmail: async (email: string) => {
     const response = await authClient.post("/auth/check-email", { email });
     return response.data;
@@ -44,9 +50,26 @@ export const authService = {
     email: string;
     phone?: string;
     password: string;
-    role?: "admin" | "user";
+    role?: "platform_admin" | "user" | "restaurant_admin";
   }) => {
     const response = await authClient.post("/auth/signup", data);
+    return response;
+  },
+
+  updatePartially: async (userId: string, updateData: Partial<IUser>) => {
+    const response = await authClient.patch(
+      `/auth/update-partially/${userId}`,
+      updateData,
+    );
+    return response;
+  },
+
+  adminLogin: async (data: {
+    email: string;
+    password: string;
+    apiKey: string;
+  }) => {
+    const response = await authClient.post("/auth/admin-login", data);
     return response;
   },
 
@@ -107,6 +130,16 @@ export const authService = {
       password,
     });
     return response.data;
+  },
+
+  getUsersByIds: async (userIds: string[]) => {
+    try {
+      const response = await authClient.post(`/users/batch`, { userIds });
+      return response.data.users || [];
+    } catch (error) {
+      console.error("Error fetching users from auth service:", error);
+      return [];
+    }
   },
 };
 
