@@ -17,19 +17,19 @@ type DishFilters = z.infer<typeof DishQueryParamsSchema>;
 // Transform functions for ObjectId conversion
 const toDbDocument = (data: CreateDishInput) => ({
   ...data,
-  category: new Types.ObjectId(data.category),
-  restaurant: new Types.ObjectId(data.restaurant),
+  categoryId: new Types.ObjectId(data.categoryId),
+  restaurantId: new Types.ObjectId(data.restaurant),
 });
 
 const toPartialDbDocument = (data: PartialUpdateDishInput) => {
   const result: Record<string, unknown> = { ...data };
 
-  if (data.category) {
-    result.category = new Types.ObjectId(data.category);
+  if (data.categoryId) {
+    result.categoryId = new Types.ObjectId(data.categoryId);
   }
 
   if (data.restaurant) {
-    result.restaurant = new Types.ObjectId(data.restaurant);
+    result.restaurantId = new Types.ObjectId(data.restaurant);
   }
 
   return result;

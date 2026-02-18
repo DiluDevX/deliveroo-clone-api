@@ -1,30 +1,31 @@
 import express from "express";
 const router = express.Router();
-import {
-  signup,
-  login,
-  forgotPassword,
-  checkEmail,
-  resetPassword,
-  refreshToken,
-  checkAuthStatus,
-  logOut,
-  updateUserPartially,
-} from "../controllers/auth.controller";
 import ValidateBody from "../middleware/validate-body.middleware";
 import {
   checkEmailRequestBodySchema,
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
+  refreshTokenHeaderSchema,
   resetPasswordRequestBodySchema,
   signupRequestBodySchema,
-  signUpRestaurantAdminRequestBodySchema,
 } from "../schema/auth.schema";
 import {
   updateUserPartiallyRequestBodySchema,
   updateUserPartiallyRequestParamsSchema,
 } from "../schema/users.schema";
 import ValidateParams from "../middleware/validate-params.middleware";
+import {
+  checkAuthStatus,
+  checkEmail,
+  forgotPassword,
+  login,
+  logOut,
+  refreshToken,
+  resetPassword,
+  signup,
+  updateUserPartially,
+} from "../controllers/auth.controller";
+import ValidateHeader from "../middleware/validate-header.middleware";
 
 /**
  * @swagger
@@ -137,12 +138,6 @@ router.post("/login", ValidateBody(loginRequestBodySchema), login);
  */
 router.post("/signup", ValidateBody(signupRequestBodySchema), signup);
 
-router.post(
-  "/admin/create-restaurant-admin",
-  ValidateBody(signUpRestaurantAdminRequestBodySchema),
-  signup,
-);
-
 /**
  * @swagger
  * /auth/forgot-password:
@@ -214,13 +209,6 @@ router.post(
   resetPassword,
 );
 
-router.patch(
-  "/admin/update-partially/:userId",
-  ValidateBody(updateUserPartiallyRequestBodySchema),
-  ValidateParams(updateUserPartiallyRequestParamsSchema),
-  updateUserPartially,
-);
-
 /**
  * @swagger
  * /auth/refresh:
@@ -257,7 +245,11 @@ router.patch(
  *       401:
  *         description: Invalid or expired refresh token
  */
-router.post("/refresh", refreshToken);
+router.post(
+  "/refresh",
+  ValidateHeader(refreshTokenHeaderSchema, "authorization"),
+  refreshToken,
+);
 
 router.post("/me", checkAuthStatus);
 

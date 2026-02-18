@@ -1,7 +1,7 @@
 import { z } from "zod";
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import Restaurant from "../models/restaurant.model";
+import Restaurant, { IRestaurant } from "../models/restaurant.model";
 import {
   createRestaurantRequestBodySchema,
   updateRestaurantFullyRequestBodySchema,
@@ -16,35 +16,38 @@ type UpdateRestaurantInput = z.infer<
 type PartialUpdateRestaurantInput = z.infer<
   typeof updateRestaurantPartiallyRequestBodySchema
 >;
-
-// Service methods
-const findAll = async () => {
+const findAll = async (): Promise<IRestaurant[]> => {
   return Restaurant.find();
 };
 
-const createNew = async (data: CreateRestaurantInput) => {
+const createNew = async (data: CreateRestaurantInput): Promise<IRestaurant> => {
   return Restaurant.create({ ...data, orgId: uuidv4() });
 };
 
-const findOne = async (orgID: string) => {
-  const input = mongoose.Types.ObjectId.isValid(orgID)
-    ? { _id: orgID }
-    : { name: orgID };
+const findOne = async (restaurantID: string): Promise<IRestaurant | null> => {
+  const input = mongoose.Types.ObjectId.isValid(restaurantID)
+    ? { _id: restaurantID }
+    : { name: restaurantID };
   return Restaurant.findOne(input);
 };
 
-const findByIdAndUpdate = async (id: string, data: UpdateRestaurantInput) => {
+const findByIdAndUpdate = async (
+  id: string,
+  data: UpdateRestaurantInput,
+): Promise<IRestaurant | null> => {
   return Restaurant.findByIdAndUpdate(id, data, { new: true });
 };
 
 const findAndUpdatePartially = async (
   id: string,
   data: PartialUpdateRestaurantInput,
-) => {
+): Promise<IRestaurant | null> => {
   return Restaurant.findByIdAndUpdate(id, data, { new: true });
 };
 
-const findByIdAndDelete = async (id: string) => {
+const findByIdAndDelete = async (
+  id: string,
+): Promise<IRestaurant | null> => {
   return Restaurant.findByIdAndDelete(id);
 };
 

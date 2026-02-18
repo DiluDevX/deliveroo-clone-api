@@ -11,8 +11,12 @@ export const authorizeUser = (
   res: Response,
   next: NextFunction,
 ) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.replace("Bearer ", "");
+  let token = req.cookies?.accessToken;
+
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    token = authHeader?.replace("Bearer ", "");
+  }
 
   if (!token) {
     return res.status(401).send({ error: "Access denied. No token provided" });
@@ -21,6 +25,7 @@ export const authorizeUser = (
   try {
     const decodedToken = jwt.verify(token, SECRET_KEY) as {
       firstName: string;
+      userId: string;
       role: string;
     };
 

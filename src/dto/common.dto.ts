@@ -4,9 +4,12 @@ import { restaurantPathParamsSchema } from "../schema/restaurant.schema";
 
 export type ObjectIdPathParamsDTO = z.infer<typeof objectIdPathParamsSchema>;
 
-export type OrgIdPathParamsDTO = z.infer<typeof restaurantPathParamsSchema>;
+export type restaurantIdPathParamsDTO = z.infer<
+  typeof restaurantPathParamsSchema
+>;
 
 export type CommonResponseDTO<T> = {
+  success: boolean;
   message: string;
   data?: T;
 };

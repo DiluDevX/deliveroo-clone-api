@@ -1,10 +1,16 @@
 import { z } from "zod";
 import {
   DishQueryParamsSchema,
+  CreateDishRequestBodySchema,
   FullyUpdateDishRequestBodySchema,
   PartiallyUpdateDishRequestBodySchema,
 } from "../schema/dish.schema";
 import { IDish } from "../models/dish.model";
+
+export type CreateDishRequestBodyDTO = z.infer<
+  typeof CreateDishRequestBodySchema
+>;
+
 export type UpdateDishFullyRequestBodyDTO = z.infer<
   typeof FullyUpdateDishRequestBodySchema
 >;

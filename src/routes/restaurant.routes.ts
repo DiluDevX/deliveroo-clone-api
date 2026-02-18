@@ -150,7 +150,7 @@ router.put(
  *         description: Restaurant not found
  */
 router.get(
-  "/:orgID",
+  "/:restaurantId",
   ValidateParams(restaurantPathParamsSchema),
   getARestaurant,
 );

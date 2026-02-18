@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="Deliveroo Auth RDS Postgres" uuid="436af82e-4e40-4b57-b2e9-b917c733b107">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <schema-control>AUTOMATIC</schema-control>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://deliveroo-auth-db.cduwkqcacuzy.eu-north-1.rds.amazonaws.com:5432/postgres</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

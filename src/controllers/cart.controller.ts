@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { AddToCart, UpdateCartItem, Cart } from "../schema/cart.schema";
 import { cartService } from "../services/cart.service";
@@ -7,7 +7,8 @@ import { cartService } from "../services/cart.service";
 export const getCart = async (
   req: Request<ObjectIdPathParamsDTO>,
   res: Response<CommonResponseDTO<Cart | null>>,
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const cart = await cartService.findByUserId(req.params.id);
 
@@ -23,10 +24,7 @@ export const getCart = async (
       data: cart,
     });
   } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
 
@@ -34,7 +32,8 @@ export const getCart = async (
 export const addToCart = async (
   req: Request<unknown, unknown, AddToCart>,
   res: Response<CommonResponseDTO<Cart>>,
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { userId, item } = req.body;
 
@@ -45,10 +44,7 @@ export const addToCart = async (
       data: cart,
     });
   } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
 
@@ -56,7 +52,8 @@ export const addToCart = async (
 export const updateCartItem = async (
   req: Request<{ userId: string; dishId: string }, unknown, UpdateCartItem>,
   res: Response<CommonResponseDTO<Cart | null>>,
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { userId, dishId } = req.params;
     const { quantity } = req.body;
@@ -75,10 +72,7 @@ export const updateCartItem = async (
       data: cart,
     });
   } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
 
@@ -86,7 +80,8 @@ export const updateCartItem = async (
 export const removeFromCart = async (
   req: Request<{ userId: string; dishId: string }>,
   res: Response<CommonResponseDTO<Cart | null>>,
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { userId, dishId } = req.params;
 
@@ -104,10 +99,7 @@ export const removeFromCart = async (
       data: cart,
     });
   } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };
 
@@ -115,7 +107,8 @@ export const removeFromCart = async (
 export const clearCart = async (
   req: Request<ObjectIdPathParamsDTO>,
   res: Response<CommonResponseDTO<Cart | null>>,
-) => {
+  next: NextFunction,
+): Promise<void> => {
   try {
     const cart = await cartService.clearCart(req.params.id);
 
@@ -131,9 +124,6 @@ export const clearCart = async (
       data: cart,
     });
   } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    next(error);
   }
 };

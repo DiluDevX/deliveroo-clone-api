@@ -1,27 +1,47 @@
-import { model, Schema } from "mongoose";
+import { model, ObjectId, Schema } from "mongoose";
 
-const cartItemSchema = new Schema(
+export interface ICartItem {
+  dishId: string;
+  quantity: number;
+}
+
+export interface ICart {
+  _id: ObjectId;
+  userId: string;
+  restaurantId: string;
+  items: ICartItem[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const cartItemSchema = new Schema<ICartItem>(
   {
-    dishId: { type: String, required: true, ref: "Dish" },
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    quantity: { type: Number, required: true },
-    image: { type: String },
-    description: { type: String },
+    dishId: {
+      type: String,
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
   },
-  { _id: false, timestamps: true },
+  { _id: false },
 );
 
-const cartSchema = new Schema(
+const cartSchema = new Schema<ICart>(
   {
     userId: {
-      type: Schema.Types.ObjectId || String,
+      type: String,
       ref: "User",
       required: true,
       unique: true,
     },
+    restaurantId: {
+      type: String,
+      required: true,
+    },
     items: [cartItemSchema],
-    restaurantId: { type: String },
   },
   { timestamps: true },
 );

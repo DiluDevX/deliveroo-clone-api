@@ -1,20 +1,30 @@
-import Finance from "../models/finance.model";
 import Order, { IOrder } from "../models/order.model";
 import Restaurant from "../models/restaurant.model";
-import { Types } from "mongoose";
+import Cart from "../models/cart.model";
+import { createPaymentRecord } from "./payment.service";
+import { ObjectId } from "mongoose";
+
+interface CreateOrderInput extends Partial<IOrder> {
+  restaurantId: ObjectId;
+  userId: string;
+  paymentMethod: "cash-on-delivery" | "card";
+}
 
 const findAll = async (): Promise<IOrder[]> => {
   return Order.find().populate("restaurantId", "name");
 };
 
-const createOrder = async (data: Partial<IOrder>): Promise<IOrder> => {
+const createOrder = async (
+  data: Partial<CreateOrderInput>,
+): Promise<IOrder> => {
+  // Validate required fields
+  if (!data.restaurantId || !data.userId || !data.paymentMethod) {
+    throw new Error("Order must have restaurantId, userId and a paymentMethod");
+  }
+
   // Create new order
   const order = new Order(data);
   await order.save();
-
-  if (!order.restaurantId) {
-    throw new Error("Order must have a restaurantId");
-  }
 
   // Update Restaurant totals
   await Restaurant.findByIdAndUpdate(order.restaurantId, {
@@ -24,25 +34,26 @@ const createOrder = async (data: Partial<IOrder>): Promise<IOrder> => {
     },
   });
 
-  // Update Finance record
-  const finance = await Finance.findOne({
-    restaurantId: new Types.ObjectId(order.restaurantId.toString()),
+  // Create Payment record
+  await createPaymentRecord({
+    _id: order._id,
+    restaurantId: data.restaurantId.toString(),
+    userId: order.userId,
+    amount: order.totalAmount,
+    paymentMethod: data.paymentMethod,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    orderId: order._id,
+    commissionPercentage: 0,
+    commissionAmount: 0,
+    status: "pending",
   });
-  if (!finance) {
-    throw new Error("Finance record not found for the restaurant");
-  }
-  const newTotalRevenue = finance.totalRevenue + order.totalAmount;
-  const newPlatformCommission =
-    newTotalRevenue * (finance.commissionPercentage / 100);
-  const newAmountDue = newTotalRevenue - newPlatformCommission;
-  const newPendingAmount = newAmountDue - finance.amountPaid;
 
-  await Finance.findByIdAndUpdate(finance.id, {
-    totalRevenue: newTotalRevenue,
-    platformCommission: newPlatformCommission,
-    amountDue: newAmountDue,
-    pendingAmount: newPendingAmount,
-  });
+  // Clear user's cart
+  await Cart.findOneAndUpdate(
+    { userId: order.userId },
+    { $set: { items: [] } },
+  );
 
   return order;
 };

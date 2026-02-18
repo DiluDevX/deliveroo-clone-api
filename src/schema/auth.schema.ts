@@ -23,7 +23,11 @@ export const signupRequestBodySchema = z.object({
   email: usersEmailSchema,
   phone: usersPhoneSchema.optional(),
   password: usersCreatePasswordSchema,
-  role: z.enum(["admin", "user"]).default("user"),
+  role: z.enum(["platform_admin", "user", "restaurant_user"]).default("user"),
+});
+
+export const logoutRequestBodySchema = z.object({
+  refreshToken: z.string(),
 });
 
 export const userUpdateRequestBodySchema = z.object({
@@ -64,4 +68,8 @@ export const validateOAuthTokenRequestBodySchema = z.object({
 
 export const validateRefreshTokenRequestBodySchema = z.object({
   refreshToken: z.string().min(10),
+});
+
+export const refreshTokenHeaderSchema = z.object({
+  token: z.string().min(10).describe("Refresh token from Authorization header"),
 });

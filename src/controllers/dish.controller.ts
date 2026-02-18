@@ -72,17 +72,15 @@ const createNewDish = async (
       res.status(404).json({
         message: "Restaurant Not Found",
       });
-
       return;
     }
 
-    const foundCategory = await categoryService.findById(req.body.category);
+    const foundCategory = await categoryService.findById(req.body.categoryId);
 
     if (!foundCategory) {
       res.status(404).json({
         message: "Category Not Found",
       });
-
       return;
     }
 
@@ -128,10 +126,7 @@ const getADish = async (
 };
 
 const updateDishFully = async (
-  req: Request<
-    ObjectIdPathParamsDTO,
-    CommonResponseDTO<UpdateDishFullyRequestBodyDTO>
-  >,
+  req: Request<ObjectIdPathParamsDTO, unknown, UpdateDishFullyRequestBodyDTO>,
   res: Response<CommonResponseDTO<UpdateDishFullyResponseBodyDTO>>,
 ) => {
   try {
@@ -141,7 +136,6 @@ const updateDishFully = async (
       res.status(404).json({
         message: "Category Not Found",
       });
-
       return;
     }
 
@@ -154,7 +148,6 @@ const updateDishFully = async (
       res.status(404).json({
         message: "Dish Not Found",
       });
-
       return;
     }
 
@@ -186,7 +179,6 @@ const updateDishPartially = async (
         res.status(404).json({
           message: "Category Not Found",
         });
-
         return;
       }
     }

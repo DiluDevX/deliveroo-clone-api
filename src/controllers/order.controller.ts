@@ -1,7 +1,17 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { orderService } from "../services/order.service";
+import {
+  CreateOrderRequestBodyDTO,
+  CreateOrderResponseBodyDTO,
+  GetAllOrdersResponseBodyDTO,
+} from "../dto/order.dto";
+import { CommonResponseDTO } from "../dto/common.dto";
 
-const getAllOrders = async (_req: Request, res: Response) => {
+const getAllOrders = async (
+  _req: Request<unknown, unknown, unknown>,
+  res: Response<CommonResponseDTO<GetAllOrdersResponseBodyDTO>>,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const ordersArray = await orderService.findAll();
     res.status(200).json({
@@ -9,12 +19,15 @@ const getAllOrders = async (_req: Request, res: Response) => {
       data: ordersArray,
     });
   } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    next(error);
   }
 };
 
-const createOrder = async (req: Request, res: Response) => {
+const createOrder = async (
+  req: Request<unknown, unknown, CreateOrderRequestBodyDTO>,
+  res: Response<CommonResponseDTO<CreateOrderResponseBodyDTO>>,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const newOrder = await orderService.createOrder(req.body);
     res.status(201).json({
@@ -22,8 +35,7 @@ const createOrder = async (req: Request, res: Response) => {
       data: newOrder,
     });
   } catch (error) {
-    console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    next(error);
   }
 };
 

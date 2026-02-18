@@ -29,7 +29,7 @@ const toPartialDbDocument = (data: PartialUpdateCategoryInput) => {
 const findAll = async (
   filters: Partial<{ restaurant: string }>,
   populate?: string | string[],
-) => {
+): Promise<ICategory[]> => {
   const query = Category.find(filters);
 
   if (populate) {
@@ -45,24 +45,29 @@ const createNew = async (data: CreateCategoryInput): Promise<ICategory> => {
   return category.toObject();
 };
 
-const findById = async (id: string) => {
+const findById = async (id: string): Promise<ICategory | null> => {
   return Category.findById(id);
 };
 
-const findByIdAndUpdate = async (id: string, data: UpdateCategoryInput) => {
+const findByIdAndUpdate = async (
+  id: string,
+  data: UpdateCategoryInput,
+): Promise<ICategory | null> => {
   return Category.findByIdAndUpdate(id, toDbDocument(data), { new: true });
 };
 
 const findAndUpdatePartially = async (
   id: string,
   data: PartialUpdateCategoryInput,
-) => {
+): Promise<ICategory | null> => {
   return Category.findByIdAndUpdate(id, toPartialDbDocument(data), {
     new: true,
   });
 };
 
-const findByIdAndDelete = async (id: string) => {
+const findByIdAndDelete = async (
+  id: string,
+): Promise<ICategory | null> => {
   return Category.findByIdAndDelete(id);
 };
 

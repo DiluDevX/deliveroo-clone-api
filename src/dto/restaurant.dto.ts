@@ -1,21 +1,14 @@
 import { z } from "zod";
 import {
+  createRestaurantRequestBodySchema,
   updateRestaurantFullyRequestBodySchema,
   updateRestaurantPartiallyRequestBodySchema,
 } from "../schema/restaurant.schema";
+import { IOperatingHours } from "../models/restaurant.model";
 
-export type CreateNewRestaurantRequestBodyDTO = {
-  name: string;
-  image: string;
-  description?: string;
-  tags: string[];
-  openingAt: string;
-  closingAt: string;
-  minimumValue: string;
-  deliveryCharge: string;
-  cuisine: string;
-  adminId: string;
-};
+export type CreateNewRestaurantRequestBodyDTO = z.infer<
+  typeof createRestaurantRequestBodySchema
+>;
 
 export type UpdateRestaurantFullyRequestBodyDTO = z.infer<
   typeof updateRestaurantFullyRequestBodySchema
@@ -27,21 +20,17 @@ export type UpdateRestaurantPartiallyRequestBodyDTO = z.infer<
 
 export type RestaurantResponseDTO = {
   id: string;
-  orgId: string;
   name: string;
   image: string;
-  adminId: string;
   description?: string;
   tags: string[];
-  openingAt: string;
-  closingAt: string;
   minimumValue: string;
   deliveryCharge: string;
   cuisine: string;
   rating: number;
-  totalOrders: number;
-  totalRevenue: number;
+  operatingHours: IOperatingHours[];
   status: "active" | "disabled";
+  commissionPercentage?: number;
 };
 
 export type GetAllRestaurantsResponseBodyDTO = RestaurantResponseDTO[];

@@ -1,25 +1,66 @@
 import { ObjectId, Schema, model } from "mongoose";
 
+export interface IOperatingHours {
+  day:
+    | "Monday"
+    | "Tuesday"
+    | "Wednesday"
+    | "Thursday"
+    | "Friday"
+    | "Saturday"
+    | "Sunday";
+  openAt: string;
+  closeAt: string;
+  isOpen: boolean;
+}
+
 export interface IRestaurant {
   _id: ObjectId;
   createdAt: Date;
   updatedAt: Date;
-  orgId: string;
-  adminId: string;
   name: string;
   image: string;
   description?: string;
   tags: string[];
-  openingAt: string;
-  closingAt: string;
+  operatingHours: IOperatingHours[];
   minimumValue: string;
   deliveryCharge: string;
+  commissionPercentage: number;
   cuisine: string;
   rating: number;
-  totalOrders: number;
-  totalRevenue: number;
   status: "active" | "disabled";
 }
+
+const operatingHoursSchema = new Schema<IOperatingHours>(
+  {
+    day: {
+      type: String,
+      required: true,
+      enum: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
+    },
+    openAt: {
+      type: String,
+      required: true,
+    },
+    closeAt: {
+      type: String,
+      required: true,
+    },
+    isOpen: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  { _id: false },
+);
 
 const restaurantSchema = new Schema<IRestaurant>(
   {
@@ -37,23 +78,7 @@ const restaurantSchema = new Schema<IRestaurant>(
       required: false,
     },
     tags: [String],
-    openingAt: {
-      type: String,
-      required: true,
-    },
-    closingAt: {
-      type: String,
-      required: true,
-    },
-    orgId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    adminId: {
-      type: String,
-      required: true,
-    },
+    operatingHours: [operatingHoursSchema],
     minimumValue: {
       type: String,
       required: true,
@@ -67,16 +92,6 @@ const restaurantSchema = new Schema<IRestaurant>(
       required: true,
     },
     rating: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    totalOrders: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    totalRevenue: {
       type: Number,
       required: false,
       default: 0,

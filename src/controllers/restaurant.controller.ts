@@ -1,6 +1,5 @@
 import { restaurantService } from "../services/restaurant.service";
 import { Request, Response } from "express";
-import { Types } from "mongoose";
 import {
   CreateNewRestaurantRequestBodyDTO,
   CreateNewRestaurantResponseBodyDTO,
@@ -16,28 +15,23 @@ import {
 import {
   CommonResponseDTO,
   ObjectIdPathParamsDTO,
-  OrgIdPathParamsDTO,
+  restaurantIdPathParamsDTO,
 } from "../dto/common.dto";
 import { IRestaurant } from "../models/restaurant.model";
-import { financeService } from "../services/finance.service";
 
 const toResponseDTO = (restaurant: IRestaurant): RestaurantResponseDTO => ({
   id: restaurant._id.toString(),
-  orgId: restaurant.orgId,
   name: restaurant.name,
   image: restaurant.image,
-  adminId: restaurant.adminId,
   description: restaurant.description,
   tags: restaurant.tags,
-  openingAt: restaurant.openingAt,
-  closingAt: restaurant.closingAt,
   minimumValue: restaurant.minimumValue,
   deliveryCharge: restaurant.deliveryCharge,
   cuisine: restaurant.cuisine,
   rating: restaurant.rating,
-  totalOrders: restaurant.totalOrders,
-  totalRevenue: restaurant.totalRevenue,
   status: restaurant.status,
+  operatingHours: restaurant.operatingHours,
+  commissionPercentage: restaurant.commissionPercentage,
 });
 
 const getAllRestaurants = async (
@@ -67,24 +61,10 @@ const createNewRestaurant = async (
 ) => {
   try {
     const createdRestaurant = await restaurantService.createNew(req.body);
-
-    const financeRecord = await financeService.createFinanceRecord({
-      restaurantId: new Types.ObjectId(createdRestaurant.id),
-      totalRevenue: 0,
-      platformCommission: 0,
-      commissionPercentage: 10,
-      amountDue: 0,
-      amountPaid: 0,
-      pendingAmount: 0,
-      status: "pending",
+    res.status(201).json({
+      message: "Restaurant created successfully",
+      data: toResponseDTO(createdRestaurant),
     });
-
-    if (financeRecord && createdRestaurant) {
-      res.status(201).json({
-        message: "Created and updated Finance Record",
-        data: toResponseDTO(createdRestaurant),
-      });
-    }
   } catch (error) {
     console.log(error, "error");
     res.status(500).json({ message: "Internal Server Error" });
@@ -92,12 +72,13 @@ const createNewRestaurant = async (
 };
 
 const getARestaurant = async (
-  req: Request<OrgIdPathParamsDTO>,
+  req: Request<restaurantIdPathParamsDTO>,
   res: Response<CommonResponseDTO<GetARestaurantResponseBodyDTO>>,
 ) => {
   try {
-    const decodedOrgID = decodeURIComponent(req.params.orgID);
-    const foundRestaurant = await restaurantService.findOne(decodedOrgID);
+    const decodedRestaurantID = decodeURIComponent(req.params.restaurantId);
+    const foundRestaurant =
+      await restaurantService.findOne(decodedRestaurantID);
     if (!foundRestaurant) {
       res.status(404).json({ message: "Restaurant Not found" });
       return;

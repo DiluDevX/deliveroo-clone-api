@@ -4,40 +4,56 @@ import {
   forgotPasswordRequestBodySchema,
   loginRequestBodySchema,
   signupRequestBodySchema,
+  checkEmailRequestBodySchema,
+  logoutRequestBodySchema,
 } from "../schema/auth.schema";
-import { IUser } from "../models/user.model";
 import { ObjectId } from "mongodb";
+import { IUser } from "../types/user.type";
 
-export interface AuthenticatedUserRequest extends Request {
-  user?: JwtPayloadDTO;
-}
-
-export type CheckEmailRequestBodyDTO = {
-  email: string;
-};
+export type CheckEmailRequestBodyDTO = z.infer<
+  typeof checkEmailRequestBodySchema
+>;
 
 export type CheckEmailResponseBodyDTO = {
   firstName: string;
   lastName: string;
   email: string;
-  token: string;
 };
 
 export type LoginRequestBodyDTO = z.infer<typeof loginRequestBodySchema>;
 
 export type LoginResponseBodyDTO = {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
 };
 
 export type SignupRequestBodyDTO = z.infer<typeof signupRequestBodySchema>;
+
+export type SignupResponseBodyDTO = {
+  user: Omit<IUser, "password">;
+};
+
+export type LogoutRequestBodyDTO = z.infer<typeof logoutRequestBodySchema>;
+
+export interface AuthenticatedUserRequest extends Request {
+  user?: JwtPayloadDTO;
+}
 
 export type ForgotPasswordRequestBodyDTO = z.infer<
   typeof forgotPasswordRequestBodySchema
 >;
 
-export type SignupResponseBodyDTO = {
-  token: string;
-  user: Omit<IUser, "password">;
+export type ForgotPasswordResponseBodyDTO = {
+  message: string;
+};
+
+export type ResetPasswordResponseBodyDTO = {
+  message: string;
+};
+
+export type RefreshTokenResponseBodyDTO = {
+  accessToken: string;
+  refreshToken: string;
 };
 
 export interface JwtPayloadDTO {
