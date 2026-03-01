@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { HttpStatusCode } from "axios";
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { AddToCart, UpdateCartItem, Cart } from "../schema/cart.schema";
 import { cartService } from "../services/cart.service";
@@ -13,13 +14,15 @@ export const getCart = async (
     const cart = await cartService.findByUserId(req.params.id);
 
     if (!cart) {
-      res.status(404).json({
+      res.status(HttpStatusCode.NotFound).json({
+        success: false,
         message: "Cart Not Found",
       });
       return;
     }
 
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "OK",
       data: cart,
     });
@@ -39,7 +42,8 @@ export const addToCart = async (
 
     const cart = await cartService.addItem(userId, item);
 
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "Item Added to Cart",
       data: cart,
     });
@@ -61,13 +65,15 @@ export const updateCartItem = async (
     const cart = await cartService.updateItemQuantity(userId, dishId, quantity);
 
     if (!cart) {
-      res.status(404).json({
+      res.status(HttpStatusCode.NotFound).json({
+        success: false,
         message: "Cart or Item Not Found",
       });
       return;
     }
 
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "Cart Item Updated",
       data: cart,
     });
@@ -88,13 +94,15 @@ export const removeFromCart = async (
     const cart = await cartService.removeItem(userId, dishId);
 
     if (!cart) {
-      res.status(404).json({
+      res.status(HttpStatusCode.NotFound).json({
+        success: false,
         message: "Cart or Item Not Found",
       });
       return;
     }
 
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "Item Removed from Cart",
       data: cart,
     });
@@ -113,13 +121,15 @@ export const clearCart = async (
     const cart = await cartService.clearCart(req.params.id);
 
     if (!cart) {
-      res.status(404).json({
+      res.status(HttpStatusCode.NotFound).json({
+        success: false,
         message: "Cart Not Found",
       });
       return;
     }
 
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "Cart Cleared",
       data: cart,
     });

@@ -7,32 +7,30 @@ import {
   getUserRequestParamsSchema,
 } from "../schema/users.schema";
 
-export type GetAllUsersResponseBodyDTO = {
-  users: Array<{
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string | null;
-    role: string;
-  }>;
-};
+export type GetAllUsersResponseBodyDTO = Array<{
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string | null;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}>;
 
 export type GetSingleUserRequestParamsDTO = z.infer<
   typeof getUserRequestParamsSchema
 >;
 
 export type GetSingleUserResponseBodyDTO = {
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string | null;
-    role: string;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string | null;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type CreateUserRequestBodyDTO = z.infer<
@@ -40,15 +38,14 @@ export type CreateUserRequestBodyDTO = z.infer<
 >;
 
 export type CreateUserResponseBodyDTO = {
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string | null;
-    role: string;
-  };
-  message: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string | null;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type UpdateUserRequestParamsDTO = z.infer<
@@ -62,21 +59,18 @@ export type UpdateUserRequestBodyDTO = z.infer<
 };
 
 export type UpdateUserResponseBodyDTO = {
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string | null;
-    role: string;
-  };
-  message: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string | null;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type DeleteUserRequestParamsDTO = z.infer<
   typeof deleteUserRequestParamsSchema
 >;
 
-export type DeleteUserResponseBodyDTO = {
-  message: string;
-};
+export type DeleteUserResponseBodyDTO = Record<string, never>;

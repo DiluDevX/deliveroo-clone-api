@@ -6,6 +6,7 @@ import {
   signupRequestBodySchema,
   checkEmailRequestBodySchema,
   logoutRequestBodySchema,
+  refreshTokenHeaderSchema,
 } from "../schema/auth.schema";
 import { ObjectId } from "mongodb";
 import { IUser } from "../types/user.type";
@@ -35,6 +36,10 @@ export type SignupResponseBodyDTO = {
 
 export type LogoutRequestBodyDTO = z.infer<typeof logoutRequestBodySchema>;
 
+export type RefreshTokenRequestBodyDTO = z.infer<
+  typeof refreshTokenHeaderSchema
+>;
+
 export interface AuthenticatedUserRequest extends Request {
   user?: JwtPayloadDTO;
 }
@@ -47,8 +52,13 @@ export type ForgotPasswordResponseBodyDTO = {
   message: string;
 };
 
-export type ResetPasswordResponseBodyDTO = {
-  message: string;
+export type ValidateResetPasswordTokenRequestBodyDTO = {
+  token: string;
+};
+
+export type ResetPasswordRequestBodyDTO = {
+  token: string;
+  password: string;
 };
 
 export type RefreshTokenResponseBodyDTO = {
@@ -67,16 +77,12 @@ declare module "express-serve-static-core" {
   }
 }
 
-export type ValidateResetPasswordTokenRequestBodySchemaDTO = {
-  token: string;
-};
-
-export type ValidateResetPasswordTokenResponseBodySchemaDTO = {
-  email: string;
-  user_id: ObjectId;
-};
-
 export type ResetPasswordResponseBodySchemaDTO = {
   email: string;
   user_id: ObjectId;
+};
+
+export type HealthCheckResponseBodyDTO = {
+  success: boolean;
+  message: string;
 };

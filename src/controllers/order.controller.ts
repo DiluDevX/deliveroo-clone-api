@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { HttpStatusCode } from "axios";
 import { orderService } from "../services/order.service";
 import {
   CreateOrderRequestBodyDTO,
@@ -14,9 +15,13 @@ const getAllOrders = async (
 ): Promise<void> => {
   try {
     const ordersArray = await orderService.findAll();
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "OK",
-      data: ordersArray,
+      data: ordersArray.map(order => ({
+        ...order,
+        restaurantId: order.restaurantId.toString(),
+      })),
     });
   } catch (error) {
     next(error);
@@ -30,9 +35,13 @@ const createOrder = async (
 ): Promise<void> => {
   try {
     const newOrder = await orderService.createOrder(req.body);
-    res.status(201).json({
+    res.status(HttpStatusCode.Created).json({
+      success: true,
       message: "Order Created",
-      data: newOrder,
+      data: {
+        ...newOrder,
+        restaurantId: newOrder.restaurantId.toString(),
+      },
     });
   } catch (error) {
     next(error);

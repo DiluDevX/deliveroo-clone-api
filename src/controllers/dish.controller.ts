@@ -16,6 +16,7 @@ import { CommonResponseDTO, ObjectIdPathParamsDTO } from "../dto/common.dto";
 import { CreateDishRequestBodySchema } from "../schema/dish.schema";
 import { z } from "zod";
 import { restaurantService } from "../services/restaurant.service";
+import { ObjectId } from "mongodb";
 
 interface DishFilters {
   restaurant?: string;
@@ -45,6 +46,7 @@ const getAllDishes = async (
     const dishesArray = await dishService.findAll(filters, req.query.populate);
 
     res.status(200).json({
+      success: true,
       message: "OK",
       data: dishesArray,
     });
@@ -53,6 +55,7 @@ const getAllDishes = async (
     console.log(error, "error");
 
     res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
     return;
@@ -70,6 +73,7 @@ const createNewDish = async (
 
     if (!foundRestaurant) {
       res.status(404).json({
+        success: false,
         message: "Restaurant Not Found",
       });
       return;
@@ -79,6 +83,7 @@ const createNewDish = async (
 
     if (!foundCategory) {
       res.status(404).json({
+        success: false,
         message: "Category Not Found",
       });
       return;
@@ -86,6 +91,7 @@ const createNewDish = async (
 
     const createdDish = await dishService.createNew(req.body);
     res.status(201).json({
+      success: true,
       message: "OK",
       data: createdDish,
     });
@@ -93,6 +99,7 @@ const createNewDish = async (
     console.log(error, "error");
 
     res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }
@@ -107,12 +114,14 @@ const getADish = async (
 
     if (!foundDish) {
       res.status(404).json({
+        success: false,
         message: "Dish not Found",
       });
       return;
     }
 
     res.status(200).json({
+      success: true,
       message: "OK",
       data: foundDish,
     });
@@ -120,6 +129,7 @@ const getADish = async (
     console.log(error, "error");
 
     res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }
@@ -130,34 +140,40 @@ const updateDishFully = async (
   res: Response<CommonResponseDTO<UpdateDishFullyResponseBodyDTO>>,
 ) => {
   try {
-    const foundCategory = await categoryService.findById(req.body.category);
+    const foundCategory = await categoryService.findById(req.body.categoryId);
 
     if (!foundCategory) {
       res.status(404).json({
+        success: false,
         message: "Category Not Found",
       });
       return;
     }
 
+    const foundRestaurant = typeof new ObjectId(foundCategory.restaurant);
+
     const updatedDish = await dishService.findByIdAndUpdate(req.params.id, {
       ...req.body,
-      restaurant: foundCategory.restaurant,
+      restaurant: foundRestaurant,
     });
 
     if (!updatedDish) {
       res.status(404).json({
+        success: false,
         message: "Dish Not Found",
       });
       return;
     }
 
     res.status(200).json({
+      success: true,
       message: "OK",
       data: updatedDish,
     });
   } catch (error) {
     console.log(error, "error");
     res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }
@@ -177,6 +193,7 @@ const updateDishPartially = async (
 
       if (!foundCategory) {
         res.status(404).json({
+          success: false,
           message: "Category Not Found",
         });
         return;
@@ -197,18 +214,21 @@ const updateDishPartially = async (
 
     if (!patchedDish) {
       res.status(404).json({
+        success: false,
         message: "Dish Not Found",
       });
       return;
     }
 
     res.status(200).json({
+      success: true,
       message: "OK",
       data: patchedDish,
     });
   } catch (error) {
     console.log(error, "error");
     res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }
@@ -223,18 +243,21 @@ const deleteDish = async (
 
     if (!deletedDish) {
       res.status(404).json({
+        success: false,
         message: "Dish Not Found",
       });
       return;
     }
 
     res.status(200).json({
+      success: true,
       message: "OK",
       data: deletedDish,
     });
   } catch (error) {
     console.log(error, "error");
     res.status(500).json({
+      success: false,
       message: "Internal Server Error",
     });
   }

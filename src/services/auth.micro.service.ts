@@ -7,7 +7,6 @@ import {
   LoginResponseBodyDTO,
   LogoutRequestBodyDTO,
   RefreshTokenResponseBodyDTO,
-  ResetPasswordResponseBodyDTO,
   SignupRequestBodyDTO,
   SignupResponseBodyDTO,
 } from "../dto/auth.dto";
@@ -83,12 +82,22 @@ export const authService = {
       return response.data;
     },
     resetPassword: async (token: string, password: string) => {
-      const response = await authClient.post<
-        CommonResponseDTO<ResetPasswordResponseBodyDTO>
-      >("/auth/reset-password", {
-        token,
-        password,
-      });
+      const response = await authClient.post<CommonResponseDTO<void>>(
+        "/auth/reset-password/update",
+        {
+          token,
+          password,
+        },
+      );
+      return response.data;
+    },
+    verifyResetToken: async (token: string) => {
+      const response = await authClient.post<CommonResponseDTO<void>>(
+        "/auth/reset-password/verify",
+        {
+          token,
+        },
+      );
       return response.data;
     },
   },

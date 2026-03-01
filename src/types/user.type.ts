@@ -1,7 +1,8 @@
 export type IUser = {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
   firstName: string;
   lastName: string;
   email: string;

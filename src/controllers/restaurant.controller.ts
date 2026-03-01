@@ -1,5 +1,6 @@
 import { restaurantService } from "../services/restaurant.service";
 import { Request, Response } from "express";
+import { HttpStatusCode } from "axios";
 import {
   CreateNewRestaurantRequestBodyDTO,
   CreateNewRestaurantResponseBodyDTO,
@@ -45,13 +46,16 @@ const getAllRestaurants = async (
 ) => {
   try {
     const restaurantsArray = await restaurantService.findAll();
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "OK",
       data: restaurantsArray.map(toResponseDTO),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(HttpStatusCode.InternalServerError)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -61,13 +65,16 @@ const createNewRestaurant = async (
 ) => {
   try {
     const createdRestaurant = await restaurantService.createNew(req.body);
-    res.status(201).json({
+    res.status(HttpStatusCode.Created).json({
+      success: true,
       message: "Restaurant created successfully",
       data: toResponseDTO(createdRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(HttpStatusCode.InternalServerError)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -80,16 +87,21 @@ const getARestaurant = async (
     const foundRestaurant =
       await restaurantService.findOne(decodedRestaurantID);
     if (!foundRestaurant) {
-      res.status(404).json({ message: "Restaurant Not found" });
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ success: false, message: "Restaurant Not found" });
       return;
     }
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "OK",
       data: toResponseDTO(foundRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(HttpStatusCode.InternalServerError)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -107,16 +119,21 @@ const updateARestaurantFully = async (
       req.body,
     );
     if (!updatedRestaurant) {
-      res.status(404).json({ message: "Restaurant Not found" });
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ success: false, message: "Restaurant Not found" });
       return;
     }
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "Updated Restaurant",
       data: toResponseDTO(updatedRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(HttpStatusCode.InternalServerError)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -134,16 +151,21 @@ const updateARestaurantPartially = async (
       req.body,
     );
     if (!updatedRestaurant) {
-      res.status(404).json({ message: "Restaurant Not found" });
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ success: false, message: "Restaurant Not found" });
       return;
     }
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "OK",
       data: toResponseDTO(updatedRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(HttpStatusCode.InternalServerError)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -156,16 +178,21 @@ const deleteARestaurant = async (
       req.params.id,
     );
     if (!deletedRestaurant) {
-      res.status(404).json({ message: "Restaurant Not found" });
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ success: false, message: "Restaurant Not found" });
       return;
     }
-    res.status(200).json({
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
       message: "OK",
       data: toResponseDTO(deletedRestaurant),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res
+      .status(HttpStatusCode.InternalServerError)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 

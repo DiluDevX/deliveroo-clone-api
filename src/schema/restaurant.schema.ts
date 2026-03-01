@@ -3,7 +3,6 @@ import { z } from "zod";
 const restaurantNameSchema = z.string().min(1).max(30);
 const restaurantDescriptionSchema = z.string().min(3).max(150);
 const restaurantTagSchema = z.string().min(3).max(30);
-const restaurantTimeSchema = z.string().time();
 const restaurantMinimumValueSchema = z.string().min(1);
 const restaurantDeliveryChargeSchema = z.string().min(1);
 const restaurantImageSchema = z.string();

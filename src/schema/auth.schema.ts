@@ -53,23 +53,20 @@ export const forgotPasswordRequestBodySchema = z.object({
   email: usersEmailSchema,
 });
 
+export const validateResetPasswordRequestBodySchema = z.object({
+  token: z.string().min(10, "Invalid or expired token"),
+});
+
+export const updateResetPasswordRequestBodySchema = z.object({
+  token: z.string().min(10, "Invalid or expired token"),
+  password: usersCreatePasswordSchema,
+});
+
 export const resetPasswordRequestBodySchema = z.object({
   password: usersCreatePasswordSchema,
   token: z.string().min(10),
 });
 
-export const validateResetPasswordRequestBodySchema = z.object({
-  token: z.string().min(10),
-});
-
-export const validateOAuthTokenRequestBodySchema = z.object({
-  refreshToken: z.string().min(10),
-});
-
-export const validateRefreshTokenRequestBodySchema = z.object({
-  refreshToken: z.string().min(10),
-});
-
 export const refreshTokenHeaderSchema = z.object({
-  token: z.string().min(10).describe("Refresh token from Authorization header"),
+  refreshToken: z.string().min(10).describe("Refresh token"),
 });

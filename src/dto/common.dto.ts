@@ -8,8 +8,14 @@ export type restaurantIdPathParamsDTO = z.infer<
   typeof restaurantPathParamsSchema
 >;
 
+export type ValidationErrorDTO = {
+  field: string;
+  message: string;
+};
+
 export type CommonResponseDTO<T> = {
   success: boolean;
   message: string;
   data?: T;
+  errors?: ValidationErrorDTO[];
 };

@@ -55,12 +55,13 @@ const getAllCategories = async (
       req.query.populate,
     );
     res.status(200).json({
+      success: true,
       message: "OK",
       data: categoriesArray.map(toResponseDTO),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error", success: false });
   }
 };
 
@@ -78,24 +79,25 @@ const createNewCategory = async (
       orgID: decodedOrgID,
     });
     if (!parseResult.success) {
-      res.status(400).json({ message: "Invalid orgID" });
+      res.status(400).json({ success: false, message: "Invalid orgID" });
       return;
     }
     const foundRestaurant = (await restaurantService.findOne(
       req.body.restaurant,
     )) as IRestaurant | null;
     if (!foundRestaurant) {
-      res.status(404).json({ message: "Restaurant Not Found" });
+      res.status(404).json({ success: false, message: "Restaurant Not Found" });
       return;
     }
     const createdCategory = await categoryService.createNew(req.body);
     res.status(201).json({
+      success: true,
       message: "Created",
       data: toResponseDTO(createdCategory),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -106,16 +108,17 @@ const getCategory = async (
   try {
     const foundCategory = await categoryService.findById(req.params.id);
     if (!foundCategory) {
-      res.status(404).json({ message: "Category Not Found" });
+      res.status(404).json({ success: false, message: "Category Not Found" });
       return;
     }
     res.status(200).json({
+      success: true,
       message: "OK",
       data: toResponseDTO(foundCategory),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -132,7 +135,7 @@ const updateCategoryFully = async (
       req.body.restaurant,
     );
     if (!foundRestaurant) {
-      res.status(404).json({ message: "Restaurant Not Found" });
+      res.status(404).json({ success: false, message: "Restaurant Not Found" });
       return;
     }
     const updatedCategory = await categoryService.findByIdAndUpdate(
@@ -140,16 +143,17 @@ const updateCategoryFully = async (
       req.body,
     );
     if (!updatedCategory) {
-      res.status(404).json({ message: "Category Not Found" });
+      res.status(404).json({ success: false, message: "Category Not Found" });
       return;
     }
     res.status(200).json({
+      success: true,
       message: "OK",
       data: toResponseDTO(updatedCategory),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -163,7 +167,9 @@ const updateCategoryPartially = async (
 ) => {
   try {
     if (!req.body) {
-      res.status(400).json({ message: "Request body is required" });
+      res
+        .status(400)
+        .json({ success: false, message: "Request body is required" });
       return;
     }
     if (req.body.restaurant) {
@@ -171,7 +177,9 @@ const updateCategoryPartially = async (
         req.body.restaurant,
       );
       if (!foundRestaurant) {
-        res.status(404).json({ message: "Restaurant Not Found" });
+        res
+          .status(404)
+          .json({ success: false, message: "Restaurant Not Found" });
         return;
       }
     }
@@ -180,16 +188,17 @@ const updateCategoryPartially = async (
       req.body,
     );
     if (!patchedCategory) {
-      res.status(404).json({ message: "Category Not Found" });
+      res.status(404).json({ success: false, message: "Category Not Found" });
       return;
     }
     res.status(200).json({
+      success: true,
       message: "OK",
       data: toResponseDTO(patchedCategory),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -202,16 +211,17 @@ const deleteCategory = async (
       req.params.id,
     );
     if (!deletedCategory) {
-      res.status(404).json({ message: "Category Not Found" });
+      res.status(404).json({ success: false, message: "Category Not Found" });
       return;
     }
     res.status(200).json({
+      success: true,
       message: "OK",
       data: toResponseDTO(deletedCategory),
     });
   } catch (error) {
     console.log(error, "error");
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 

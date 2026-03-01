@@ -1,31 +1,27 @@
+import { HttpStatusCode } from "axios";
 import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
 
-interface HeaderRequest extends Request {
-  headerData?: Record<string, any>;
-}
-
 const ValidateHeader =
-  (headerSchema: ZodSchema, headerName: string = "authorization") =>
-  (req: HeaderRequest, res: Response, next: NextFunction) => {
+  (headerSchema: ZodSchema, headerName: string) =>
+  (req: Request, res: Response, next: NextFunction) => {
     try {
-      const headerValue = req.headers[headerName];
+      let headerValue = req.headers[headerName] as string;
 
       if (!headerValue) {
-        res.status(400).json({
+        res.status(HttpStatusCode.NotFound).json({
           message: "Validation Error",
           errors: `Missing required header: ${headerName}`,
         });
         return;
       }
-
-      // Parse and validate the header value against schema
-      const validatedData = headerSchema.parse({ token: headerValue });
-      req.headerData = validatedData;
-
+      if (headerValue.startsWith("Bearer ")) {
+        headerValue = headerValue.replace("Bearer ", "");
+      }
+      headerSchema.parse({ headerValue });
       next();
     } catch (error) {
-      res.status(400).json({
+      res.status(HttpStatusCode.BadRequest).json({
         message: "Validation Error",
         errors: error,
       });
