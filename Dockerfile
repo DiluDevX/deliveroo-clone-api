@@ -1,32 +1,42 @@
+FROM node:24-alpine AS builder
 
-ARG NODE_VERSION=24.11.1
-
-FROM node:${NODE_VERSION}-alpine as base
 WORKDIR /app
 
-FROM base as deps
-COPY package.json ./
-RUN npm install
+COPY package.json package-lock.json* ./
+RUN npm ci
 
-FROM deps as build
-COPY tsconfig.json ./
-COPY src ./src
+COPY . .
 RUN npm run build
 
-FROM base as final
-ENV NODE_ENV=production
+FROM node:24-alpine AS deps
 
-# Install Doppler CLI as root
-RUN apk add --no-cache curl gnupg \
-    && curl -Ls https://cli.doppler.com/install.sh | sh
+WORKDIR /app
 
-# Switch to non-root user after installing Doppler
-USER node
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev --ignore-scripts
 
-COPY package.json ./
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
+FROM node:24-alpine AS runner
 
-EXPOSE 4000
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser  --system --uid 1001 app
 
-CMD ["doppler", "run", "--project", "deliveroo-clone-api", "--config", "dev", "--", "node", "dist/server.js"]
+WORKDIR /app
+
+ARG ENV=production
+ARG APP_VERSION=unknown
+ENV ENV=$ENV \
+    APP_VERSION=$APP_VERSION \
+    NODE_ENV=production
+
+COPY --from=deps    --chown=app:nodejs /app/node_modules    ./node_modules
+COPY --from=builder --chown=app:nodejs /app/dist            ./dist
+COPY --from=builder --chown=app:nodejs /app/package.json    ./package.json
+
+COPY --chown=app:nodejs docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+
+USER app
+EXPOSE 3000
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["node", "dist/src/index.js"]

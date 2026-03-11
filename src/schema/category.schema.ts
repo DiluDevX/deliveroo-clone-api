@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const categoryNameSchema = z.string().min(1).max(20);
 const categoryRestaurantSchema = z.string().min(1).max(30);
@@ -8,11 +8,9 @@ export const CreateCategoryRequestBodySchema = z.object({
   restaurant: categoryRestaurantSchema,
 });
 
-export const FullyUpdateCategoryRequestBodySchema =
-  CreateCategoryRequestBodySchema.required();
+export const FullyUpdateCategoryRequestBodySchema = CreateCategoryRequestBodySchema.required();
 
-export const PartiallyUpdateCategoryRequestBodySchema =
-  CreateCategoryRequestBodySchema.optional();
+export const PartiallyUpdateCategoryRequestBodySchema = CreateCategoryRequestBodySchema.optional();
 
 export const CategoryQueryParamsSchema = z.object({
   populate: z.string(),
@@ -26,6 +24,6 @@ export const CategoryPathParamsSchema = z.object({
     .max(30)
     .regex(
       /^(?:[a-zA-Z0-9_-]|%[0-9A-Fa-f]{2})+$/,
-      "orgID must contain only letters, numbers, dashes, underscores, or encoded characters",
+      'orgID must contain only letters, numbers, dashes, underscores, or encoded characters'
     ),
 });

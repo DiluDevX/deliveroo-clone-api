@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const DishName = z.string().min(4).max(50);
 const DishDescription = z.string().min(3).max(150);
@@ -14,11 +14,9 @@ export const CreateDishRequestBodySchema = z.object({
   restaurant: DishRestaurant,
 });
 
-export const FullyUpdateDishRequestBodySchema =
-  CreateDishRequestBodySchema.required();
+export const FullyUpdateDishRequestBodySchema = CreateDishRequestBodySchema.required();
 
-export const PartiallyUpdateDishRequestBodySchema =
-  CreateDishRequestBodySchema.partial();
+export const PartiallyUpdateDishRequestBodySchema = CreateDishRequestBodySchema.partial();
 
 export const DishQueryParamsSchema = z.object({
   populate: z.string().optional(),

@@ -1,8 +1,8 @@
 // src/services/category.service.ts
-import { Types } from "mongoose";
-import { z } from "zod";
-import Category, { ICategory } from "../models/category.model";
-import { CreateCategoryRequestBodySchema } from "../schema/category.schema";
+import { Types } from 'mongoose';
+import { z } from 'zod';
+import Category, { ICategory } from '../models/category.model';
+import { CreateCategoryRequestBodySchema } from '../schema/category.schema';
 
 // Derive types from Zod schemas (Single Source of Truth)
 type CreateCategoryInput = z.infer<typeof CreateCategoryRequestBodySchema>;
@@ -26,10 +26,7 @@ const toPartialDbDocument = (data: PartialUpdateCategoryInput) => {
 };
 
 // Service methods
-const findAll = async (
-  filters: Partial<{ restaurant: string }>,
-  populate?: string | string[],
-) => {
+const findAll = async (filters: Partial<{ restaurant: string }>, populate?: string | string[]) => {
   const query = Category.find(filters);
 
   if (populate) {
@@ -53,10 +50,7 @@ const findByIdAndUpdate = async (id: string, data: UpdateCategoryInput) => {
   return Category.findByIdAndUpdate(id, toDbDocument(data), { new: true });
 };
 
-const findAndUpdatePartially = async (
-  id: string,
-  data: PartialUpdateCategoryInput,
-) => {
+const findAndUpdatePartially = async (id: string, data: PartialUpdateCategoryInput) => {
   return Category.findByIdAndUpdate(id, toPartialDbDocument(data), {
     new: true,
   });

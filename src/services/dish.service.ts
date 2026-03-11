@@ -1,17 +1,15 @@
-import { z } from "zod";
-import { Types } from "mongoose";
-import Dish from "../models/dish.model";
+import { z } from 'zod';
+import { Types } from 'mongoose';
+import Dish from '../models/dish.model';
 import {
   CreateDishRequestBodySchema,
   PartiallyUpdateDishRequestBodySchema,
   DishQueryParamsSchema,
-} from "../schema/dish.schema";
+} from '../schema/dish.schema';
 
 type CreateDishInput = z.infer<typeof CreateDishRequestBodySchema>;
 type UpdateDishInput = CreateDishInput;
-type PartialUpdateDishInput = z.infer<
-  typeof PartiallyUpdateDishRequestBodySchema
->;
+type PartialUpdateDishInput = z.infer<typeof PartiallyUpdateDishRequestBodySchema>;
 type DishFilters = z.infer<typeof DishQueryParamsSchema>;
 
 // Transform functions for ObjectId conversion
@@ -37,13 +35,13 @@ const toPartialDbDocument = (data: PartialUpdateDishInput) => {
 
 // Service methods
 const findAll = async (
-  filters: Partial<Pick<DishFilters, "restaurant" | "category">>,
-  populate?: string | string[],
+  filters: Partial<Pick<DishFilters, 'restaurant' | 'category'>>,
+  populate?: string | string[]
 ) => {
   const query = Dish.find(filters);
 
   if (populate) {
-    const fields = Array.isArray(populate) ? populate : populate.split(" ");
+    const fields = Array.isArray(populate) ? populate : populate.split(' ');
     fields.forEach((field) => query.populate(field));
   }
 
@@ -62,10 +60,7 @@ const findByIdAndUpdate = async (id: string, data: UpdateDishInput) => {
   return Dish.findByIdAndUpdate(id, toDbDocument(data), { new: true });
 };
 
-const findAndUpdatePartially = async (
-  id: string,
-  data: PartialUpdateDishInput,
-) => {
+const findAndUpdatePartially = async (id: string, data: PartialUpdateDishInput) => {
   return Dish.findByIdAndUpdate(id, toPartialDbDocument(data), { new: true });
 };
 

@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { objectIdPathParamsSchema } from "../schema/common.schema";
-import { restaurantPathParamsSchema } from "../schema/restaurant.schema";
+import { z } from 'zod';
+import { objectIdPathParamsSchema } from '../schema/common.schema';
+import { restaurantPathParamsSchema } from '../schema/restaurant.schema';
 
 export type ObjectIdPathParamsDTO = z.infer<typeof objectIdPathParamsSchema>;
 
