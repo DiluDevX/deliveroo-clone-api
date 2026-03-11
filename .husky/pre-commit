@@ -1,4 +1,1 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-npx --no -- lint:check && npx --no -- types:check && npx --no -- format:check
+npm run lint:check && npm run types:check && npm run format:check
