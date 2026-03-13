@@ -1,6 +1,9 @@
+import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { logger } from '../../utils/logger';
 import { dishService } from '../../services/dish.service';
 import { categoryService } from '../../services/category.service';
-import { Request, Response } from 'express';
+import { restaurantService } from '../../services/restaurant.service';
 import {
   CreateNewDishResponseBodyDTO,
   DeleteDishResponseBodyDTO,
@@ -15,23 +18,26 @@ import {
 import { CommonResponseDTO, ObjectIdPathParamsDTO } from '../../dto/common.dto';
 import { CreateDishRequestBodySchema } from '../../schema/dish.schema';
 import { z } from 'zod';
-import { restaurantService } from '../../services/restaurant.service';
+import { NotFoundError } from '../../utils/errors';
 
 interface DishFilters {
   restaurant?: string;
   category?: string;
 }
 
-const getAllDishes = async (
+export const getAllDishes = async (
   req: Request<
     unknown,
     CommonResponseDTO<GetAllDishesResponseBodyDTO>,
     unknown,
     GetAllDishedRequestQueryDTO
   >,
-  res: Response<CommonResponseDTO<GetAllDishesResponseBodyDTO>>
+  res: Response<CommonResponseDTO<GetAllDishesResponseBodyDTO>>,
+  next: NextFunction
 ) => {
   try {
+    logger.info('Fetching all dishes');
+
     const filters: DishFilters = {};
 
     if (req.query.restaurant) {
@@ -44,142 +50,158 @@ const getAllDishes = async (
 
     const dishesArray = await dishService.findAll(filters, req.query.populate);
 
-    res.status(200).json({
-      message: 'OK',
+    logger.info({ count: dishesArray.length }, 'Dishes fetched successfully');
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Dishes fetched successfully',
       data: dishesArray,
     });
-    return;
   } catch (error) {
-    console.log(error, 'error');
-
-    res.status(500).json({
-      message: 'Internal Server Error',
-    });
-    return;
+    logger.error(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      'Failed to fetch dishes'
+    );
+    next(error);
   }
 };
 
-const createNewDish = async (
-  req: Request<unknown, unknown, z.infer<typeof CreateDishRequestBodySchema>>,
-  res: Response<CommonResponseDTO<CreateNewDishResponseBodyDTO>>
+export const createNewDish = async (
+  req: Request<
+    unknown,
+    CommonResponseDTO<CreateNewDishResponseBodyDTO>,
+    z.infer<typeof CreateDishRequestBodySchema>
+  >,
+  res: Response<CommonResponseDTO<CreateNewDishResponseBodyDTO>>,
+  next: NextFunction
 ) => {
   try {
+    logger.info(
+      { restaurant: req.body.restaurant, category: req.body.category },
+      'Creating new dish'
+    );
+
     const foundRestaurant = await restaurantService.findOne(req.body.restaurant);
 
     if (!foundRestaurant) {
-      res.status(404).json({
-        message: 'Restaurant Not Found',
-      });
-
-      return;
+      throw new NotFoundError('Restaurant not found');
     }
 
     const foundCategory = await categoryService.findById(req.body.category);
 
     if (!foundCategory) {
-      res.status(404).json({
-        message: 'Category Not Found',
-      });
-
-      return;
+      throw new NotFoundError('Category not found');
     }
 
     const createdDish = await dishService.createNew(req.body);
-    res.status(201).json({
-      message: 'OK',
+
+    logger.info({ dishId: createdDish.id }, 'Dish created successfully');
+
+    res.status(StatusCodes.CREATED).json({
+      success: true,
+      message: 'Dish created successfully',
       data: createdDish,
     });
   } catch (error) {
-    console.log(error, 'error');
-
-    res.status(500).json({
-      message: 'Internal Server Error',
-    });
+    logger.error(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      'Failed to create dish'
+    );
+    next(error);
   }
 };
 
-const getADish = async (
-  req: Request<ObjectIdPathParamsDTO>,
-  res: Response<CommonResponseDTO<GetADishResponseBodyDTO>>
+export const getADish = async (
+  req: Request<ObjectIdPathParamsDTO, CommonResponseDTO<GetADishResponseBodyDTO>, unknown>,
+  res: Response<CommonResponseDTO<GetADishResponseBodyDTO>>,
+  next: NextFunction
 ) => {
   try {
+    logger.info({ dishId: req.params.id }, 'Fetching dish');
+
     const foundDish = await dishService.findById(req.params.id);
 
     if (!foundDish) {
-      res.status(404).json({
-        message: 'Dish not Found',
-      });
-      return;
+      throw new NotFoundError('Dish not found');
     }
 
-    res.status(200).json({
-      message: 'OK',
+    logger.info({ dishId: foundDish.id }, 'Dish fetched successfully');
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Dish fetched successfully',
       data: foundDish,
     });
   } catch (error) {
-    console.log(error, 'error');
-
-    res.status(500).json({
-      message: 'Internal Server Error',
-    });
+    logger.error(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      'Failed to fetch dish'
+    );
+    next(error);
   }
 };
 
-const updateDishFully = async (
-  req: Request<ObjectIdPathParamsDTO, CommonResponseDTO<UpdateDishFullyRequestBodyDTO>>,
-  res: Response<CommonResponseDTO<UpdateDishFullyResponseBodyDTO>>
+export const updateDishFully = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    CommonResponseDTO<UpdateDishFullyResponseBodyDTO>,
+    UpdateDishFullyRequestBodyDTO
+  >,
+  res: Response<CommonResponseDTO<UpdateDishFullyResponseBodyDTO>>,
+  next: NextFunction
 ) => {
   try {
+    logger.info({ dishId: req.params.id }, 'Fully updating dish');
+
     const foundCategory = await categoryService.findById(req.body.category);
 
     if (!foundCategory) {
-      res.status(404).json({
-        message: 'Category Not Found',
-      });
-
-      return;
+      throw new NotFoundError('Category not found');
     }
 
     const updatedDish = await dishService.findByIdAndUpdate(req.params.id, {
       ...req.body,
-      restaurant: foundCategory.restaurant,
+      restaurant: foundCategory.restaurant.toString(),
     });
 
     if (!updatedDish) {
-      res.status(404).json({
-        message: 'Dish Not Found',
-      });
-
-      return;
+      throw new NotFoundError('Dish not found');
     }
 
-    res.status(200).json({
-      message: 'OK',
+    logger.info({ dishId: updatedDish.id }, 'Dish fully updated successfully');
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Dish updated successfully',
       data: updatedDish,
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({
-      message: 'Internal Server Error',
-    });
+    logger.error(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      'Failed to fully update dish'
+    );
+    next(error);
   }
 };
 
-const updateDishPartially = async (
-  req: Request<ObjectIdPathParamsDTO, CommonResponseDTO<UpdateDishPartiallyRequestBodyDTO>>,
-  res: Response<CommonResponseDTO<UpdateDishPartiallyResponseBodyDTO>>
+export const updateDishPartially = async (
+  req: Request<
+    ObjectIdPathParamsDTO,
+    CommonResponseDTO<UpdateDishPartiallyResponseBodyDTO>,
+    UpdateDishPartiallyRequestBodyDTO
+  >,
+  res: Response<CommonResponseDTO<UpdateDishPartiallyResponseBodyDTO>>,
+  next: NextFunction
 ) => {
   try {
+    logger.info({ dishId: req.params.id }, 'Partially updating dish');
+
     let foundCategory;
     if (req.body.category) {
       foundCategory = await categoryService.findById(req.body.category);
 
       if (!foundCategory) {
-        res.status(404).json({
-          message: 'Category Not Found',
-        });
-
-        return;
+        throw new NotFoundError('Category not found');
       }
     }
 
@@ -187,54 +209,57 @@ const updateDishPartially = async (
       ...req.body,
       ...(foundCategory
         ? {
-            restaurant: foundCategory.restaurant,
+            restaurant: foundCategory.restaurant.toString(),
           }
         : {}),
     });
 
     if (!patchedDish) {
-      res.status(404).json({
-        message: 'Dish Not Found',
-      });
-      return;
+      throw new NotFoundError('Dish not found');
     }
 
-    res.status(200).json({
-      message: 'OK',
+    logger.info({ dishId: patchedDish.id }, 'Dish partially updated successfully');
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Dish updated successfully',
       data: patchedDish,
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({
-      message: 'Internal Server Error',
-    });
+    logger.error(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      'Failed to partially update dish'
+    );
+    next(error);
   }
 };
 
-const deleteDish = async (
-  req: Request<ObjectIdPathParamsDTO>,
-  res: Response<CommonResponseDTO<DeleteDishResponseBodyDTO>>
+export const deleteDish = async (
+  req: Request<ObjectIdPathParamsDTO, CommonResponseDTO<DeleteDishResponseBodyDTO>, unknown>,
+  res: Response<CommonResponseDTO<DeleteDishResponseBodyDTO>>,
+  next: NextFunction
 ) => {
   try {
+    logger.info({ dishId: req.params.id }, 'Deleting dish');
+
     const deletedDish = await dishService.findByIdAndDelete(req.params.id);
 
     if (!deletedDish) {
-      res.status(404).json({
-        message: 'Dish Not Found',
-      });
-      return;
+      throw new NotFoundError('Dish not found');
     }
 
-    res.status(200).json({
-      message: 'OK',
+    logger.info({ dishId: deletedDish.id }, 'Dish deleted successfully');
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Dish deleted successfully',
       data: deletedDish,
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({
-      message: 'Internal Server Error',
-    });
+    logger.error(
+      { error: error instanceof Error ? error.message : 'Unknown error' },
+      'Failed to delete dish'
+    );
+    next(error);
   }
 };
-
-export { getAllDishes, createNewDish, getADish, updateDishPartially, updateDishFully, deleteDish };

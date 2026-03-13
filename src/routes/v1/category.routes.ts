@@ -1,5 +1,4 @@
 import express from 'express';
-import categoryController from '../../controllers/v1/category.controller';
 import ValidateBody from '../../middleware/validate-body.middleware';
 import {
   CreateCategoryRequestBodySchema,
@@ -9,14 +8,14 @@ import {
 import ValidateParams from '../../middleware/validate-params.middleware';
 import { objectIdPathParamsSchema } from '../../schema/common.schema';
 import { authorizeRole } from '../../middleware/authorize-admin.middleware';
-const {
+import {
   getAllCategories,
   createNewCategory,
+  updateCategoryFully,
   getCategory,
   updateCategoryPartially,
-  updateCategoryFully,
   deleteCategory,
-} = categoryController;
+} from '../../controllers/v1/category.controller';
 
 const router = express.Router();
 

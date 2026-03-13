@@ -61,11 +61,10 @@ class ProxyService {
       return;
     }
 
-    const { method, path, headers, body, query } = req;
+    const { method, headers, body, query } = req;
 
     const config: AxiosRequestConfig = {
       method,
-      url: path.replace(/^\/api/, ''),
       headers: {
         ...headers,
         'x-forwarded-for': req.ip,

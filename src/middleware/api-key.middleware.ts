@@ -1,5 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { UnauthorizedError } from '../utils/errors';
+import crypto from 'node:crypto';
+
+const keyCompareTimingSafe = (a: string, b: string): boolean => {
+  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+};
 
 export function apiKeyMiddleware(allowedKeys: string[]) {
   return (req: Request, _res: Response, next: NextFunction): void => {
@@ -10,7 +15,7 @@ export function apiKeyMiddleware(allowedKeys: string[]) {
       return;
     }
 
-    if (!allowedKeys.includes(apiKey)) {
+    if (!allowedKeys.some((key) => keyCompareTimingSafe(key, apiKey))) {
       next(new UnauthorizedError('Invalid API key'));
       return;
     }

@@ -134,8 +134,8 @@ The server runs on **http://localhost:3000**
 
 ### Proxied to Payment Service
 
-- `POST /api/v1/payments` - Process payment
-- `GET /api/v1/payments/:id` - Get payment status
+- `POST /v1/payments` - Process payment
+- `GET /v1/payments/:id` - Get payment status
 
 ### Local (MongoDB)
 

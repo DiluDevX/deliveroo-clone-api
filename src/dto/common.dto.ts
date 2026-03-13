@@ -6,7 +6,19 @@ export type ObjectIdPathParamsDTO = z.infer<typeof objectIdPathParamsSchema>;
 
 export type OrgIdPathParamsDTO = z.infer<typeof restaurantPathParamsSchema>;
 
-export type CommonResponseDTO<T> = {
+export interface CommonResponseDTO<T = unknown> {
+  success: boolean;
   message: string;
   data?: T;
-};
+}
+
+export interface PaginationInfoDTO {
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+  total: number;
+}
+
+export interface PaginatedResponseDTO<T = unknown> extends CommonResponseDTO<T[]> {
+  pagination: PaginationInfoDTO;
+}

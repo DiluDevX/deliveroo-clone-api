@@ -27,6 +27,10 @@ interface Environment {
   orderService: MicroserviceConfig;
   paymentService: MicroserviceConfig;
   rateLimit: RateLimitConfig;
+  jwt: {
+    secret: string;
+    expiresIn: string;
+  };
 }
 
 function requireEnv(name: string): string {
@@ -100,15 +104,19 @@ export const environment: Environment = {
   serviceName: requireEnv('SERVICE_NAME'),
   authService: {
     url: optionalEnv('AUTH_SERVICE_URL', 'http://localhost:4001'),
-    apiKey: optionalEnv('AUTH_API_KEY', ''),
+    apiKey: requireEnv('AUTH_API_KEY'),
   },
   orderService: {
     url: optionalEnv('ORDER_SERVICE_URL', 'http://localhost:4002'),
-    apiKey: optionalEnv('ORDER_SERVICE_API_KEY', ''),
+    apiKey: requireEnv('ORDER_SERVICE_API_KEY'),
   },
   paymentService: {
     url: optionalEnv('PAYMENT_SERVICE_URL', 'http://localhost:4003'),
-    apiKey: optionalEnv('PAYMENT_SERVICE_API_KEY', ''),
+    apiKey: requireEnv('PAYMENT_SERVICE_API_KEY'),
   },
   rateLimit: loadRateLimitConfig(environmentRaw),
+  jwt: {
+    secret: requireEnv('JWT_SECRET'),
+    expiresIn: requireEnv('JWT_EXPIRES_IN'),
+  },
 };

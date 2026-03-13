@@ -13,31 +13,11 @@ import { environment } from '../config/environment';
 
 const router = Router();
 
-router.use(
-  '/v1/auth',
-  apiKeyMiddleware([environment.bffAPIKey, environment.authService.apiKey]),
-  authRoutes
-);
-router.use(
-  '/v1/users',
-  apiKeyMiddleware([environment.bffAPIKey, environment.authService.apiKey]),
-  userRoutes
-);
-router.use(
-  '/v1/orders',
-  apiKeyMiddleware([environment.bffAPIKey, environment.orderService.apiKey]),
-  orderRoutes
-);
-router.use(
-  '/v1/cart',
-  apiKeyMiddleware([environment.bffAPIKey, environment.orderService.apiKey]),
-  cartRoutes
-);
-router.use(
-  '/api/v1/payments',
-  apiKeyMiddleware([environment.bffAPIKey, environment.paymentService.apiKey]),
-  paymentRoutes
-);
+router.use('/v1/auth', apiKeyMiddleware([environment.bffAPIKey]), authRoutes);
+router.use('/v1/users', apiKeyMiddleware([environment.bffAPIKey]), userRoutes);
+router.use('/v1/orders', apiKeyMiddleware([environment.bffAPIKey]), orderRoutes);
+router.use('/v1/cart', apiKeyMiddleware([environment.bffAPIKey]), cartRoutes);
+router.use('/v1/payments', apiKeyMiddleware([environment.bffAPIKey]), paymentRoutes);
 
 router.use('/v1/restaurants', apiKeyMiddleware([environment.bffAPIKey]), restaurantRoutes);
 router.use('/v1/dishes', apiKeyMiddleware([environment.bffAPIKey]), dishRoutes);

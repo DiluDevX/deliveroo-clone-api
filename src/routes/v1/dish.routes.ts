@@ -36,8 +36,8 @@ router.put(
 router.get(
   '/:id',
   ValidateParams(objectIdPathParamsSchema),
-  getADish,
-  ValidateQuery(DishQueryParamsSchema)
+  ValidateQuery(DishQueryParamsSchema),
+  getADish
 );
 
 router.patch(

@@ -19,24 +19,28 @@ import {
 import { restaurantPathParamsSchema } from '../../schema/restaurant.schema';
 import { categoryService } from '../../services/category.service';
 import { restaurantService } from '../../services/restaurant.service';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { ICategory } from '../../models/category.model';
 import { IRestaurant } from '../../models/restaurant.model';
+import { StatusCodes } from 'http-status-codes';
+import { logger } from '../../utils/logger';
+import { NotFoundError, BadRequestError } from '../../utils/errors';
 
 interface CategoryFilters {
   restaurant?: string;
 }
 
-const toResponseDTO = (category: ICategory): CategoryResponseDTO => ({
+export const toResponseDTO = (category: ICategory): CategoryResponseDTO => ({
   id: category._id.toString(),
   name: category.name,
   restaurant: category.restaurant.toString(),
 });
 
-const getAllCategories = async (
+export const getAllCategories = async (
   req: Request<unknown, unknown, unknown, z.infer<typeof CategoryQueryParamsSchema>>,
-  res: Response<CommonResponseDTO<GetAllCategoriesResponseBodyDTO>>
-) => {
+  res: Response<CommonResponseDTO<GetAllCategoriesResponseBodyDTO>>,
+  next: NextFunction
+): Promise<void> => {
   try {
     const filters: CategoryFilters = {};
     if (req.query.restaurant) {
@@ -46,152 +50,154 @@ const getAllCategories = async (
           : req.query.restaurant;
     }
     const categoriesArray = await categoryService.findAll(filters, req.query.populate);
-    res.status(200).json({
-      message: 'OK',
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Categories retrieved successfully',
       data: categoriesArray.map(toResponseDTO),
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({ message: 'Internal Server Error' });
+    logger.error({ error }, 'Failed to retrieve categories');
+    next(error);
   }
 };
 
-const createNewCategory = async (
+export const createNewCategory = async (
   req: Request<
     z.infer<typeof CategoryPathParamsSchema>,
     unknown,
     z.infer<typeof CreateCategoryRequestBodySchema>
   >,
-  res: Response<CommonResponseDTO<CreateNewCategoryResponseBodyDTO>>
-) => {
+  res: Response<CommonResponseDTO<CreateNewCategoryResponseBodyDTO>>,
+  next: NextFunction
+): Promise<void> => {
   try {
     const decodedOrgID = decodeURIComponent(req.params.orgID);
     const parseResult = restaurantPathParamsSchema.safeParse({
       orgID: decodedOrgID,
     });
     if (!parseResult.success) {
-      res.status(400).json({ message: 'Invalid orgID' });
+      next(new BadRequestError('Invalid orgID'));
       return;
     }
     const foundRestaurant = (await restaurantService.findOne(
       req.body.restaurant
     )) as IRestaurant | null;
     if (!foundRestaurant) {
-      res.status(404).json({ message: 'Restaurant Not Found' });
+      next(new NotFoundError('Restaurant not found'));
       return;
     }
     const createdCategory = await categoryService.createNew(req.body);
-    res.status(201).json({
-      message: 'Created',
+    res.status(StatusCodes.CREATED).json({
+      success: true,
+      message: 'Category created successfully',
       data: toResponseDTO(createdCategory),
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({ message: 'Internal Server Error' });
+    logger.error({ error }, 'Failed to create category');
+    next(error);
   }
 };
 
-const getCategory = async (
+export const getCategory = async (
   req: Request<ObjectIdPathParamsDTO>,
-  res: Response<CommonResponseDTO<GetACategoryResponseBodyDTO>>
-) => {
+  res: Response<CommonResponseDTO<GetACategoryResponseBodyDTO>>,
+  next: NextFunction
+): Promise<void> => {
   try {
     const foundCategory = await categoryService.findById(req.params.id);
     if (!foundCategory) {
-      res.status(404).json({ message: 'Category Not Found' });
+      next(new NotFoundError('Category not found'));
       return;
     }
-    res.status(200).json({
-      message: 'OK',
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Category retrieved successfully',
       data: toResponseDTO(foundCategory),
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({ message: 'Internal Server Error' });
+    logger.error({ error }, 'Failed to retrieve category');
+    next(error);
   }
 };
 
-const updateCategoryFully = async (
+export const updateCategoryFully = async (
   req: Request<ObjectIdPathParamsDTO, unknown, UpdateCategoryFullyRequestBodyDTO>,
-  res: Response<CommonResponseDTO<UpdateCategoryFullyResponseBodyDTO>>
-) => {
+  res: Response<CommonResponseDTO<UpdateCategoryFullyResponseBodyDTO>>,
+  next: NextFunction
+): Promise<void> => {
   try {
     const foundRestaurant = await restaurantService.findOne(req.body.restaurant);
     if (!foundRestaurant) {
-      res.status(404).json({ message: 'Restaurant Not Found' });
+      next(new NotFoundError('Restaurant not found'));
       return;
     }
     const updatedCategory = await categoryService.findByIdAndUpdate(req.params.id, req.body);
     if (!updatedCategory) {
-      res.status(404).json({ message: 'Category Not Found' });
+      next(new NotFoundError('Category not found'));
       return;
     }
-    res.status(200).json({
-      message: 'OK',
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Category updated successfully',
       data: toResponseDTO(updatedCategory),
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({ message: 'Internal Server Error' });
+    logger.error({ error }, 'Failed to update category');
+    next(error);
   }
 };
 
-const updateCategoryPartially = async (
+export const updateCategoryPartially = async (
   req: Request<ObjectIdPathParamsDTO, unknown, UpdateCategoryPartiallyRequestBodyDTO>,
-  res: Response<CommonResponseDTO<UpdateCategoryPartiallyResponseBodyDTO>>
-) => {
+  res: Response<CommonResponseDTO<UpdateCategoryPartiallyResponseBodyDTO>>,
+  next: NextFunction
+): Promise<void> => {
   try {
     if (!req.body) {
-      res.status(400).json({ message: 'Request body is required' });
+      next(new BadRequestError('Request body is required'));
       return;
     }
     if (req.body.restaurant) {
       const foundRestaurant = await restaurantService.findOne(req.body.restaurant);
       if (!foundRestaurant) {
-        res.status(404).json({ message: 'Restaurant Not Found' });
+        next(new NotFoundError('Restaurant not found'));
         return;
       }
     }
     const patchedCategory = await categoryService.findAndUpdatePartially(req.params.id, req.body);
     if (!patchedCategory) {
-      res.status(404).json({ message: 'Category Not Found' });
+      next(new NotFoundError('Category not found'));
       return;
     }
-    res.status(200).json({
-      message: 'OK',
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Category updated successfully',
       data: toResponseDTO(patchedCategory),
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({ message: 'Internal Server Error' });
+    logger.error({ error }, 'Failed to update category');
+    next(error);
   }
 };
 
-const deleteCategory = async (
+export const deleteCategory = async (
   req: Request<ObjectIdPathParamsDTO>,
-  res: Response<CommonResponseDTO<DeleteCategoryResponseBodyDTO>>
-) => {
+  res: Response<CommonResponseDTO<DeleteCategoryResponseBodyDTO>>,
+  next: NextFunction
+): Promise<void> => {
   try {
     const deletedCategory = await categoryService.findByIdAndDelete(req.params.id);
     if (!deletedCategory) {
-      res.status(404).json({ message: 'Category Not Found' });
+      next(new NotFoundError('Category not found'));
       return;
     }
-    res.status(200).json({
-      message: 'OK',
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Category deleted successfully',
       data: toResponseDTO(deletedCategory),
     });
   } catch (error) {
-    console.log(error, 'error');
-    res.status(500).json({ message: 'Internal server error' });
+    logger.error({ error }, 'Failed to delete category');
+    next(error);
   }
-};
-
-export = {
-  getAllCategories,
-  createNewCategory,
-  getCategory,
-  updateCategoryPartially,
-  updateCategoryFully,
-  deleteCategory,
 };

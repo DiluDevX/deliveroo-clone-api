@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { environment } from '../config/environment';
+import { logger } from '../utils/logger';
 
 interface JwtPayload {
   userId: string;
@@ -8,7 +9,11 @@ interface JwtPayload {
   role: string;
 }
 
-const SECRET_KEY = environment.databaseUrl ? process.env.SECRET_KEY : '';
+interface RequestWithUser extends Request {
+  user?: JwtPayload;
+}
+
+const SECRET_KEY = environment.jwt.secret;
 
 export const authorizeRole = (role: string) => {
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -21,8 +26,8 @@ export const authorizeRole = (role: string) => {
     }
 
     try {
-      const decodedToken = jwt.verify(token, SECRET_KEY as string) as JwtPayload;
-      (req as Request & { user: JwtPayload }).user = decodedToken;
+      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayload;
+      (req as RequestWithUser).user = decodedToken;
 
       if (decodedToken.role !== role) {
         res.status(403).json({ message: 'Access denied. Insufficient role.' });
@@ -31,7 +36,7 @@ export const authorizeRole = (role: string) => {
 
       next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(401).json({ error: 'Access denied. Invalid token.' });
       return;
     }
@@ -49,8 +54,8 @@ export const optionalAuthorizeRole = (role: string) => {
     }
 
     try {
-      const decodedToken = jwt.verify(token, SECRET_KEY as string) as JwtPayload;
-      (req as Request & { user: JwtPayload }).user = decodedToken;
+      const decodedToken = jwt.verify(token, SECRET_KEY) as JwtPayload;
+      (req as RequestWithUser).user = decodedToken;
 
       if (decodedToken.role !== role) {
         res.status(403).json({ message: 'Access denied. Insufficient role.' });
@@ -59,7 +64,7 @@ export const optionalAuthorizeRole = (role: string) => {
 
       next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       res.status(401).json({ error: 'Access denied. Invalid token.' });
       return;
     }

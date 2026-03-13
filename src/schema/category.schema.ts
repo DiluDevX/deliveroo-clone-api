@@ -10,7 +10,7 @@ export const CreateCategoryRequestBodySchema = z.object({
 
 export const FullyUpdateCategoryRequestBodySchema = CreateCategoryRequestBodySchema.required();
 
-export const PartiallyUpdateCategoryRequestBodySchema = CreateCategoryRequestBodySchema.optional();
+export const PartiallyUpdateCategoryRequestBodySchema = CreateCategoryRequestBodySchema.partial();
 
 export const CategoryQueryParamsSchema = z.object({
   populate: z.string(),
