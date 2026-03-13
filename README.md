@@ -34,7 +34,7 @@ This API follows a **BFF Gateway** pattern:
 
 ## Project Structure
 
-```
+```text
 src/
 ├── config/           # Environment configuration
 ├── controllers/      # Request handlers

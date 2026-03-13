@@ -93,7 +93,10 @@ export const createNewDish = async (
       throw new NotFoundError('Category not found');
     }
 
-    const createdDish = await dishService.createNew(req.body);
+    const createdDish = await dishService.createNew({
+      ...req.body,
+      restaurant: foundCategory.restaurant.toString(),
+    });
 
     logger.info({ dishId: createdDish.id }, 'Dish created successfully');
 

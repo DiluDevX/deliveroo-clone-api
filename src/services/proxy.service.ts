@@ -63,13 +63,20 @@ class ProxyService {
 
     const { method, headers, body, query } = req;
 
+    const safeHeaders = {
+      accept: headers.accept,
+      'content-type': headers['content-type'],
+      authorization: headers.authorization,
+      'user-agent': headers['user-agent'],
+      'accept-encoding': headers['accept-encoding'],
+      'x-forwarded-for': req.ip,
+      'x-api-key': client.apiKey,
+    };
+
     const config: AxiosRequestConfig = {
+      url: req.originalUrl,
       method,
-      headers: {
-        ...headers,
-        'x-forwarded-for': req.ip,
-        'x-api-key': client.apiKey,
-      },
+      headers: safeHeaders,
       params: query,
       data: body,
     };

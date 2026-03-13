@@ -47,7 +47,7 @@ function optionalEnv(name: string, defaultValue: string): string {
 
 const parsePositiveInt = (raw: string, name: string): number => {
   const value = Number(raw);
-  if (Number.isNaN(value) || value <= 0) {
+  if (!Number.isInteger(value) || value <= 0) {
     throw new Error(`Invalid ${name} value: ${value}. Must be a positive integer.`);
   }
   return value;

@@ -79,14 +79,15 @@ export const createNewCategory = async (
       next(new BadRequestError('Invalid orgID'));
       return;
     }
-    const foundRestaurant = (await restaurantService.findOne(
-      req.body.restaurant
-    )) as IRestaurant | null;
+    const foundRestaurant = (await restaurantService.findOne(decodedOrgID)) as IRestaurant | null;
     if (!foundRestaurant) {
       next(new NotFoundError('Restaurant not found'));
       return;
     }
-    const createdCategory = await categoryService.createNew(req.body);
+    const createdCategory = await categoryService.createNew({
+      ...req.body,
+      restaurant: foundRestaurant._id.toString(),
+    });
     res.status(StatusCodes.CREATED).json({
       success: true,
       message: 'Category created successfully',
@@ -153,7 +154,7 @@ export const updateCategoryPartially = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.body) {
+    if (!req.body || Object.keys(req.body).length === 0) {
       next(new BadRequestError('Request body is required'));
       return;
     }

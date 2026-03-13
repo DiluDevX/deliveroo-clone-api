@@ -93,8 +93,7 @@ export const getARestaurant = async (
   next: NextFunction
 ) => {
   try {
-    const decodedOrgID = decodeURIComponent(req.params.orgID);
-
+    const decodedOrgID = req.params.orgID;
     logger.info({ orgId: decodedOrgID }, 'Fetching restaurant');
 
     const foundRestaurant = await restaurantService.findOne(decodedOrgID);

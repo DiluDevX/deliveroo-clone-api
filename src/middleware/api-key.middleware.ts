@@ -3,7 +3,9 @@ import { UnauthorizedError } from '../utils/errors';
 import crypto from 'node:crypto';
 
 const keyCompareTimingSafe = (a: string, b: string): boolean => {
-  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
 };
 
 export function apiKeyMiddleware(allowedKeys: string[]) {
