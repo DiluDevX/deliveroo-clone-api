@@ -66,6 +66,10 @@ PORT=3000
 SERVICE_NAME=deliveroo-clone-api
 BFF_API_KEY=your-bff-api-key
 
+# JWT
+JWT_SECRET=your-jwt-secret-key
+JWT_EXPIRES_IN=1h
+
 # Microservices
 AUTH_SERVICE_URL=http://localhost:4001
 AUTH_API_KEY=your-auth-api-key

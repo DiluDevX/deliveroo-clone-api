@@ -132,7 +132,16 @@ export const updateCategoryFully = async (
       next(new NotFoundError('Restaurant not found'));
       return;
     }
-    const updatedCategory = await categoryService.findByIdAndUpdate(req.params.id, req.body);
+
+    const updatedCategoryData = {
+      ...req.body,
+      restaurant: foundRestaurant._id.toString(),
+    };
+
+    const updatedCategory = await categoryService.findByIdAndUpdate(
+      req.params.id,
+      updatedCategoryData
+    );
     if (!updatedCategory) {
       next(new NotFoundError('Category not found'));
       return;
@@ -158,14 +167,23 @@ export const updateCategoryPartially = async (
       next(new BadRequestError('Request body is required'));
       return;
     }
+    let patchCategoryData: UpdateCategoryPartiallyRequestBodyDTO = req.body;
     if (req.body.restaurant) {
       const foundRestaurant = await restaurantService.findOne(req.body.restaurant);
       if (!foundRestaurant) {
         next(new NotFoundError('Restaurant not found'));
         return;
       }
+      patchCategoryData = {
+        ...req.body,
+        restaurant: foundRestaurant._id.toString(),
+      };
     }
-    const patchedCategory = await categoryService.findAndUpdatePartially(req.params.id, req.body);
+
+    const patchedCategory = await categoryService.findAndUpdatePartially(
+      req.params.id,
+      patchCategoryData
+    );
     if (!patchedCategory) {
       next(new NotFoundError('Category not found'));
       return;
