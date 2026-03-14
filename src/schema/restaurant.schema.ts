@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const restaurantNameSchema = z.string().min(1).max(20);
 const restaurantDescriptionSchema = z.string().min(3).max(150);
@@ -48,6 +48,6 @@ export const restaurantPathParamsSchema = z.object({
     .max(40)
     .regex(
       /^(?:[a-zA-Z0-9_\- ]|%[0-9A-Fa-f]{2})+$/,
-      "orgID must contain only letters, numbers, dashes, underscores, or encoded characters",
+      'orgID must contain only letters, numbers, dashes, underscores, or encoded characters'
     ),
 });

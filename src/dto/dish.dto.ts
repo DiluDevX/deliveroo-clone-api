@@ -1,13 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 import {
   DishQueryParamsSchema,
   FullyUpdateDishRequestBodySchema,
   PartiallyUpdateDishRequestBodySchema,
-} from "../schema/dish.schema";
-import { IDish } from "../models/dish.model";
-export type UpdateDishFullyRequestBodyDTO = z.infer<
-  typeof FullyUpdateDishRequestBodySchema
->;
+} from '../schema/dish.schema';
+import { IDish } from '../models/dish.model';
+export type UpdateDishFullyRequestBodyDTO = z.infer<typeof FullyUpdateDishRequestBodySchema>;
 
 export type UpdateDishPartiallyRequestBodyDTO = z.infer<
   typeof PartiallyUpdateDishRequestBodySchema

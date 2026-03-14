@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 export interface ICategory {
   createdAt: Date;
@@ -19,20 +19,20 @@ const categorySchema = new mongoose.Schema(
     restaurant: {
       required: true,
       type: mongoose.SchemaTypes.ObjectId,
-      ref: "Restaurant",
+      ref: 'Restaurant',
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-categorySchema.virtual("dishes", {
-  ref: "Dish",
-  localField: "_id",
-  foreignField: "category",
+categorySchema.virtual('dishes', {
+  ref: 'Dish',
+  localField: '_id',
+  foreignField: 'category',
 });
 
-categorySchema.set("toJSON", { virtuals: true });
+categorySchema.set('toJSON', { virtuals: true });
 
-const Category = mongoose.model("Category", categorySchema);
+const Category = mongoose.model('Category', categorySchema);
 
 export default Category;

@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
 import {
   updateRestaurantFullyRequestBodySchema,
   updateRestaurantPartiallyRequestBodySchema,
-} from "../schema/restaurant.schema";
+} from '../schema/restaurant.schema';
 
 export type CreateNewRestaurantRequestBodyDTO = {
   name: string;

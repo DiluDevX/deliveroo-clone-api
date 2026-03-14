@@ -1,4 +1,4 @@
-import { ObjectId, Schema, model } from "mongoose";
+import { ObjectId, Schema, model } from 'mongoose';
 
 export interface IRestaurant {
   _id: ObjectId;
@@ -54,9 +54,9 @@ const restaurantSchema = new Schema<IRestaurant>(
       required: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-const Restaurant = model("Restaurant", restaurantSchema);
+const Restaurant = model('Restaurant', restaurantSchema);
 
 export default Restaurant;

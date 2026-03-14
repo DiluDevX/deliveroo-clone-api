@@ -1,4 +1,4 @@
-import { model, ObjectId, Schema, SchemaTypes } from "mongoose";
+import { model, ObjectId, Schema, SchemaTypes } from 'mongoose';
 
 export interface IDish {
   name: string;
@@ -25,16 +25,16 @@ const dishSchema = new Schema<IDish>(
     },
     category: {
       type: SchemaTypes.ObjectId,
-      ref: "Category",
+      ref: 'Category',
     },
     restaurant: {
       type: SchemaTypes.ObjectId,
-      ref: "Restaurant",
+      ref: 'Restaurant',
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-const Dish = model("Dish", dishSchema);
+const Dish = model('Dish', dishSchema);
 
 export default Dish;

@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod';
 import {
   FullyUpdateCategoryRequestBodySchema,
   PartiallyUpdateCategoryRequestBodySchema,
-} from "../schema/category.schema";
+} from '../schema/category.schema';
 
 export type CreateNewCategoryRequestBodyDTO = {
   name: string;
