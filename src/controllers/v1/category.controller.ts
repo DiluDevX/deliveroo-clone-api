@@ -71,15 +71,15 @@ export const createNewCategory = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const decodedOrgID = decodeURIComponent(req.params.orgID);
+    const orgID = req.params.orgID;
     const parseResult = restaurantPathParamsSchema.safeParse({
-      orgID: decodedOrgID,
+      orgID,
     });
     if (!parseResult.success) {
       next(new BadRequestError('Invalid orgID'));
       return;
     }
-    const foundRestaurant = (await restaurantService.findOne(decodedOrgID)) as IRestaurant | null;
+    const foundRestaurant = (await restaurantService.findOne(orgID)) as IRestaurant | null;
     if (!foundRestaurant) {
       next(new NotFoundError('Restaurant not found'));
       return;

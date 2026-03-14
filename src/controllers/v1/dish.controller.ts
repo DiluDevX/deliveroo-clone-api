@@ -203,19 +203,12 @@ export const updateDishPartially = async (
     if (req.body.category) {
       foundCategory = await categoryService.findById(req.body.category);
 
-      if (!foundCategory) {
-        throw new NotFoundError('Category not found');
+      if (!foundCategory || foundCategory.restaurant.toString() !== req.body.restaurant) {
+        throw new NotFoundError('Category not found or does not belong to this restaurant');
       }
     }
 
-    const patchedDish = await dishService.findAndUpdatePartially(req.params.id, {
-      ...req.body,
-      ...(foundCategory
-        ? {
-            restaurant: foundCategory.restaurant.toString(),
-          }
-        : {}),
-    });
+    const patchedDish = await dishService.findAndUpdatePartially(req.params.id, req.body);
 
     if (!patchedDish) {
       throw new NotFoundError('Dish not found');

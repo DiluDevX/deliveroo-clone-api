@@ -74,7 +74,7 @@ class ProxyService {
     };
 
     const config: AxiosRequestConfig = {
-      url: req.originalUrl,
+      url: req.path,
       method,
       headers: safeHeaders,
       params: query,

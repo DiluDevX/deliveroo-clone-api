@@ -142,7 +142,7 @@ The server runs on **http://localhost:3000**
 #### Restaurants
 
 - `GET /v1/restaurants` - Get all restaurants
-- `GET /v1/restaurants/:orgID` - Get restaurant by ID
+- `GET /v1/restaurants/:id` - Get restaurant by ID
 - `POST /v1/restaurants` - Create restaurant (Admin)
 - `PUT /v1/restaurants/:id` - Update restaurant (Admin)
 - `PATCH /v1/restaurants/:id` - Partially update restaurant (Admin)
