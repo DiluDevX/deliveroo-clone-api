@@ -26,6 +26,7 @@ interface Environment {
   authService: MicroserviceConfig;
   orderService: MicroserviceConfig;
   paymentService: MicroserviceConfig;
+  restaurantService: MicroserviceConfig;
   rateLimit: RateLimitConfig;
   jwt: {
     secret: string;
@@ -113,6 +114,10 @@ export const environment: Environment = {
   paymentService: {
     url: optionalEnv('PAYMENT_SERVICE_URL', 'http://localhost:4003'),
     apiKey: requireEnv('PAYMENT_SERVICE_API_KEY'),
+  },
+  restaurantService: {
+    url: optionalEnv('RESTAURANT_SERVICE_URL', 'http://localhost:4004'),
+    apiKey: requireEnv('RESTAURANT_SERVICE_API_KEY'),
   },
   rateLimit: loadRateLimitConfig(environmentRaw),
   jwt: {

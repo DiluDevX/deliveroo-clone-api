@@ -34,6 +34,14 @@ class ProxyService {
           environment.paymentService.apiKey
         ),
       },
+      [MICROSERVICE_NAMES.RESTAURANT_SERVICE]: {
+        baseURL: environment.restaurantService.url,
+        apiKey: environment.restaurantService.apiKey,
+        client: this.createClient(
+          environment.restaurantService.url,
+          environment.restaurantService.apiKey
+        ),
+      },
     };
   }
 
@@ -74,7 +82,7 @@ class ProxyService {
     };
 
     const config: AxiosRequestConfig = {
-      url: req.path,
+      url: `/api/v1${req.path}`,
       method,
       headers: safeHeaders,
       params: query,

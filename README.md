@@ -21,16 +21,17 @@ Node.js BFF (Backend for Frontend) Gateway for Deliveroo clone application with 
 This API follows a **BFF Gateway** pattern:
 
 - **Main API (BFF)** - Gateway service handling:
-  - **Local**: Restaurants, Dishes, Categories (MongoDB)
   - **Proxied**: Auth, Users → Auth Service
   - **Proxied**: Orders, Cart → Order Service
   - **Proxied**: Payments → Payment Service
+  - **Proxied**: Restaurants, Dishes, Categories → Restaurant Service
 
 ### Microservices
 
 - **Auth Service** (`deliveroo-clone-auth-service`) - Authentication, authorization, user management
 - **Order Service** (`deliveroo-clone-order-service`) - Orders, cart management
 - **Payment Service** (`deliveroo-clone-payment-service`) - Payment processing
+- **Restaurant Service** (`deliveroo-clone-restaurant-service`) - Restaurants, dishes, categories management
 
 ## Project Structure
 
@@ -77,6 +78,8 @@ ORDER_SERVICE_URL=http://localhost:4002
 ORDER_SERVICE_API_KEY=your-order-api-key
 PAYMENT_SERVICE_URL=http://localhost:4003
 PAYMENT_SERVICE_API_KEY=your-payment-api-key
+RESTAURANT_SERVICE_URL=http://localhost:4004
+RESTAURANT_SERVICE_API_KEY=your-restaurant-api-key
 
 # Database
 DATABASE_URL=mongodb://localhost:27017/deliveroo-clone
@@ -141,7 +144,7 @@ The server runs on **http://localhost:3000**
 - `POST /v1/payments` - Process payment
 - `GET /v1/payments/:id` - Get payment status
 
-### Local (MongoDB)
+### Proxied to Restaurant Service
 
 #### Restaurants
 
