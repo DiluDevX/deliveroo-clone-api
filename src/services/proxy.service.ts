@@ -56,6 +56,19 @@ class ProxyService {
     });
   }
 
+  private mapPath(serviceName: string, originalPath: string): string {
+    const servicePaths: Record<string, string> = {
+      [MICROSERVICE_NAMES.AUTH_SERVICE]: '/v1',
+      [MICROSERVICE_NAMES.ORDER_SERVICE]: '/v1',
+      [MICROSERVICE_NAMES.PAYMENT_SERVICE]: '/v1',
+    };
+
+    const pathPrefix = servicePaths[serviceName] || '';
+    const cleanPath = originalPath.replace(/^\/api/, '') || '/';
+
+    return pathPrefix ? `${pathPrefix}${cleanPath}` : cleanPath;
+  }
+
   async proxyRequest(
     serviceName: string,
     req: Request,
@@ -70,6 +83,9 @@ class ProxyService {
     }
 
     const { method, headers, body, query } = req;
+    const baseUrl = req.baseUrl || '';
+    const fullPath = baseUrl + req.path || '/';
+    const mappedPath = this.mapPath(serviceName, fullPath);
 
     const safeHeaders = {
       accept: headers.accept,
@@ -79,10 +95,14 @@ class ProxyService {
       'accept-encoding': headers['accept-encoding'],
       'x-forwarded-for': req.ip,
       'x-api-key': client.apiKey,
+      'x-actor-type': headers['x-actor-type'] as string,
+      'x-actor-id': headers['x-actor-id'] as string,
+      'x-actor-user-id': headers['x-actor-user-id'] as string,
+      'x-user-id': headers['x-user-id'] as string,
     };
 
     const config: AxiosRequestConfig = {
-      url: `/api/v1${req.path}`,
+      url: mappedPath,
       method,
       headers: safeHeaders,
       params: query,
