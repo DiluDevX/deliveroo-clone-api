@@ -76,14 +76,14 @@ Important: `BASE_URL` is used as the allowed CORS origin. For the Vite frontend 
 
 The frontend calls the BFF under these paths:
 
-| Frontend path       | BFF target service | Downstream path mapping       |
-| ------------------- | ------------------ | ----------------------------- |
-| /api/auth/\*        | auth-service       | /v1/auth/\*                   |
-| /api/users/\*       | auth-service       | /v1/users/\*                  |
-| /api/cart/\*        | order-service      | /v1/cart/\*                   |
-| /api/orders/\*      | order-service      | /v1/orders/\*                 |
-| /api/payments/\*    | payment-service    | /v1/payments/\*               |
-| /api/restaurants/\* | restaurant-service | currently no /v1 prefix added |
+| Frontend path       | BFF target service | Downstream path mapping |
+| ------------------- | ------------------ | ----------------------- |
+| /api/auth/\*        | auth-service       | /v1/auth/\*             |
+| /api/users/\*       | auth-service       | /v1/users/\*            |
+| /api/cart/\*        | order-service      | /v1/cart/\*             |
+| /api/orders/\*      | order-service      | /v1/orders/\*           |
+| /api/payments/\*    | payment-service    | /v1/payments/\*         |
+| /api/restaurants/\* | restaurant-service | /v1/restaurants/\*      |
 
 All frontend requests are checked by `apiKeyMiddleware([BFF_API_KEY])`, so frontend requests must include:
 
@@ -132,17 +132,14 @@ For restaurant admin/platform admin flows, set actor type based on the user role
 
 ## Path Prefix Notes
 
-The proxy adds `/v1` for auth, order, and payment services.
+The proxy adds `/v1` for auth, order, payment, and restaurant services.
 
 Check downstream route registrations carefully:
 
 - auth-service registers /v1/auth and /v1/users, so BFF /api/auth -> /v1/auth is correct.
 - order-service registers /v1/cart and /v1/orders, so BFF /api/cart -> /v1/cart is correct.
-- payment-service currently registers /api/v1/payments. BFF maps to /v1/payments. Either:
-  - change payment-service routes to /v1/payments, or
-  - set PAYMENT_SERVICE_URL=http://localhost:4003/api, or
-  - update proxy mapping for payment-service to /api/v1.
-- restaurant-service currently registers /api/v1/restaurants, /api/v1/categories, /api/v1/dishes. BFF currently does not add /api/v1 for restaurant-service. Either set RESTAURANT_SERVICE_URL=http://localhost:4004/api/v1 or update proxy mapping.
+- payment-service registers /v1/payments, so BFF /api/payments -> /v1/payments is correct.
+- restaurant-service registers /v1/restaurants, /v1/categories, and /v1/dishes. BFF /api/restaurants maps to /v1/restaurants.
 
 Do not leave this implicit. Pick one path convention for every service.
 

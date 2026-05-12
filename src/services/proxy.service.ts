@@ -61,6 +61,7 @@ class ProxyService {
       [MICROSERVICE_NAMES.AUTH_SERVICE]: '/v1',
       [MICROSERVICE_NAMES.ORDER_SERVICE]: '/v1',
       [MICROSERVICE_NAMES.PAYMENT_SERVICE]: '/v1',
+      [MICROSERVICE_NAMES.RESTAURANT_SERVICE]: '/v1',
     };
 
     const pathPrefix = servicePaths[serviceName] || '';
