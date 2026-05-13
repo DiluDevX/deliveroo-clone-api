@@ -136,6 +136,7 @@ The server runs on **http://localhost:3000**
 
 - `GET /v1/cart` - Get user's cart
 - `POST /v1/cart` - Add item to cart
+- `POST /v1/cart/sync` - Replace user's server cart with a client cart snapshot
 - `PUT /v1/cart/:id` - Update cart item
 - `DELETE /v1/cart/:id` - Remove cart item
 
