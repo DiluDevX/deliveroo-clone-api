@@ -2,8 +2,8 @@
 
 ### Bug Fixes
 
-* fetch tags when extracting release version ([d14a5ca](https://github.com/DiluDevX/deliveroo-clone-api/commit/d14a5cace9fc4289af14cda1e5c1ad980104e394))
-* trigger bff azure deployment ([e5a185e](https://github.com/DiluDevX/deliveroo-clone-api/commit/e5a185e3720d911089be445eb72c10c31ab65d34))
+- fetch tags when extracting release version ([d14a5ca](https://github.com/DiluDevX/deliveroo-clone-api/commit/d14a5cace9fc4289af14cda1e5c1ad980104e394))
+- trigger bff azure deployment ([e5a185e](https://github.com/DiluDevX/deliveroo-clone-api/commit/e5a185e3720d911089be445eb72c10c31ab65d34))
 
 ## [1.1.1](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.1.0...v1.1.1) (2026-05-27)
 
