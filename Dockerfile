@@ -26,7 +26,7 @@ ARG ENV=production
 ARG APP_VERSION=unknown
 ENV ENV=$ENV \
     APP_VERSION=$APP_VERSION \
-    NODE_ENV=production
+    NODE_ENV=$ENV
 
 COPY --from=deps    --chown=app:nodejs /app/node_modules    ./node_modules
 COPY --from=builder --chown=app:nodejs /app/dist            ./dist
@@ -39,4 +39,4 @@ USER app
 EXPOSE 3000
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "dist/index.js"]
