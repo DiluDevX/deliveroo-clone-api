@@ -20,12 +20,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Extract version
         id: extract
         run: |
-          # Get the latest tag
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          git fetch --tags
+
+          TAG=$(git tag --sort=-creatordate | head -n 1)
 
           if [ -z "$TAG" ]; then
             echo "No tags found"
@@ -33,7 +36,16 @@ jobs:
             exit 0
           fi
 
-          # Remove 'v' prefix if present
+          TAG_DATE=$(git log -1 --format="%ct" "$TAG")
+          NOW=$(date +%s)
+          DIFF=$((NOW - TAG_DATE))
+
+          if [ "$DIFF" -ge 300 ]; then
+            echo "No new release in this run"
+            echo "published=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           VERSION=${TAG#v}
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
