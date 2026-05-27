@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.0.0...v1.1.0) (2026-05-27)
+
+### Features
+
+* trigger CI/CD pipeline ([cd17e6e](https://github.com/DiluDevX/deliveroo-clone-api/commit/cd17e6ed078f1baca91be780742abbeccba674fc))
+
 ## 1.0.0 (2026-05-27)
 
 ### Features
