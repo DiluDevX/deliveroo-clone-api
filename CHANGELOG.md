@@ -1,3 +1,9 @@
+## [1.1.4](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.1.3...v1.1.4) (2026-05-28)
+
+### Bug Fixes
+
+* update HOST_PORT to 3000 and bind to localhost in Azure deployment ([3015d61](https://github.com/DiluDevX/deliveroo-clone-api/commit/3015d61bca4e39679f757f1b3ce587db0d39aacc))
+
 ## [1.1.3](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.1.2...v1.1.3) (2026-05-27)
 
 ### Bug Fixes
