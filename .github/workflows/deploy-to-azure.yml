@@ -17,7 +17,7 @@ env:
   IMAGE_NAME: bff-gateway
   CONTAINER_NAME: bff-gateway
   CONTAINER_PORT: '3000'
-  HOST_PORT: '80'
+  HOST_PORT: '3000'
   DOCKER_NETWORK: deliveroo-dev
   SERVICE_DIR: /opt/deliveroo/bff-gateway
 
@@ -171,7 +171,7 @@ jobs:
             --restart unless-stopped \
             --env-file "$SERVICE_DIR/.env" \
             -e APP_VERSION="$APP_VERSION" \
-            -p "$HOST_PORT:$APP_PORT" \
+            -p "127.0.0.1:$HOST_PORT:$APP_PORT" \
             "$ACR_LOGIN_SERVER/$IMAGE_NAME:$APP_VERSION"
 
           sleep 10
