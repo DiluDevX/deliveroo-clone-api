@@ -51,6 +51,9 @@ export const createPaymentIntent = async (
           'x-actor-id': actor.actorId,
           'x-actor-user-id': actor.actorUserId,
           'x-actor-type': actor.actorType,
+          'x-user-email': actor.email,
+          'x-user-first-name': actor.firstName,
+          'x-user-last-name': actor.lastName,
         },
       }
     );
