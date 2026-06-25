@@ -60,4 +60,7 @@ export interface ActorContextDTO {
   actorId: string;
   actorUserId: string;
   actorType: ActorType;
+  email: string;
+  firstName: string;
+  lastName: string;
 }

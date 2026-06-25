@@ -100,6 +100,9 @@ class ProxyService {
       'x-actor-id': headers['x-actor-id'] as string,
       'x-actor-user-id': headers['x-actor-user-id'] as string,
       'x-user-id': headers['x-user-id'] as string,
+      'x-user-email': headers['x-user-email'] as string,
+      'x-user-first-name': headers['x-user-first-name'] as string,
+      'x-user-last-name': headers['x-user-last-name'] as string,
     };
 
     const config: AxiosRequestConfig = {

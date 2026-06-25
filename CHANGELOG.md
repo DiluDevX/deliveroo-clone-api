@@ -2,7 +2,7 @@
 
 ### Bug Fixes
 
-* trigger bff azure deployment ([7902dd8](https://github.com/DiluDevX/deliveroo-clone-api/commit/7902dd87cb86796824f73ae74e12c2651f89b55e))
+- trigger bff azure deployment ([7902dd8](https://github.com/DiluDevX/deliveroo-clone-api/commit/7902dd87cb86796824f73ae74e12c2651f89b55e))
 
 ## [1.1.5](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.1.4...v1.1.5) (2026-05-28)
 

@@ -96,6 +96,9 @@ export async function authContextMiddleware(
     req.headers['x-actor-id'] = user.id;
     req.headers['x-actor-user-id'] = user.id;
     req.headers['x-actor-type'] = actorType;
+    req.headers['x-user-email'] = user.email;
+    req.headers['x-user-first-name'] = user.firstName;
+    req.headers['x-user-last-name'] = user.lastName;
 
     // Store actor context on request for potential use in BFF logic
     (req as AuthenticatedRequest).actor = {
@@ -103,6 +106,9 @@ export async function authContextMiddleware(
       actorId: user.id,
       actorUserId: user.id,
       actorType,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
     };
 
     next();
