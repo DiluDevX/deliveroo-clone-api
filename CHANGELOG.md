@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.1.6...v1.2.0) (2026-06-25)
+
+### Features
+
+* add user email and name to auth context and proxy headers ([24fa938](https://github.com/DiluDevX/deliveroo-clone-api/commit/24fa9382890ccddf06e3031141ea8371ce012cd8))
+
 ## [1.1.6](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.1.5...v1.1.6) (2026-06-25)
 
 ### Bug Fixes
