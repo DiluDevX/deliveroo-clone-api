@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.3.0...v1.4.0) (2026-07-01)
+
+### Features
+
+* add category and dish proxy routes with authentication middleware ([083ffb3](https://github.com/DiluDevX/deliveroo-clone-api/commit/083ffb32289ba223b214381a212535d6f77e6870))
+
 ## [1.3.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.2.0...v1.3.0) (2026-06-25)
 
 ### Features
