@@ -18,9 +18,14 @@ function mapRoleToActorType(role?: string): ActorType {
     user: 'USER',
     platform_admin: 'PLATFORM_ADMIN',
     restaurant_admin: 'RESTAURANT_ADMIN',
+    restaurant_user: 'RESTAURANT_ADMIN',
   };
 
   return roleToActorType[role ?? ''] || 'USER';
+}
+
+function getPrimaryRestaurantId(user: NonNullable<GetMeResponseDTO['data']>): string | undefined {
+  return user.restaurantId ?? user.restaurantUsers?.[0]?.restaurantId;
 }
 
 /**
@@ -78,9 +83,11 @@ export async function authContextMiddleware(
     }
 
     const actorType = mapRoleToActorType(user.role);
+    const restaurantId = getPrimaryRestaurantId(user);
+    const restaurantRole = user.restaurantRole ?? user.restaurantUsers?.[0]?.role;
 
     logger.info(
-      { userId: user.id, email: user.email, role: user.role },
+      { userId: user.id, email: user.email, role: user.role, restaurantId },
       'User authenticated successfully'
     );
 
@@ -89,6 +96,12 @@ export async function authContextMiddleware(
     req.headers['x-actor-id'] = user.id;
     req.headers['x-actor-user-id'] = user.id;
     req.headers['x-actor-type'] = actorType;
+    if (restaurantId) {
+      req.headers['x-actor-restaurant-id'] = restaurantId;
+    }
+    if (restaurantRole) {
+      req.headers['x-actor-restaurant-role'] = restaurantRole;
+    }
     req.headers['x-user-email'] = user.email;
     req.headers['x-user-first-name'] = user.firstName;
     req.headers['x-user-last-name'] = user.lastName;
@@ -99,6 +112,8 @@ export async function authContextMiddleware(
       actorId: user.id,
       actorUserId: user.id,
       actorType,
+      restaurantId,
+      restaurantRole,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,

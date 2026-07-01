@@ -11,6 +11,12 @@ interface MicroserviceClient {
   client: AxiosInstance;
 }
 
+type ForwardedActorHeaders = {
+  'x-actor-type': string | undefined;
+  'x-actor-id': string | undefined;
+  'x-actor-user-id': string | undefined;
+};
+
 class ProxyService {
   private readonly clients: Record<string, MicroserviceClient>;
 
@@ -70,6 +76,55 @@ class ProxyService {
     return pathPrefix ? `${pathPrefix}${cleanPath}` : cleanPath;
   }
 
+  private getForwardedActorHeaders(
+    serviceName: string,
+    headers: Request['headers']
+  ): ForwardedActorHeaders {
+    const actorType = headers['x-actor-type'];
+    const actorId = headers['x-actor-id'];
+    const actorUserId = headers['x-actor-user-id'];
+
+    if (typeof actorType !== 'string') {
+      return {
+        'x-actor-type': undefined,
+        'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
+        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+      };
+    }
+
+    if (serviceName !== MICROSERVICE_NAMES.RESTAURANT_SERVICE) {
+      return {
+        'x-actor-type': actorType,
+        'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
+        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+      };
+    }
+
+    if (actorType === 'PLATFORM_ADMIN') {
+      return {
+        'x-actor-type': 'ADMIN',
+        'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
+        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+      };
+    }
+
+    if (actorType === 'RESTAURANT_ADMIN') {
+      const restaurantId = headers['x-actor-restaurant-id'];
+
+      return {
+        'x-actor-type': 'RESTAURANT',
+        'x-actor-id': typeof restaurantId === 'string' ? restaurantId : undefined,
+        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+      };
+    }
+
+    return {
+      'x-actor-type': actorType,
+      'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
+      'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+    };
+  }
+
   async proxyRequest(
     serviceName: string,
     req: Request,
@@ -87,6 +142,7 @@ class ProxyService {
     const baseUrl = req.baseUrl || '';
     const fullPath = baseUrl + req.path || '/';
     const mappedPath = this.mapPath(serviceName, fullPath);
+    const actorHeaders = this.getForwardedActorHeaders(serviceName, headers);
 
     const safeHeaders = {
       accept: headers.accept,
@@ -96,9 +152,7 @@ class ProxyService {
       'accept-encoding': headers['accept-encoding'],
       'x-forwarded-for': req.ip,
       'x-api-key': client.apiKey,
-      'x-actor-type': headers['x-actor-type'] as string,
-      'x-actor-id': headers['x-actor-id'] as string,
-      'x-actor-user-id': headers['x-actor-user-id'] as string,
+      ...actorHeaders,
       'x-user-id': headers['x-user-id'] as string,
       'x-user-email': headers['x-user-email'] as string,
       'x-user-first-name': headers['x-user-first-name'] as string,
