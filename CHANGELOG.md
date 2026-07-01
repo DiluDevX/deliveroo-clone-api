@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.4.0...v1.5.0) (2026-07-01)
+
+### Features
+
+* update auth context middleware, and improve proxy service header handling ([b6a9f57](https://github.com/DiluDevX/deliveroo-clone-api/commit/b6a9f572e9289d02253fd830b30e7934b20ac9a3))
+
 ## [1.4.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.3.0...v1.4.0) (2026-07-01)
 
 ### Features
