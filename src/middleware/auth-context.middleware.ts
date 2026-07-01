@@ -9,13 +9,6 @@ export interface AuthenticatedRequest extends Request {
   actor?: ActorContextDTO;
 }
 
-function sendUnauthorized(res: Response, message: string): void {
-  res.status(401).json({
-    success: false,
-    message,
-  });
-}
-
 function isAuthServiceUnavailable(error: AxiosError): boolean {
   return error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT';
 }
@@ -41,7 +34,7 @@ function mapRoleToActorType(role?: string): ActorType {
  */
 export async function authContextMiddleware(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -127,13 +120,13 @@ export async function authContextMiddleware(
 
       if (axiosError.response?.status === 401) {
         logger.info('Token verification failed: invalid or expired token');
-        sendUnauthorized(res, 'Invalid or expired access token');
+        next(new UnauthorizedError('Invalid or expired access token'));
         return;
       }
 
       if (axiosError.response?.status === 403) {
         logger.warn('Token verification failed: forbidden');
-        sendUnauthorized(res, 'Access denied');
+        next(new UnauthorizedError('Access forbidden: insufficient permissions'));
         return;
       }
 
@@ -141,12 +134,12 @@ export async function authContextMiddleware(
         { status: axiosError.response?.status, data: axiosError.response?.data },
         'Auth service returned error'
       );
-      sendUnauthorized(res, 'Authentication failed');
+      next(new UnauthorizedError('Unable to verify user identity'));
       return;
     }
 
     if (error instanceof UnauthorizedError) {
-      sendUnauthorized(res, error.message);
+      next(error);
       return;
     }
 

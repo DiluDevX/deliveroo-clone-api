@@ -2,7 +2,7 @@
 
 ### Features
 
-* add user email and name to payment intent headers ([55e8bba](https://github.com/DiluDevX/deliveroo-clone-api/commit/55e8bbaa9fbc167e1205e13a7cb24a05d7b01956))
+- add user email and name to payment intent headers ([55e8bba](https://github.com/DiluDevX/deliveroo-clone-api/commit/55e8bbaa9fbc167e1205e13a7cb24a05d7b01956))
 
 ## [1.2.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.1.6...v1.2.0) (2026-06-25)
 
