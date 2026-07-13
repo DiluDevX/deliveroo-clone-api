@@ -1,3 +1,9 @@
+## [1.5.1](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.5.0...v1.5.1) (2026-07-13)
+
+### Bug Fixes
+
+* trigger azure deployment ([bc9a2aa](https://github.com/DiluDevX/deliveroo-clone-api/commit/bc9a2aa018401f31aa5b6b492e8b642a110cf993))
+
 ## [1.5.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.4.0...v1.5.0) (2026-07-01)
 
 ### Features
