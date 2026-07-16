@@ -11,8 +11,11 @@ import commonRoutes from './common.routes';
 import { apiKeyMiddleware } from '../middleware/api-key.middleware';
 import { authContextMiddleware } from '../middleware/auth-context.middleware';
 import { environment } from '../config/environment';
+import { stripInternalIdentityHeaders } from '../middleware/internal-headers.middleware';
 
 const router = Router();
+
+router.use(stripInternalIdentityHeaders);
 
 // Auth routes: Public, require API key only
 router.use('/api/auth', apiKeyMiddleware([environment.bffAPIKey]), authRoutes);

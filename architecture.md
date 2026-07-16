@@ -109,13 +109,20 @@ It forwards a curated set of headers:
 - x-actor-type
 - x-actor-id
 - x-actor-user-id
+- x-actor-restaurant-id
+- x-actor-restaurant-role
 - x-user-id
+- x-user-email
+- x-user-first-name
+- x-user-last-name
 
-The BFF currently forwards actor/user headers if the browser sends them. That is not safe for production. The BFF should derive user identity from an access token/session and inject actor headers itself.
+The BFF removes caller-supplied actor/user headers before routing. For protected routes it verifies
+the access token through auth-service and constructs downstream identity headers only from that
+verified actor context.
 
-## Current Critical Integration Gap
+## Authenticated Actor Propagation
 
-Order service cart/checkout requires `x-user-id`. The browser should not be trusted to send this. The BFF should do this instead:
+Order service cart/checkout requires `x-user-id`. The BFF derives it through this flow:
 
 1. Read access token from Authorization header or cookie.
 2. Verify token using JWT_SECRET or call auth-service /me.
@@ -128,7 +135,16 @@ x-actor-user-id: <authenticated user id>
 x-actor-type: USER
 ```
 
-For restaurant admin/platform admin flows, set actor type based on the user role.
+For restaurant admin/platform admin flows, actor context is derived from auth-service and translated
+per downstream service. Restaurant users are forwarded as a `RESTAURANT` actor with their verified
+restaurant id and role. Order-service receives the authenticated staff user as `x-actor-id` for audit
+history and the assigned restaurant separately as `x-actor-restaurant-id`. Restaurant-service still
+receives the assigned restaurant as `x-actor-id` to match its ownership contract. Platform admins are
+mapped to each service's platform-level actor type.
+
+Incoming `x-actor-*` and `x-user-*` headers are removed before routing. Internal identity headers are
+constructed only from the verified auth-service actor context. Restaurant reads remain public, while
+restaurant, category, and dish mutations require authentication before proxying.
 
 ## Path Prefix Notes
 

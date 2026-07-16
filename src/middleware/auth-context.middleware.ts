@@ -17,8 +17,7 @@ function mapRoleToActorType(role?: string): ActorType {
   const roleToActorType: Record<string, ActorType> = {
     user: 'USER',
     platform_admin: 'PLATFORM_ADMIN',
-    restaurant_admin: 'RESTAURANT_ADMIN',
-    restaurant_user: 'RESTAURANT_ADMIN',
+    restaurant_user: 'RESTAURANT',
   };
 
   return roleToActorType[role ?? ''] || 'USER';
@@ -34,7 +33,7 @@ function getPrimaryRestaurantId(user: NonNullable<GetMeResponseDTO['data']>): st
  * This middleware:
  * 1. Extracts the Bearer token from Authorization header
  * 2. Verifies the token by calling auth-service /v1/auth/me
- * 3. On success, injects verified actor headers into the request
+ * 3. On success, stores verified actor context on the request
  * 4. On failure, returns 401 Unauthorized
  */
 export async function authContextMiddleware(
@@ -56,8 +55,6 @@ export async function authContextMiddleware(
     }
 
     const accessToken = authHeader.slice(7); // Remove 'Bearer ' prefix
-
-    logger.debug({ accessToken: accessToken.slice(0, 10) + '...' }, 'Verifying access token');
 
     // Call auth-service to verify token and get user info
     const authServiceResponse = await axios.get<GetMeResponseDTO>(
@@ -91,22 +88,7 @@ export async function authContextMiddleware(
       'User authenticated successfully'
     );
 
-    // Inject verified actor headers into request
-    req.headers['x-user-id'] = user.id;
-    req.headers['x-actor-id'] = user.id;
-    req.headers['x-actor-user-id'] = user.id;
-    req.headers['x-actor-type'] = actorType;
-    if (restaurantId) {
-      req.headers['x-actor-restaurant-id'] = restaurantId;
-    }
-    if (restaurantRole) {
-      req.headers['x-actor-restaurant-role'] = restaurantRole;
-    }
-    req.headers['x-user-email'] = user.email;
-    req.headers['x-user-first-name'] = user.firstName;
-    req.headers['x-user-last-name'] = user.lastName;
-
-    // Store actor context on request for potential use in BFF logic
+    // Store only verified auth-service data as actor context.
     (req as AuthenticatedRequest).actor = {
       userId: user.id,
       actorId: user.id,
