@@ -4,6 +4,8 @@ import { environment } from '../config/environment';
 import { logger } from '../utils/logger';
 import { ServiceUnavailableError } from '../utils/errors';
 import { MICROSERVICE_NAMES } from '../utils/constants';
+import { ActorContextDTO } from '../dtos/auth.dto';
+import { AuthenticatedRequest } from '../middleware/auth-context.middleware';
 
 interface MicroserviceClient {
   baseURL: string;
@@ -17,6 +19,10 @@ type ForwardedActorHeaders = {
   'x-actor-user-id': string | undefined;
   'x-actor-restaurant-id': string | undefined;
   'x-actor-restaurant-role': string | undefined;
+  'x-user-id': string | undefined;
+  'x-user-email': string | undefined;
+  'x-user-first-name': string | undefined;
+  'x-user-last-name': string | undefined;
 };
 
 class ProxyService {
@@ -80,66 +86,45 @@ class ProxyService {
 
   private getForwardedActorHeaders(
     serviceName: string,
-    headers: Request['headers']
+    actor: ActorContextDTO | undefined
   ): ForwardedActorHeaders {
-    const actorType = headers['x-actor-type'];
-    const actorId = headers['x-actor-id'];
-    const actorUserId = headers['x-actor-user-id'];
-    const restaurantId = headers['x-actor-restaurant-id'];
-    const restaurantRole = headers['x-actor-restaurant-role'];
-    const normalizedRestaurantId = typeof restaurantId === 'string' ? restaurantId : undefined;
-    const normalizedRestaurantRole =
-      typeof restaurantRole === 'string' ? restaurantRole : undefined;
-
-    if (typeof actorType !== 'string') {
+    if (!actor) {
       return {
         'x-actor-type': undefined,
-        'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
-        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
-        'x-actor-restaurant-id': normalizedRestaurantId,
-        'x-actor-restaurant-role': normalizedRestaurantRole,
+        'x-actor-id': undefined,
+        'x-actor-user-id': undefined,
+        'x-actor-restaurant-id': undefined,
+        'x-actor-restaurant-role': undefined,
+        'x-user-id': undefined,
+        'x-user-email': undefined,
+        'x-user-first-name': undefined,
+        'x-user-last-name': undefined,
       };
     }
 
     const isRestaurantService = serviceName === MICROSERVICE_NAMES.RESTAURANT_SERVICE;
-    const isOrderService = serviceName === MICROSERVICE_NAMES.ORDER_SERVICE;
+    let forwardedActorType: string = actor.actorType;
+    let forwardedActorId = actor.actorId;
 
-    if (!isRestaurantService && !isOrderService) {
-      return {
-        'x-actor-type': actorType,
-        'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
-        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
-        'x-actor-restaurant-id': normalizedRestaurantId,
-        'x-actor-restaurant-role': normalizedRestaurantRole,
-      };
+    if (actor.actorType === 'PLATFORM_ADMIN' && isRestaurantService) {
+      forwardedActorType = 'ADMIN';
     }
 
-    if (actorType === 'PLATFORM_ADMIN') {
-      return {
-        'x-actor-type': isRestaurantService ? 'ADMIN' : 'PLATFORM_ADMIN',
-        'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
-        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
-        'x-actor-restaurant-id': normalizedRestaurantId,
-        'x-actor-restaurant-role': normalizedRestaurantRole,
-      };
-    }
-
-    if (actorType === 'RESTAURANT') {
-      return {
-        'x-actor-type': 'RESTAURANT',
-        'x-actor-id': normalizedRestaurantId,
-        'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
-        'x-actor-restaurant-id': normalizedRestaurantId,
-        'x-actor-restaurant-role': normalizedRestaurantRole,
-      };
+    if (actor.actorType === 'RESTAURANT' && isRestaurantService) {
+      // restaurant-service currently scopes ownership through x-actor-id.
+      forwardedActorId = actor.restaurantId ?? actor.actorId;
     }
 
     return {
-      'x-actor-type': actorType,
-      'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
-      'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
-      'x-actor-restaurant-id': normalizedRestaurantId,
-      'x-actor-restaurant-role': normalizedRestaurantRole,
+      'x-actor-type': forwardedActorType,
+      'x-actor-id': forwardedActorId,
+      'x-actor-user-id': actor.actorUserId,
+      'x-actor-restaurant-id': actor.restaurantId,
+      'x-actor-restaurant-role': actor.restaurantRole,
+      'x-user-id': actor.userId,
+      'x-user-email': actor.email,
+      'x-user-first-name': actor.firstName,
+      'x-user-last-name': actor.lastName,
     };
   }
 
@@ -160,7 +145,10 @@ class ProxyService {
     const baseUrl = req.baseUrl || '';
     const fullPath = baseUrl + req.path || '/';
     const mappedPath = this.mapPath(serviceName, fullPath);
-    const actorHeaders = this.getForwardedActorHeaders(serviceName, headers);
+    const actorHeaders = this.getForwardedActorHeaders(
+      serviceName,
+      (req as AuthenticatedRequest).actor
+    );
 
     const safeHeaders = {
       accept: headers.accept,
@@ -171,10 +159,6 @@ class ProxyService {
       'x-forwarded-for': req.ip,
       'x-api-key': client.apiKey,
       ...actorHeaders,
-      'x-user-id': headers['x-user-id'] as string,
-      'x-user-email': headers['x-user-email'] as string,
-      'x-user-first-name': headers['x-user-first-name'] as string,
-      'x-user-last-name': headers['x-user-last-name'] as string,
     };
 
     const config: AxiosRequestConfig = {
