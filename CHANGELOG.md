@@ -2,12 +2,12 @@
 
 ### Features
 
-* enhance actor context handling and secure header propagation in BFF ([5a53dc1](https://github.com/DiluDevX/deliveroo-clone-api/commit/5a53dc1919454316623f279de15abaca97d12b86))
-* refine actor context handling for restaurant and platform admins ([8db3495](https://github.com/DiluDevX/deliveroo-clone-api/commit/8db34957e02e75896c2426058857a13e587e14b1))
+- enhance actor context handling and secure header propagation in BFF ([5a53dc1](https://github.com/DiluDevX/deliveroo-clone-api/commit/5a53dc1919454316623f279de15abaca97d12b86))
+- refine actor context handling for restaurant and platform admins ([8db3495](https://github.com/DiluDevX/deliveroo-clone-api/commit/8db34957e02e75896c2426058857a13e587e14b1))
 
 ### Bug Fixes
 
-* trigger azure deployment ([f5c4d0c](https://github.com/DiluDevX/deliveroo-clone-api/commit/f5c4d0c2db0bdb37d8aa0c6c63e977524ac726e6))
+- trigger azure deployment ([f5c4d0c](https://github.com/DiluDevX/deliveroo-clone-api/commit/f5c4d0c2db0bdb37d8aa0c6c63e977524ac726e6))
 
 ## [1.5.1](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.5.0...v1.5.1) (2026-07-13)
 

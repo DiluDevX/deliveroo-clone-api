@@ -12,6 +12,7 @@ import { apiKeyMiddleware } from '../middleware/api-key.middleware';
 import { authContextMiddleware } from '../middleware/auth-context.middleware';
 import { environment } from '../config/environment';
 import { stripInternalIdentityHeaders } from '../middleware/internal-headers.middleware';
+import { requireActorTypes } from '../middleware/actor-authorization.middleware';
 
 const router = Router();
 
@@ -41,6 +42,7 @@ router.use(
   '/api/cart',
   apiKeyMiddleware([environment.bffAPIKey]),
   authContextMiddleware,
+  requireActorTypes('USER'),
   cartRoutes
 );
 
@@ -49,6 +51,7 @@ router.use(
   '/api/payments',
   apiKeyMiddleware([environment.bffAPIKey]),
   authContextMiddleware,
+  requireActorTypes('USER'),
   paymentRoutes
 );
 

@@ -146,6 +146,10 @@ Incoming `x-actor-*` and `x-user-*` headers are removed before routing. Internal
 constructed only from the verified auth-service actor context. Restaurant reads remain public, while
 restaurant, category, and dish mutations require authentication before proxying.
 
+Cart and payment routes accept customer (`USER`) actors only. Restaurant users operate through the
+restaurant order/menu routes and cannot create customer carts or payments. Direct order creation is
+restricted to platform administrators at the BFF boundary.
+
 ## Path Prefix Notes
 
 The proxy adds `/v1` for auth, order, payment, and restaurant services.
