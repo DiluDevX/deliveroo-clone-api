@@ -128,7 +128,10 @@ x-actor-user-id: <authenticated user id>
 x-actor-type: USER
 ```
 
-For restaurant admin/platform admin flows, set actor type based on the user role.
+For restaurant admin/platform admin flows, actor context is derived from auth-service and translated
+per downstream service. Restaurant users are forwarded to restaurant-service and order-service as a
+`RESTAURANT` actor with their verified restaurant id and restaurant role; platform admins are mapped
+to each service's platform-level actor type.
 
 ## Path Prefix Notes
 

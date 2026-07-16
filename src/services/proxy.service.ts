@@ -15,6 +15,8 @@ type ForwardedActorHeaders = {
   'x-actor-type': string | undefined;
   'x-actor-id': string | undefined;
   'x-actor-user-id': string | undefined;
+  'x-actor-restaurant-id': string | undefined;
+  'x-actor-restaurant-role': string | undefined;
 };
 
 class ProxyService {
@@ -83,38 +85,52 @@ class ProxyService {
     const actorType = headers['x-actor-type'];
     const actorId = headers['x-actor-id'];
     const actorUserId = headers['x-actor-user-id'];
+    const restaurantId = headers['x-actor-restaurant-id'];
+    const restaurantRole = headers['x-actor-restaurant-role'];
+    const normalizedRestaurantId = typeof restaurantId === 'string' ? restaurantId : undefined;
+    const normalizedRestaurantRole =
+      typeof restaurantRole === 'string' ? restaurantRole : undefined;
 
     if (typeof actorType !== 'string') {
       return {
         'x-actor-type': undefined,
         'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
         'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+        'x-actor-restaurant-id': normalizedRestaurantId,
+        'x-actor-restaurant-role': normalizedRestaurantRole,
       };
     }
 
-    if (serviceName !== MICROSERVICE_NAMES.RESTAURANT_SERVICE) {
+    const isRestaurantService = serviceName === MICROSERVICE_NAMES.RESTAURANT_SERVICE;
+    const isOrderService = serviceName === MICROSERVICE_NAMES.ORDER_SERVICE;
+
+    if (!isRestaurantService && !isOrderService) {
       return {
         'x-actor-type': actorType,
         'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
         'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+        'x-actor-restaurant-id': normalizedRestaurantId,
+        'x-actor-restaurant-role': normalizedRestaurantRole,
       };
     }
 
     if (actorType === 'PLATFORM_ADMIN') {
       return {
-        'x-actor-type': 'ADMIN',
+        'x-actor-type': isRestaurantService ? 'ADMIN' : 'PLATFORM_ADMIN',
         'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
         'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+        'x-actor-restaurant-id': normalizedRestaurantId,
+        'x-actor-restaurant-role': normalizedRestaurantRole,
       };
     }
 
-    if (actorType === 'RESTAURANT_ADMIN') {
-      const restaurantId = headers['x-actor-restaurant-id'];
-
+    if (actorType === 'RESTAURANT') {
       return {
         'x-actor-type': 'RESTAURANT',
-        'x-actor-id': typeof restaurantId === 'string' ? restaurantId : undefined,
+        'x-actor-id': normalizedRestaurantId,
         'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+        'x-actor-restaurant-id': normalizedRestaurantId,
+        'x-actor-restaurant-role': normalizedRestaurantRole,
       };
     }
 
@@ -122,6 +138,8 @@ class ProxyService {
       'x-actor-type': actorType,
       'x-actor-id': typeof actorId === 'string' ? actorId : undefined,
       'x-actor-user-id': typeof actorUserId === 'string' ? actorUserId : undefined,
+      'x-actor-restaurant-id': normalizedRestaurantId,
+      'x-actor-restaurant-role': normalizedRestaurantRole,
     };
   }
 

@@ -1,7 +1,7 @@
 /**
  * User role types
  */
-export type UserRole = 'user' | 'platform_admin' | 'restaurant_admin' | 'restaurant_user';
+export type UserRole = 'user' | 'platform_admin' | 'restaurant_user';
 
 export interface RestaurantAssignmentDTO {
   id: string;
@@ -62,7 +62,7 @@ export type AuthServiceRefreshResponseDTO = AuthServiceResponseDTO<RefreshRespon
 /**
  * Actor context that gets injected into requests
  */
-export type ActorType = 'USER' | 'PLATFORM_ADMIN' | 'RESTAURANT_ADMIN' | 'SYSTEM';
+export type ActorType = 'USER' | 'PLATFORM_ADMIN' | 'RESTAURANT' | 'SYSTEM';
 
 export interface ActorContextDTO {
   userId: string;

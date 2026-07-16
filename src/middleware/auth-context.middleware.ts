@@ -17,8 +17,7 @@ function mapRoleToActorType(role?: string): ActorType {
   const roleToActorType: Record<string, ActorType> = {
     user: 'USER',
     platform_admin: 'PLATFORM_ADMIN',
-    restaurant_admin: 'RESTAURANT_ADMIN',
-    restaurant_user: 'RESTAURANT_ADMIN',
+    restaurant_user: 'RESTAURANT',
   };
 
   return roleToActorType[role ?? ''] || 'USER';
@@ -56,8 +55,6 @@ export async function authContextMiddleware(
     }
 
     const accessToken = authHeader.slice(7); // Remove 'Bearer ' prefix
-
-    logger.debug({ accessToken: accessToken.slice(0, 10) + '...' }, 'Verifying access token');
 
     // Call auth-service to verify token and get user info
     const authServiceResponse = await axios.get<GetMeResponseDTO>(
