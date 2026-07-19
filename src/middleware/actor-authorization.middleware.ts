@@ -54,5 +54,12 @@ export const requirePlatformAdminOrRestaurantRoles =
       return;
     }
 
+    const requestedRestaurantId = req.params.restaurantId;
+
+    if (requestedRestaurantId && actor.restaurantId !== requestedRestaurantId) {
+      next(new ForbiddenError("You do not have permission to access this restaurant's resources"));
+      return;
+    }
+
     next();
   };
