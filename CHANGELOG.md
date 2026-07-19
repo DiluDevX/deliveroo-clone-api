@@ -2,7 +2,7 @@
 
 ### Features
 
-* implement actor authorization middleware and update routes for user access control ([7249f93](https://github.com/DiluDevX/deliveroo-clone-api/commit/7249f93d732983a5f2002e5eb90ec0bd141fb137))
+- implement actor authorization middleware and update routes for user access control ([7249f93](https://github.com/DiluDevX/deliveroo-clone-api/commit/7249f93d732983a5f2002e5eb90ec0bd141fb137))
 
 ## [1.6.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.5.1...v1.6.0) (2026-07-16)
 
