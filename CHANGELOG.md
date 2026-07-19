@@ -1,3 +1,10 @@
+## [1.8.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.7.0...v1.8.0) (2026-07-19)
+
+### Features
+
+* add restaurant-specific access control to platform admin middleware ([5dc6cd8](https://github.com/DiluDevX/deliveroo-clone-api/commit/5dc6cd80bc8e297e00fc46c75b18268f6ae688c8))
+* enhance restaurant role-based access control and update routes ([8536fc5](https://github.com/DiluDevX/deliveroo-clone-api/commit/8536fc5d739fc3c99694e971a87373896a3b6add))
+
 ## [1.7.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.6.0...v1.7.0) (2026-07-16)
 
 ### Features
