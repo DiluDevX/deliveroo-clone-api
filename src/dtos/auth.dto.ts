@@ -2,11 +2,12 @@
  * User role types
  */
 export type UserRole = 'user' | 'platform_admin' | 'restaurant_user';
+export type RestaurantRole = 'employee' | 'super_admin' | 'admin' | 'finance';
 
 export interface RestaurantAssignmentDTO {
   id: string;
   restaurantId: string;
-  role: string;
+  role: RestaurantRole;
 }
 
 /**
@@ -20,7 +21,7 @@ export interface UserProfileDTO {
   phone?: string;
   role: UserRole;
   restaurantId?: string;
-  restaurantRole?: string;
+  restaurantRole?: RestaurantRole;
   restaurantUsers?: RestaurantAssignmentDTO[];
 }
 
@@ -70,7 +71,7 @@ export interface ActorContextDTO {
   actorUserId: string;
   actorType: ActorType;
   restaurantId?: string;
-  restaurantRole?: string;
+  restaurantRole?: RestaurantRole;
   email: string;
   firstName: string;
   lastName: string;

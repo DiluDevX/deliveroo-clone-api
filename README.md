@@ -33,6 +33,10 @@ This API follows a **BFF Gateway** pattern:
 - **Payment Service** (`deliveroo-clone-payment-service`) - Payment processing
 - **Restaurant Service** (`deliveroo-clone-restaurant-service`) - Restaurants, dishes, categories management
 
+The BFF derives restaurant identity and role from the auth service. It rejects
+role-incompatible team, order, and analytics requests before proxying them; the
+owning service repeats the authorization check.
+
 ## Project Structure
 
 ```text
@@ -124,6 +128,10 @@ The server runs on **http://localhost:3000**
 - `GET /v1/users/:id` - Get user by ID
 - `PUT /v1/users/:id` - Update user
 - `DELETE /v1/users/:id` - Delete user
+- `GET /api/users/restaurant-team` - List restaurant members and invitations (owner/admin)
+- `POST /api/users/restaurant-team/invitations` - Invite a permitted role
+- `PATCH /api/users/restaurant-team/members/:id/role` - Change a member role
+- `DELETE /api/users/restaurant-team/members/:id` - Remove a permitted member
 
 ### Proxied to Order Service
 
@@ -131,6 +139,9 @@ The server runs on **http://localhost:3000**
 - `POST /v1/orders` - Create order
 - `GET /v1/orders/:id` - Get order by ID
 - `PUT /v1/orders/:id` - Update order
+- `GET /api/orders/restaurant/:restaurantId` - Restaurant orders (employee/admin/owner)
+- `GET /api/orders/restaurant/:restaurantId/summary` - Dashboard summary (assigned restaurant roles)
+- `GET /api/orders/restaurant/:restaurantId/analytics` - Analytics (finance/admin/owner)
 
 ### Proxied to Order Service (Cart)
 
