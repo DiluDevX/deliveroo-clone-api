@@ -4,7 +4,7 @@
 
 The BFF gateway is the single HTTP entry point used by the React frontend. It validates the frontend-facing API key, applies CORS/rate limiting/error handling, and proxies requests to the underlying microservices.
 
-This service currently behaves mostly as a pass-through proxy. It does not yet fully own session authentication or actor-context injection, which is the main integration gap to fix before the whole system is reliable.
+Most resource routes are pass-through proxies. The BFF also owns narrow orchestration commands where a browser must not coordinate partial writes across services, including platform-admin restaurant provisioning.
 
 ## Runtime
 
@@ -76,14 +76,15 @@ Important: `BASE_URL` is used as the allowed CORS origin. For the Vite frontend 
 
 The frontend calls the BFF under these paths:
 
-| Frontend path       | BFF target service | Downstream path mapping |
-| ------------------- | ------------------ | ----------------------- |
-| /api/auth/\*        | auth-service       | /v1/auth/\*             |
-| /api/users/\*       | auth-service       | /v1/users/\*            |
-| /api/cart/\*        | order-service      | /v1/cart/\*             |
-| /api/orders/\*      | order-service      | /v1/orders/\*           |
-| /api/payments/\*    | payment-service    | /v1/payments/\*         |
-| /api/restaurants/\* | restaurant-service | /v1/restaurants/\*      |
+| Frontend path          | BFF target service | Downstream path mapping    |
+| ---------------------- | ------------------ | -------------------------- |
+| /api/auth/\*           | auth-service       | /v1/auth/\*                |
+| /api/users/\*          | auth-service       | /v1/users/\*               |
+| /api/cart/\*           | order-service      | /v1/cart/\*                |
+| /api/orders/\*         | order-service      | /v1/orders/\*              |
+| /api/payments/\*       | payment-service    | /v1/payments/\*            |
+| /api/restaurants/\*    | restaurant-service | /v1/restaurants/\*         |
+| /api/admin/restaurants | BFF orchestration  | restaurant + auth services |
 
 All frontend requests are checked by `apiKeyMiddleware([BFF_API_KEY])`, so frontend requests must include:
 
@@ -145,6 +146,19 @@ mapped to each service's platform-level actor type.
 Incoming `x-actor-*` and `x-user-*` headers are removed before routing. Internal identity headers are
 constructed only from the verified auth-service actor context. Restaurant reads remain public, while
 restaurant, category, and dish mutations require authentication before proxying.
+
+## Platform Restaurant Provisioning
+
+`POST /api/admin/restaurants` is restricted to a verified `PLATFORM_ADMIN` actor. Its body contains a
+stable UUID `provisioningId`, restaurant details, and the initial owner details. The BFF uses the UUID
+as the restaurant `orgId`, creates or recovers that restaurant, and then asks auth-service to create the
+owner and `super_admin` membership in one local database transaction.
+
+The command is retry-safe for the same provisioning id. A definitive auth validation or conflict
+response compensates a restaurant created by that request. Ambiguous auth failures such as timeouts
+and 5xx responses are not compensated because the auth transaction may have committed; clients retry
+with the same provisioning id. Passwords are forwarded only to auth-service and are never logged or
+returned.
 
 Cart and payment routes accept customer (`USER`) actors only. Restaurant users operate through the
 restaurant order/menu routes and cannot create customer carts or payments. Direct order creation is
