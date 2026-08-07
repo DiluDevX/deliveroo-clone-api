@@ -5,9 +5,16 @@ export type ProvisionRestaurantRequestBodyDTO = z.infer<
   typeof provisionRestaurantRequestBodySchema
 >;
 
-export type ProvisionedRestaurantDTO = ProvisionRestaurantRequestBodyDTO['restaurant'] & {
+type ProvisionRestaurantInputDTO = ProvisionRestaurantRequestBodyDTO['restaurant'];
+
+export type ProvisionedRestaurantDTO = Omit<
+  ProvisionRestaurantInputDTO,
+  'address' | 'description' | 'cuisine'
+> & {
   id: string;
   orgId: string;
+  provisioningId: string | null;
+  provisioningStatus: 'PENDING' | 'COMPLETED' | null;
   rating: number;
   status: string;
   createdAt: string;

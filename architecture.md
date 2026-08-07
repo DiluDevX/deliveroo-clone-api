@@ -154,11 +154,12 @@ stable UUID `provisioningId`, restaurant details, and the initial owner details.
 as the restaurant `orgId`, creates or recovers that restaurant, and then asks auth-service to create the
 owner and `super_admin` membership in one local database transaction.
 
-The command is retry-safe for the same provisioning id. A definitive auth validation or conflict
-response compensates a restaurant created by that request. Ambiguous auth failures such as timeouts
-and 5xx responses are not compensated because the auth transaction may have committed; clients retry
-with the same provisioning id. Passwords are forwarded only to auth-service and are never logged or
-returned.
+The command is retry-safe for the same provisioning id. Restaurant-service records the operation as
+pending, and the BFF marks it complete only after the owner transaction succeeds. A definitive auth
+validation or conflict response compensates only the matching pending provisioning operation.
+Ambiguous auth failures such as timeouts and 5xx responses are not compensated because the auth
+transaction may have committed; clients retry with the same provisioning id. Passwords are forwarded
+only to auth-service and are never logged or returned.
 
 Cart and payment routes accept customer (`USER`) actors only. Restaurant users operate through the
 restaurant order/menu routes and cannot create customer carts or payments. Direct order creation is
