@@ -13,10 +13,19 @@ import { authContextMiddleware } from '../middleware/auth-context.middleware';
 import { environment } from '../config/environment';
 import { stripInternalIdentityHeaders } from '../middleware/internal-headers.middleware';
 import { requireActorTypes } from '../middleware/actor-authorization.middleware';
+import adminRoutes from './v1/admin.routes';
 
 const router = Router();
 
 router.use(stripInternalIdentityHeaders);
+
+router.use(
+  '/api/admin',
+  apiKeyMiddleware([environment.bffAPIKey]),
+  authContextMiddleware,
+  requireActorTypes('PLATFORM_ADMIN'),
+  adminRoutes
+);
 
 // Auth routes: Public, require API key only
 router.use('/api/auth', apiKeyMiddleware([environment.bffAPIKey]), authRoutes);
