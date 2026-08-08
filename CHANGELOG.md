@@ -1,3 +1,16 @@
+## [1.9.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.8.0...v1.9.0) (2026-08-08)
+
+### Features
+
+* enhance restaurant provisioning process with improved error handling and status tracking ([aa9a2f4](https://github.com/DiluDevX/deliveroo-clone-api/commit/aa9a2f40eb084c771a5eb7db0cfd03c1e7650d91))
+* implement restaurant invitation acceptance flow with ownership reservation and error handling ([12af1b8](https://github.com/DiluDevX/deliveroo-clone-api/commit/12af1b86d464718b423cfff3889408ff3a7c3faf))
+* implement restaurant provisioning endpoint and related services ([9cae761](https://github.com/DiluDevX/deliveroo-clone-api/commit/9cae761b4e5996f30ea2d5edabbc339d3eead937))
+* include restaurant name in ownership invitation request payload ([8b698ac](https://github.com/DiluDevX/deliveroo-clone-api/commit/8b698ac584f70abfddec8fe4513ac701be80d171))
+
+### Bug Fixes
+
+* trigger azure deployment ([5dc9f27](https://github.com/DiluDevX/deliveroo-clone-api/commit/5dc9f27634c56582bb525ece691ebfd6da6e16b7))
+
 ## [1.8.0](https://github.com/DiluDevX/deliveroo-clone-api/compare/v1.7.0...v1.8.0) (2026-07-19)
 
 ### Features
