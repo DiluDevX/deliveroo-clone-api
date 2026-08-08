@@ -152,14 +152,17 @@ restaurant, category, and dish mutations require authentication before proxying.
 `POST /api/admin/restaurants` is restricted to a verified `PLATFORM_ADMIN` actor. Its body contains a
 stable UUID `provisioningId`, restaurant details, and the initial owner details. The BFF uses the UUID
 as the restaurant `orgId`, creates or recovers that restaurant, and then asks auth-service to create the
-owner and `super_admin` membership in one local database transaction.
+unique ownership reservation and send a short-lived owner invitation. The platform administrator
+never supplies or receives the owner's password.
 
 The command is retry-safe for the same provisioning id. Restaurant-service records the operation as
-pending, and the BFF marks it complete only after the owner transaction succeeds. A definitive auth
-validation or conflict response compensates only the matching pending provisioning operation.
+pending. The BFF marks it complete only after the owner accepts the invitation and auth-service
+atomically creates the account or attaches the existing account, creates the `super_admin` membership,
+and accepts the ownership reservation. A definitive auth validation or conflict response compensates
+only the matching pending provisioning operation.
 Ambiguous auth failures such as timeouts and 5xx responses are not compensated because the auth
-transaction may have committed; clients retry with the same provisioning id. Passwords are forwarded
-only to auth-service and are never logged or returned.
+reservation may have committed; clients retry with the same provisioning id. Invitation acceptance is
+also retry-safe so restaurant activation can recover after a timeout.
 
 Cart and payment routes accept customer (`USER`) actors only. Restaurant users operate through the
 restaurant order/menu routes and cannot create customer carts or payments. Direct order creation is

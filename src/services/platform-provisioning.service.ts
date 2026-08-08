@@ -2,7 +2,6 @@ import axios, { AxiosError } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import { environment } from '../config/environment';
 import {
-  ProvisionedOwnerDTO,
   ProvisionedRestaurantDTO,
   ProvisionRestaurantRequestBodyDTO,
   ProvisionRestaurantResponseBodyDTO,
@@ -23,9 +22,9 @@ type ServiceResponseDTO<T> = {
   data?: T;
 };
 
-type OwnerProvisioningResult = {
-  user: ProvisionedOwnerDTO;
-  membership: ProvisionRestaurantResponseBodyDTO['membership'];
+type OwnerInvitationReservationResult = {
+  ownership: ProvisionRestaurantResponseBodyDTO['ownership'];
+  invitation: ProvisionRestaurantResponseBodyDTO['invitation'];
   created: boolean;
 };
 
@@ -145,28 +144,6 @@ const createOrRecoverRestaurantForProvisioning = async (
   }
 };
 
-const markRestaurantProvisioningAsCompleted = async (
-  provisioningId: string,
-  actor: ActorContextDTO
-): Promise<ProvisionedRestaurantDTO> => {
-  try {
-    const response = await axios.patch<ServiceResponseDTO<ProvisionedRestaurantDTO>>(
-      `${environment.restaurantService.url}${buildRestaurantProvisioningPath(provisioningId)}/complete`,
-      undefined,
-      { headers: buildRestaurantServiceHeaders(actor), timeout: 10000 }
-    );
-    if (!response.data.data) {
-      throw new ServiceUnavailableError('Restaurant service returned an invalid response');
-    }
-    return response.data.data;
-  } catch (error) {
-    if (!axios.isAxiosError(error)) {
-      throw error;
-    }
-    return throwMappedRestaurantServiceError(error);
-  }
-};
-
 const deletePendingRestaurantAfterOwnerProvisioningRejection = async (
   restaurantId: string,
   provisioningId: string,
@@ -180,7 +157,7 @@ const deletePendingRestaurantAfterOwnerProvisioningRejection = async (
         timeout: 10000,
       }
     );
-    logger.warn({ restaurantId }, 'Compensated restaurant after owner provisioning rejection');
+    logger.warn({ restaurantId }, 'Compensated restaurant after owner invitation rejection');
   } catch (error) {
     logger.error(
       {
@@ -199,13 +176,13 @@ const shouldDeletePendingRestaurantAfterOwnerFailure = (
   const status = error.response?.status;
   return (
     restaurant.provisioningStatus === 'PENDING' &&
-    status !== undefined &&
-    status >= StatusCodes.BAD_REQUEST &&
-    status < StatusCodes.INTERNAL_SERVER_ERROR
+    (status === StatusCodes.BAD_REQUEST ||
+      status === StatusCodes.UNAUTHORIZED ||
+      status === StatusCodes.FORBIDDEN)
   );
 };
 
-const throwMappedOwnerProvisioningError = (error: AxiosError): never => {
+const throwMappedOwnerInvitationError = (error: AxiosError): never => {
   const status = error.response?.status;
 
   if (status === StatusCodes.CONFLICT) {
@@ -225,18 +202,18 @@ const throwMappedOwnerProvisioningError = (error: AxiosError): never => {
     throw new ForbiddenError('Platform administrator access is required');
   }
   throw new ServiceUnavailableError(
-    'Owner provisioning could not be confirmed. Retry with the same provisioning id.'
+    'Owner invitation could not be confirmed. Retry with the same provisioning id.'
   );
 };
 
-const provisionInitialRestaurantOwner = async (
+const reserveOwnershipAndInviteInitialRestaurantOwner = async (
   input: ProvisionRestaurantRequestBodyDTO,
   restaurantId: string,
   authorization: string
-): Promise<OwnerProvisioningResult> => {
-  const response = await axios.post<ServiceResponseDTO<OwnerProvisioningResult>>(
-    `${environment.authService.url}/v1/users/restaurant-owners`,
-    { ...input.owner, restaurantId },
+): Promise<OwnerInvitationReservationResult> => {
+  const response = await axios.post<ServiceResponseDTO<OwnerInvitationReservationResult>>(
+    `${environment.authService.url}/v1/users/restaurant-owner-invitations`,
+    { ...input.owner, restaurantId, provisioningId: input.provisioningId },
     {
       headers: {
         'x-api-key': environment.authService.apiKey,
@@ -258,10 +235,10 @@ export const provisionRestaurant = async (
   authorization: string
 ): Promise<ProvisionRestaurantResponseBodyDTO> => {
   const restaurantResult = await createOrRecoverRestaurantForProvisioning(input, actor);
-  let ownerResult: OwnerProvisioningResult;
+  let ownerInvitationResult: OwnerInvitationReservationResult;
 
   try {
-    ownerResult = await provisionInitialRestaurantOwner(
+    ownerInvitationResult = await reserveOwnershipAndInviteInitialRestaurantOwner(
       input,
       restaurantResult.restaurant.id,
       authorization
@@ -278,18 +255,13 @@ export const provisionRestaurant = async (
         actor
       );
     }
-    return throwMappedOwnerProvisioningError(error);
+    return throwMappedOwnerInvitationError(error);
   }
 
-  const completedRestaurant = await markRestaurantProvisioningAsCompleted(
-    input.provisioningId,
-    actor
-  );
-
   return {
-    restaurant: completedRestaurant,
-    owner: ownerResult.user,
-    membership: ownerResult.membership,
-    created: restaurantResult.created || ownerResult.created,
+    restaurant: restaurantResult.restaurant,
+    ownership: ownerInvitationResult.ownership,
+    invitation: ownerInvitationResult.invitation,
+    created: restaurantResult.created || ownerInvitationResult.created,
   };
 };

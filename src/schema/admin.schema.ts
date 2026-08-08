@@ -1,12 +1,5 @@
 import { z } from 'zod';
 
-const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters')
-  .regex(/[A-Z]/, 'Password must include an uppercase letter')
-  .regex(/[a-z]/, 'Password must include a lowercase letter')
-  .regex(/[0-9]/, 'Password must include a number');
-
 export const provisionRestaurantRequestBodySchema = z.object({
   provisioningId: z.string().uuid('provisioningId must be a valid UUID'),
   restaurant: z.object({
@@ -26,6 +19,5 @@ export const provisionRestaurantRequestBodySchema = z.object({
     firstName: z.string().trim().min(1).max(50),
     lastName: z.string().trim().min(1).max(50),
     email: z.string().trim().email(),
-    password: passwordSchema,
   }),
 });

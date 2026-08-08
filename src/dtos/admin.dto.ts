@@ -24,22 +24,18 @@ export type ProvisionedRestaurantDTO = Omit<
   cuisine: string | null;
 };
 
-export type ProvisionedOwnerDTO = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: 'restaurant_user';
-};
-
 export type ProvisionRestaurantResponseBodyDTO = {
   restaurant: ProvisionedRestaurantDTO;
-  owner: ProvisionedOwnerDTO;
-  membership: {
+  ownership: {
     id: string;
     restaurantId: string;
-    userId: string;
-    role: 'super_admin';
+    provisioningId: string;
+    status: 'INVITED' | 'ACCEPTED';
+  };
+  invitation: {
+    id: string;
+    email: string;
+    expiresAt: string;
   };
   created: boolean;
 };

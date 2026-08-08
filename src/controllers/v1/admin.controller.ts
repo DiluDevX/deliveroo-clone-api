@@ -39,18 +39,19 @@ export const provisionRestaurant = async (
     logger.info(
       {
         restaurantId: result.restaurant.id,
-        ownerId: result.owner.id,
+        ownershipId: result.ownership.id,
+        invitationId: result.invitation.id,
         provisioningId: req.body.provisioningId,
         created: result.created,
       },
-      'Restaurant and owner provisioned'
+      'Restaurant created and owner invitation reserved'
     );
 
     res.status(result.created ? StatusCodes.CREATED : StatusCodes.OK).json({
       success: true,
       message: result.created
-        ? 'Restaurant and owner provisioned successfully'
-        : 'Restaurant and owner already provisioned',
+        ? 'Restaurant created and owner invitation sent successfully'
+        : 'Restaurant and owner invitation already reserved',
       data: result,
     });
   } catch (error) {
