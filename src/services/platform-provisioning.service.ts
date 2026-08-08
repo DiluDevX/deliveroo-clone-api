@@ -213,7 +213,12 @@ const reserveOwnershipAndInviteInitialRestaurantOwner = async (
 ): Promise<OwnerInvitationReservationResult> => {
   const response = await axios.post<ServiceResponseDTO<OwnerInvitationReservationResult>>(
     `${environment.authService.url}/v1/users/restaurant-owner-invitations`,
-    { ...input.owner, restaurantId, provisioningId: input.provisioningId },
+    {
+      ...input.owner,
+      restaurantId,
+      restaurantName: input.restaurant.name,
+      provisioningId: input.provisioningId,
+    },
     {
       headers: {
         'x-api-key': environment.authService.apiKey,
